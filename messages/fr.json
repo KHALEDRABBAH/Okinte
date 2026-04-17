@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "siteTitle": "Bolila — Services de Placement affiliés à l'IBLT",
+    "siteDescription": "Services professionnels de placement et de mise en relation pour l'éducation internationale, les stages, les bourses, l'emploi et les programmes sabbatiques.",
+    "authorization": "Autorisation N° 11-2015N-MESR/DES"
+  },
+  "nav": {
+    "home": "Accueil",
+    "services": "Services",
+    "about": "À propos",
+    "contact": "Contact",
+    "apply": "Postuler",
+    "login": "Connexion",
+    "selectLanguage": "Choisir la langue"
+  },
+  "hero": {
+    "badge": "Services de Placement Professionnels",
+    "title": "Votre Passerelle vers les Opportunités Internationales",
+    "subtitle": "Bolila — Services de Placement affiliés à l'IBLT — vous connecte professionnellement avec des universités internationales, des stages, des bourses, des emplois et des programmes sabbatiques.",
+    "cta": "Postuler Maintenant",
+    "learnMore": "Nos Services"
+  },
+  "about": {
+    "label": "À Propos",
+    "title": "À Propos de Bolila",
+    "subtitle": "Services de Placement affiliés à l'IBLT",
+    "description": "Bolila est un service professionnel de placement et de mise en relation affilié à l'IBLT (Autorisation N° 11-2015N-MESR/DES). Nous connectons professionnellement les individus avec des opportunités internationales en éducation, stages, bourses, emploi et programmes sabbatiques, en suivant strictement nos directives et normes.",
+    "mission": "Notre Mission",
+    "missionText": "Fournir des services de placement professionnels, légaux et fiables qui connectent les individus ambitieux avec des opportunités internationales, en suivant des directives strictes et des normes reconnues.",
+    "vision": "Notre Vision",
+    "visionText": "Devenir le service de placement le plus fiable et professionnel pour la mobilité internationale, reconnu pour son intégrité, sa fiabilité et ses résultats.",
+    "features": {
+      "global": {
+        "title": "Portée Internationale",
+        "description": "Relations avec des universités et entreprises du monde entier"
+      },
+      "secure": {
+        "title": "Légal et Professionnel",
+        "description": "Tous les services sont traités légalement et professionnellement"
+      },
+      "expert": {
+        "title": "Accompagnement Expert",
+        "description": "Professionnels dédiés avec une expérience internationale"
+      }
+    }
+  },
+  "services": {
+    "label": "Nos Services",
+    "title": "Nos Services",
+    "subtitle": "Services professionnels de placement et de mise en relation",
+    "applyBtn": "Postuler pour ce service",
+    "study": {
+      "title": "Connexion des Études",
+      "subtitle": "Study Connection",
+      "description": "Nous vous connectons professionnellement avec des universités internationales pour des études ou des transferts académiques, selon votre domaine et nos directives."
+    },
+    "internship": {
+      "title": "Connexion de Stages",
+      "subtitle": "Internship Connection",
+      "description": "Nous trouvons des stages professionnels pour vous, tant au niveau national qu'international, dans des entreprises pertinentes à votre domaine, selon nos directives."
+    },
+    "scholarship": {
+      "title": "Connexion des Bourses",
+      "subtitle": "Scholarship Connection",
+      "description": "Nous recherchons les bourses disponibles dans les universités et instituts pour les candidats éligibles qui remplissent les conditions requises, strictement selon nos directives."
+    },
+    "sabbatical": {
+      "title": "Sabbatique Vacances",
+      "subtitle": "Sabbatical Vacation",
+      "description": "Pour les employés qui souhaitent enrichir leurs vacances à l'étranger avec une courte expérience professionnelle dans leur domaine à leur destination de vacances — nous nous en occupons légalement et professionnellement."
+    },
+    "employment": {
+      "title": "Connexion d'Emploi",
+      "subtitle": "Employment Connection",
+      "description": "Pour toute personne cherchant un emploi national ou international, nous trouvons légalement les opportunités d'emploi disponibles dans votre domaine, selon nos directives."
+    }
+  },
+  "process": {
+    "label": "Comment ça Marche",
+    "title": "Comment ça Marche",
+    "subtitle": "Des étapes simples pour commencer votre parcours",
+    "step1": {
+      "title": "Inscription",
+      "description": "Remplissez vos informations personnelles et sélectionnez un service."
+    },
+    "step2": {
+      "title": "Documents",
+      "description": "Téléchargez vos documents requis en toute sécurité."
+    },
+    "step3": {
+      "title": "Paiement",
+      "description": "Complétez le paiement des frais de pré-inscription."
+    },
+    "step4": {
+      "title": "Mise en Relation",
+      "description": "Nous traitons votre candidature et vous connectons avec les bonnes opportunités."
+    }
+  },
+  "partners": {
+    "label": "Nos Partenaires",
+    "title": "Nos Partenaires",
+    "subtitle": "Développement de partenariats avec des institutions de premier plan",
+    "comingSoon": "Bientôt Disponible",
+    "comingSoonText": "Nous finalisons des partenariats avec des institutions de premier plan. Restez à l'écoute pour des annonces passionnantes !"
+  },
+  "contact": {
+    "label": "Contactez-nous",
+    "title": "Contactez-nous",
+    "subtitle": "Nous sommes là pour vous aider à réussir",
+    "name": "Nom Complet",
+    "email": "Adresse E-mail",
+    "phone": "Numéro de Téléphone",
+    "message": "Votre Message",
+    "send": "Envoyer le Message",
+    "thankYou": "Merci !",
+    "messageSent": "Votre message a été envoyé. Nous vous répondrons bientôt.",
+    "sendAnother": "Envoyer un Autre Message",
+    "addressLabel": "Adresse",
+    "addressText": "À annoncer",
+    "phoneLabel": "Téléphone / WhatsApp",
+    "phoneText": "Contactez-nous via WhatsApp",
+    "emailLabel": "E-mail",
+    "emailText": "Contactez-nous par e-mail",
+    "social": "Suivez-nous"
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Questions Fréquemment Posées",
+    "subtitle": "Trouvez les réponses aux questions courantes",
+    "q1": "Quels documents dois-je fournir pour postuler ?",
+    "a1": "Vous aurez besoin d'un passeport valide, d'un CV, de certificats ou diplômes, et d'une preuve de paiement. Tous les documents doivent être au format PDF ou image (JPG, PNG), max 5 Mo par fichier.",
+    "q2": "Combien de temps prend le processus de candidature ?",
+    "a2": "Les délais de traitement varient selon le service et l'institution. En général, vous pouvez attendre une réponse dans les 2 à 8 semaines après une soumission complète.",
+    "q3": "Mes informations personnelles sont-elles sécurisées ?",
+    "a3": "Absolument. Nous traitons toutes vos données et documents de manière professionnelle et sécurisée, avec une stricte confidentialité.",
+    "q4": "Quels modes de paiement acceptez-vous ?",
+    "a4": "Nous acceptons les paiements par carte de crédit et de débit. Les frais de pré-inscription doivent être payés avant que votre candidature puisse être traitée.",
+    "q5": "Puis-je postuler à plusieurs services ?",
+    "a5": "Oui, vous pouvez soumettre des candidatures séparées pour différents services. Chaque candidature est traitée indépendamment."
+  },
+  "cta": {
+    "title": "Prêt à Commencer Votre Parcours ?",
+    "subtitle": "Faites le premier pas vers votre avenir international. Postulez maintenant et laissez-nous vous connecter avec les bonnes opportunités.",
+    "apply": "Postuler Maintenant",
+    "contact": "Nous Contacter"
+  },
+  "footer": {
+    "tagline": "Services de Placement affiliés à l'IBLT",
+    "authorization": "Autorisation N° 11-2015N-MESR/DES",
+    "quickLinks": "Liens Rapides",
+    "services": "Services",
+    "contactTitle": "Contact",
+    "copyright": "© {year} Bolila. Tous droits réservés.",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation"
+  },
+  "floating": {
+    "contactUs": "Contactez-nous",
+    "whatsapp": "WhatsApp",
+    "email": "E-mail",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "apply": {
+    "title": "Postuler Maintenant",
+    "subtitle": "Complétez votre candidature en 4 étapes simples",
+    "steps": {
+      "personalInfo": "Informations",
+      "documents": "Documents",
+      "payment": "Paiement",
+      "confirmation": "Confirmation"
+    },
+    "form": {
+      "firstName": "Prénom",
+      "lastName": "Nom de Famille",
+      "phone": "Numéro de Téléphone",
+      "phoneHint": "Tout pays, tout format",
+      "email": "E-mail",
+      "country": "Pays",
+      "city": "Ville",
+      "service": "Sélectionnez un Service",
+      "selectCountry": "Sélectionnez un pays",
+      "next": "Suivant",
+      "back": "Retour"
+    },
+    "documents": {
+      "title": "Téléchargez les Documents Requis",
+      "subtitle": "Formats acceptés : PDF, JPG, JPEG, PNG. Max 5 Mo par fichier.",
+      "passport": "Passeport",
+      "cv": "CV / Curriculum Vitae",
+      "diploma": "Diplôme / Certificat",
+      "paymentReceipt": "Reçu de Paiement",
+      "uploaded": "Téléchargé",
+      "clickToUpload": "Cliquez pour télécharger",
+      "formats": "PDF, JPG, PNG — Max 5 Mo"
+    },
+    "payment": {
+      "title": "Finaliser le Paiement",
+      "orderSummary": "Résumé de la Commande",
+      "service": "Service",
+      "processingFee": "Frais de Pré-inscription",
+      "total": "Total",
+      "paymentMethod": "Mode de Paiement",
+      "card": "Carte de Crédit / Débit",
+      "payNow": "Payer Maintenant"
+    },
+    "confirmation": {
+      "title": "Candidature Soumise !",
+      "message": "Votre candidature a été reçue. Nous vous contacterons bientôt.",
+      "reference": "Référence de Candidature",
+      "emailSent": "Un e-mail de confirmation a été envoyé à votre adresse e-mail.",
+      "backHome": "Retour à l'Accueil"
+    }
+  },
+  "auth": {
+    "loginTitle": "Bon Retour",
+    "email": "E-mail",
+    "password": "Mot de Passe",
+    "submit": "Se Connecter",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signUp": "Postuler",
+    "forgotPassword": "Mot de passe oublié ?"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "success": "Succès",
+    "required": "Obligatoire"
+  }
+}

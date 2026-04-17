@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+    @apply bg-off-white text-primary;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           bg-gold text-primary font-semibold rounded-lg
+           transition-all duration-300 ease-out
+           hover:bg-gold-dark hover:shadow-lg hover:shadow-gold/20
+           active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           border-2 border-primary text-primary font-semibold rounded-lg
+           transition-all duration-300 ease-out
+           hover:bg-primary hover:text-white
+           active:scale-95;
+  }
+  
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           border-2 border-white text-white font-semibold rounded-lg
+           transition-all duration-300 ease-out
+           hover:bg-white hover:text-primary
+           active:scale-95;
+  }
+  
+  .section-title {
+    @apply text-4xl md:text-5xl font-heading font-bold text-primary;
+  }
+  
+  .section-subtitle {
+    @apply text-lg text-gray-600 mt-4 max-w-2xl;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-lg p-6 
+           transition-all duration-300
+           hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border-2 border-gray-200
+           bg-white text-primary placeholder-gray-400
+           transition-all duration-200
+           focus:border-gold focus:ring-4 focus:ring-gold/10
+           focus:outline-none;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/50;
+}
+
+/* RTL Support */
+[dir="rtl"] .rtl\:space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* Animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }

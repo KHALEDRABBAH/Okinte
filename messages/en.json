@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "siteTitle": "Bolila — Placement Services affiliated with IBLT",
+    "siteDescription": "Professional placement and connection services for international education, internships, scholarships, employment, and sabbatical programs.",
+    "authorization": "Authorization N° 11-2015N-MESR/DES"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "apply": "Apply Now",
+    "login": "Login",
+    "selectLanguage": "Select Language"
+  },
+  "hero": {
+    "badge": "Professional Placement Services",
+    "title": "Your Gateway to International Opportunities",
+    "subtitle": "Bolila — Placement Services affiliated with IBLT — professionally connects you with international universities, internships, scholarships, employment, and sabbatical programs.",
+    "cta": "Apply Now",
+    "learnMore": "Our Services"
+  },
+  "about": {
+    "label": "About Us",
+    "title": "About Bolila",
+    "subtitle": "Placement Services affiliated with IBLT",
+    "description": "Bolila is a professional placement and connection service affiliated with IBLT (Authorization N° 11-2015N-MESR/DES). We professionally connect individuals with international opportunities in education, internships, scholarships, employment, and sabbatical programs, strictly following our guidelines and standards.",
+    "mission": "Our Mission",
+    "missionText": "To provide professional, legal, and reliable placement services that connect ambitious individuals with international opportunities, following strict guidelines and recognized standards.",
+    "vision": "Our Vision",
+    "visionText": "To become the most trusted and professional placement service for international mobility, known for integrity, reliability, and results.",
+    "features": {
+      "global": {
+        "title": "International Reach",
+        "description": "Connections with universities and companies worldwide"
+      },
+      "secure": {
+        "title": "Legal & Professional",
+        "description": "All services handled legally and professionally"
+      },
+      "expert": {
+        "title": "Expert Guidance",
+        "description": "Dedicated professionals with international experience"
+      }
+    }
+  },
+  "services": {
+    "label": "Our Services",
+    "title": "Our Services",
+    "subtitle": "Professional placement and connection services",
+    "applyBtn": "Apply for this service",
+    "study": {
+      "title": "Study Connection",
+      "subtitle": "Connexion des études",
+      "description": "We professionally connect you with international universities for studies or academic transfers, according to your field and our guidelines."
+    },
+    "internship": {
+      "title": "Internship Connection",
+      "subtitle": "Connexion de stages",
+      "description": "We find professional internship placements for you, both nationally and internationally, in companies relevant to your field, according to our guidelines."
+    },
+    "scholarship": {
+      "title": "Scholarship Connection",
+      "subtitle": "Connexion des bourses",
+      "description": "We search for available scholarships at universities and institutes for eligible candidates who meet the required conditions, strictly according to our guidelines."
+    },
+    "sabbatical": {
+      "title": "Sabbatical Vacation",
+      "subtitle": "Sabbatique vacances",
+      "description": "For employees who want to enrich their vacation abroad with short professional experience in their field at their vacation destination — we handle it legally and professionally."
+    },
+    "employment": {
+      "title": "Employment Connection",
+      "subtitle": "Connexion d'emploi",
+      "description": "For anyone seeking national or international employment, we legally find available job opportunities in your field, according to our guidelines."
+    }
+  },
+  "process": {
+    "label": "How It Works",
+    "title": "How It Works",
+    "subtitle": "Simple steps to start your journey",
+    "step1": {
+      "title": "Register",
+      "description": "Fill out your personal information and select a service."
+    },
+    "step2": {
+      "title": "Upload Documents",
+      "description": "Securely upload your required documents."
+    },
+    "step3": {
+      "title": "Make Payment",
+      "description": "Complete the pre-registration fee payment."
+    },
+    "step4": {
+      "title": "Get Connected",
+      "description": "We process your application and connect you with the right opportunities."
+    }
+  },
+  "partners": {
+    "label": "Trusted By",
+    "title": "Our Partners",
+    "subtitle": "Building partnerships with leading institutions worldwide",
+    "comingSoon": "Coming Soon",
+    "comingSoonText": "We are finalizing partnerships with leading institutions. Stay tuned for exciting announcements!"
+  },
+  "contact": {
+    "label": "Get In Touch",
+    "title": "Get in Touch",
+    "subtitle": "We're here to help you succeed",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Your Message",
+    "send": "Send Message",
+    "thankYou": "Thank You!",
+    "messageSent": "Your message has been sent. We'll get back to you soon.",
+    "sendAnother": "Send Another Message",
+    "addressLabel": "Address",
+    "addressText": "To be announced",
+    "phoneLabel": "Phone / WhatsApp",
+    "phoneText": "Contact us via WhatsApp",
+    "emailLabel": "Email",
+    "emailText": "Contact us via email",
+    "social": "Connect With Us"
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions",
+    "q1": "What documents do I need to apply?",
+    "a1": "You will need a valid passport, CV/resume, educational certificates or diploma, and proof of payment. All documents must be in PDF or image format (JPG, PNG), max 5MB per file.",
+    "q2": "How long does the application process take?",
+    "a2": "Processing times vary depending on the service and institution. Generally, you can expect to hear from us within 2-8 weeks after a complete submission.",
+    "q3": "Is my personal information secure?",
+    "a3": "Absolutely. We handle all your data and documents professionally and securely, with strict confidentiality.",
+    "q4": "What payment methods do you accept?",
+    "a4": "We accept credit and debit card payments. The pre-registration fee must be paid before your application can be processed.",
+    "q5": "Can I apply for multiple services?",
+    "a5": "Yes, you can submit separate applications for different services. Each application is processed independently."
+  },
+  "cta": {
+    "title": "Ready to Start Your Journey?",
+    "subtitle": "Take the first step towards your international future. Apply now and let us connect you with the right opportunities.",
+    "apply": "Apply Now",
+    "contact": "Contact Us"
+  },
+  "footer": {
+    "tagline": "Placement Services affiliated with IBLT",
+    "authorization": "Authorization N° 11-2015N-MESR/DES",
+    "quickLinks": "Quick Links",
+    "services": "Services",
+    "contactTitle": "Contact",
+    "copyright": "© {year} Bolila. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "floating": {
+    "contactUs": "Contact Us",
+    "whatsapp": "WhatsApp",
+    "email": "Email Us",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "apply": {
+    "title": "Apply Now",
+    "subtitle": "Complete your application in 4 simple steps",
+    "steps": {
+      "personalInfo": "Personal Info",
+      "documents": "Documents",
+      "payment": "Payment",
+      "confirmation": "Confirmation"
+    },
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone Number",
+      "phoneHint": "Any country, any format",
+      "email": "Email",
+      "country": "Country",
+      "city": "City",
+      "service": "Select Service",
+      "selectCountry": "Select a country",
+      "next": "Next",
+      "back": "Back"
+    },
+    "documents": {
+      "title": "Upload Required Documents",
+      "subtitle": "Accepted formats: PDF, JPG, JPEG, PNG. Max 5MB per file.",
+      "passport": "Passport",
+      "cv": "CV / Resume",
+      "diploma": "Diploma / Certificate",
+      "paymentReceipt": "Payment Receipt",
+      "uploaded": "Uploaded",
+      "clickToUpload": "Click to upload",
+      "formats": "PDF, JPG, PNG — Max 5MB"
+    },
+    "payment": {
+      "title": "Complete Payment",
+      "orderSummary": "Order Summary",
+      "service": "Service",
+      "processingFee": "Pre-registration Fee",
+      "total": "Total",
+      "paymentMethod": "Payment Method",
+      "card": "Credit / Debit Card",
+      "payNow": "Pay Now"
+    },
+    "confirmation": {
+      "title": "Application Submitted!",
+      "message": "Your application has been received. We will contact you soon.",
+      "reference": "Application Reference",
+      "emailSent": "A confirmation email has been sent to your email address.",
+      "backHome": "Back to Home"
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome Back",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signUp": "Apply Now",
+    "forgotPassword": "Forgot Password?"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "required": "Required"
+  }
+}

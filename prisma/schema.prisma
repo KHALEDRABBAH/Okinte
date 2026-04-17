@@ -1,0 +1,193 @@
+// Prisma Schema for Bolila Platform
+// This defines ALL database tables, relationships, and constraints.
+// Run `npx prisma migrate dev` to apply changes to the database.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// USER: Anyone who registers on the platform
+// Role: "user" (default) or "admin" (platform managers)
+// ============================================================
+model User {
+  id            String   @id @default(uuid())
+  firstName     String
+  lastName      String
+  email         String   @unique
+  phone         String
+  country       String
+  city          String
+  passwordHash  String
+  role          Role     @default(USER)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations: a user can have many applications, documents, payments, messages
+  applications Application[]
+  documents    Document[]
+  payments     Payment[]
+  messages     Message[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// ============================================================
+// SERVICE: The 5 core services Bolila offers
+// Stored in DB so admin can edit names, descriptions, prices
+// ============================================================
+model Service {
+  id          String  @id @default(uuid())
+  key         String  @unique // "study", "internship", "scholarship", "sabbatical", "employment"
+  price       Decimal @default(150.00)
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  applications Application[]
+
+  @@map("services")
+}
+
+// ============================================================
+// APPLICATION: A user's request for a specific service
+// Goes through: draft → submitted → under_review → approved/rejected
+// ============================================================
+model Application {
+  id            String            @id @default(uuid())
+  userId        String
+  serviceId     String
+  referenceCode String            @unique // e.g., "BOL-2026-A3F8K2"
+  status        ApplicationStatus @default(DRAFT)
+  notes         String?           // Admin review notes
+  submittedAt   DateTime?
+  reviewedAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service   Service    @relation(fields: [serviceId], references: [id])
+  documents Document[]
+  payment   Payment?
+
+  @@map("applications")
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+// ============================================================
+// DOCUMENT: Files uploaded by users (passport, CV, diploma, receipt)
+// Files stored in Supabase Storage; this table stores metadata
+// ============================================================
+model Document {
+  id            String       @id @default(uuid())
+  userId        String
+  applicationId String
+  type          DocumentType
+  fileName      String       // Original filename
+  storagePath   String       // Path in Supabase Storage bucket
+  mimeType      String       // "application/pdf", "image/jpeg", etc.
+  fileSize      Int          // Size in bytes
+  uploadedAt    DateTime     @default(now())
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+enum DocumentType {
+  PASSPORT
+  CV
+  DIPLOMA
+  PAYMENT_RECEIPT
+}
+
+// ============================================================
+// PAYMENT: Tracks Stripe payment for each application
+// Status updates via Stripe webhooks
+// ============================================================
+model Payment {
+  id                    String        @id @default(uuid())
+  userId                String
+  applicationId         String        @unique // One payment per application
+  stripeSessionId       String?       @unique
+  stripePaymentIntentId String?       @unique
+  amount                Decimal
+  currency              String        @default("usd")
+  status                PaymentStatus @default(PENDING)
+  paidAt                DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+// ============================================================
+// PARTNER: Institutions and companies that partner with Bolila
+// Managed by admin; displayed on the platform
+// ============================================================
+model Partner {
+  id        String   @id @default(uuid())
+  name      String
+  logoUrl   String?
+  website   String?
+  country   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("partners")
+}
+
+// ============================================================
+// MESSAGE: Contact form submissions from visitors
+// userId is optional (anonymous visitors can send messages too)
+// ============================================================
+model Message {
+  id        String   @id @default(uuid())
+  userId    String?  // Nullable: anonymous visitors can send messages
+  name      String
+  email     String
+  phone     String?
+  message   String
+  isRead    Boolean  @default(false)
+  repliedBy String?
+  repliedAt DateTime?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("messages")
+}

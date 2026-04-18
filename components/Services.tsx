@@ -29,8 +29,8 @@ export default function Services() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <motion.div key={service.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
-              <div className="card h-full hover:border-gold border-2 border-transparent flex flex-col p-6 sm:p-8 transition-all hover:shadow-xl hover:-translate-y-1">
-                <div className={`w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center mb-6`}>
+              <div className="card h-full glow-border bg-white rounded-2xl flex flex-col p-6 sm:p-8 transition-all hover:-translate-y-2 group/card">
+                <div className={`w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center mb-6 transition-transform duration-500 group-hover/card:scale-110`}>
                   <service.icon className="w-7 h-7 text-gold" />
                 </div>
                 <h3 className="font-heading font-bold text-xl text-primary mb-2 line-clamp-2">{t(`${service.id}.title`)}</h3>

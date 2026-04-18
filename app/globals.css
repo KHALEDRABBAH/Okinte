@@ -65,6 +65,35 @@
   .gradient-text {
     @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
   }
+
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-lg;
+  }
+
+  .glass-panel-dark {
+    @apply bg-primary/80 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .glow-border {
+    @apply relative before:absolute before:-inset-[1px] before:-z-10 before:rounded-[inherit] before:bg-gradient-to-r before:from-gold before:to-gold/50 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500;
+  }
+
+  .animate-gradient {
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @layer utilities {

@@ -49,7 +49,12 @@ export default function Header() {
   ];
 
   return (
-    <header className={`fixed top-0 start-0 end-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
+    <motion.header 
+      initial={{ y: -100 }} 
+      animate={{ y: 0 }} 
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className={`fixed top-0 start-0 end-0 z-50 transition-all duration-300 ${isScrolled ? 'glass-panel' : 'bg-transparent'}`}
+    >
       <nav className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-3">
@@ -153,6 +158,6 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

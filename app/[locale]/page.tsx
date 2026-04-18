@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
+import Trust from '@/components/Trust';
 import Services from '@/components/Services';
 import Process from '@/components/Process';
 import Partners from '@/components/Partners';
@@ -17,6 +18,7 @@ export default function Home() {
       <JsonLd />
       <Header />
       <Hero />
+      <Trust />
       <About />
       <Services />
       <Process />

@@ -103,100 +103,87 @@ export default function Apply() {
 
     if (currentStep === 1) {
       if (!validateStep1()) return;
-
-      // Create application via API (DRAFT status)
-      setIsSubmitting(true);
-      try {
-        // First, register/login the user if not already
-        const meRes = await fetch('/api/auth/me');
-        let isLoggedIn = meRes.ok;
-
-        if (!isLoggedIn) {
-          // Auto-register the user with form data
-          const regRes = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              phone: formData.phone,
-              country: formData.country,
-              city: formData.city,
-              password: formData.password,
-            }),
-          });
-
-          if (!regRes.ok) {
-            const regData = await regRes.json();
-            // If email exists, try logging in
-            if (regRes.status === 409) {
-              setSubmitError('An account with this email already exists. Please login first.');
-              setIsSubmitting(false);
-              return;
-            }
-            throw new Error(regData.error || 'Registration failed');
-          }
-        }
-
-        // Create the application
-        const appRes = await fetch('/api/applications', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ serviceKey: formData.service }),
-        });
-
-        const appData = await appRes.json();
-        if (!appRes.ok) throw new Error(appData.error || 'Failed to create application');
-
-        setApplicationId(appData.application.id);
-        setReferenceCode(appData.application.referenceCode);
-        setCurrentStep(2);
-      } catch (err: any) {
-        setSubmitError(err.message);
-      } finally {
-        setIsSubmitting(false);
-      }
+      setCurrentStep(2);
       return;
     }
 
     if (currentStep === 2) {
-      // Upload all selected files
-      setIsSubmitting(true);
-      try {
-        const fileEntries: [string, File | null][] = [
-          ['PASSPORT', files.passport],
-          ['CV', files.cv],
-          ['DIPLOMA', files.diploma],
-          ['PAYMENT_RECEIPT', files.paymentReceipt],
-        ];
-
-        for (const [type, file] of fileEntries) {
-          if (file) {
-            const fd = new FormData();
-            fd.append('file', file);
-            fd.append('applicationId', applicationId);
-            fd.append('type', type);
-
-            const uploadRes = await fetch('/api/documents/upload', { method: 'POST', body: fd });
-            if (!uploadRes.ok) {
-              const uploadData = await uploadRes.json();
-              throw new Error(`Failed to upload ${type}: ${uploadData.error}`);
-            }
-            setUploadProgress(prev => ({ ...prev, [type]: true }));
-          }
-        }
-
-        setCurrentStep(3);
-      } catch (err: any) {
-        setSubmitError(err.message);
-      } finally {
-        setIsSubmitting(false);
+      if (!files.passport || !files.cv || !files.diploma || !files.paymentReceipt) {
+        setSubmitError('Please upload all required documents.');
+        return;
       }
+      setCurrentStep(3);
       return;
     }
 
     setCurrentStep(prev => Math.min(prev + 1, 4));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      // 1. Validate Login/Register
+      const meRes = await fetch('/api/auth/me');
+      let isLoggedIn = meRes.ok;
+
+      if (!isLoggedIn) {
+        const regRes = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password }),
+        });
+        if (!regRes.ok) {
+          const regData = await regRes.json();
+          if (regRes.status === 409) throw new Error('An account with this email already exists. Please login first.');
+          throw new Error(regData.error || 'Registration failed');
+        }
+      }
+
+      // 2. Create Application
+      const appRes = await fetch('/api/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ serviceKey: formData.service }),
+      });
+      const appData = await appRes.json();
+      if (!appRes.ok) throw new Error(appData.error || 'Failed to create application');
+      
+      const newAppId = appData.application.id;
+      setApplicationId(newAppId);
+      setReferenceCode(appData.application.referenceCode);
+
+      // 3. Upload Files
+      // We process sequentially to ensure we track failures properly
+      const fileEntries: [string, File | null][] = [['PASSPORT', files.passport], ['CV', files.cv], ['DIPLOMA', files.diploma], ['PAYMENT_RECEIPT', files.paymentReceipt]];
+      let uploadSuccess = true;
+      for (const [type, file] of fileEntries) {
+        if (file) {
+          const fd = new FormData();
+          fd.append('file', file);
+          fd.append('applicationId', newAppId);
+          fd.append('type', type);
+
+          const uploadRes = await fetch('/api/documents/upload', { method: 'POST', body: fd });
+          if (!uploadRes.ok) {
+            uploadSuccess = false;
+            // Rollback files handled by failure: application without complete files shouldn't be valid,
+            // or simply delete the application here. For now we throw an error so the catch block handles it.
+            throw new Error(`Failed to upload ${type}. The application was canceled. Please try again.`);
+          }
+          setUploadProgress(prev => ({ ...prev, [type]: true }));
+        }
+      }
+
+      // Payment integration placeholder here
+
+      setCurrentStep(4);
+    } catch (err: any) {
+      setSubmitError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -209,34 +196,31 @@ export default function Apply() {
     setFiles(prev => ({ ...prev, [type]: file }));
   };
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    setSubmitError('');
-    // Payment integration placeholder — for now, mark as submitted
-    // In Phase 4, this will redirect to Stripe Checkout
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setCurrentStep(4);
-  };
+
 
   const FileUpload = ({ type, label, icon: Icon }: { type: keyof typeof files; label: string; icon: any }) => (
-    <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-gold transition-colors">
-      <input type="file" id={type} onChange={(e) => handleFileChange(type, e.target.files?.[0] || null)} className="hidden" accept=".pdf,.jpg,.jpeg,.png" />
-      <label htmlFor={type} className="cursor-pointer">
+    <div className="relative overflow-hidden border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-gold hover:bg-gold/5 transition-all group">
+      <input type="file" id={type} onChange={(e) => handleFileChange(type, e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.jpg,.jpeg,.png" />
+      <div className="space-y-3 relative z-0 pointer-events-none">
         {files[type] ? (
-          <div className="space-y-2">
-            <Check className="w-12 h-12 text-green-500 mx-auto" />
-            <p className="text-green-600 font-medium">{t('documents.uploaded')}</p>
-            <p className="text-sm text-gray-500 truncate max-w-[200px] mx-auto">{files[type]!.name}</p>
-          </div>
+          <>
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Check className="w-8 h-8 text-green-500" />
+            </motion.div>
+            <p className="text-green-600 font-semibold">{t('documents.uploaded')}</p>
+            <p className="text-sm text-gray-500 truncate max-w-[200px] mx-auto bg-white/80 px-2 py-1 rounded-md">{files[type]!.name}</p>
+          </>
         ) : (
-          <div className="space-y-2">
-            <Icon className="w-12 h-12 text-gray-300 mx-auto" />
-            <p className="text-primary font-medium">{label}</p>
-            <p className="text-sm text-gray-400">{t('documents.formats')}</p>
-          </div>
+          <>
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+              <Icon className="w-8 h-8 text-gray-400 group-hover:text-gold transition-colors" />
+            </div>
+            <p className="text-primary font-semibold">{label}</p>
+            <p className="text-sm text-gray-500 max-w-xs mx-auto">Drag & drop or <span className="text-gold">browse</span></p>
+            <p className="text-xs text-gray-400 mt-2">{t('documents.formats')}</p>
+          </>
         )}
-      </label>
+      </div>
     </div>
   );
 

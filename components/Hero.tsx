@@ -10,11 +10,11 @@ export default function Hero() {
   const locale = useLocale();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary via-primary-dark to-primary">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0f1e] via-primary-dark to-[#0a0f1e] animate-gradient">
       {/* Hero Background Image */}
-      <div className="absolute inset-0">
-        <img src="/hero-bg.png" alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary-dark/85 to-primary/90" />
+      <div className="absolute inset-0 opacity-40">
+        <img src="/hero-bg.png" alt="" className="w-full h-full object-cover mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e] via-transparent to-transparent" />
       </div>
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(212,175,55,0.1),transparent_50%)]" />
@@ -46,14 +46,24 @@ export default function Hero() {
             {t('subtitle')}
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/apply" className="btn-primary text-lg px-8 py-4 group">{t('cta')}<ArrowRight className="w-5 h-5 ms-2 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" /></Link>
-            <a href="#services" className="btn-outline text-lg px-8 py-4">{t('learnMore')}</a>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="flex flex-col sm:flex-row gap-6 justify-center mt-10">
+            <Link href="/apply" className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-gold to-gold/50 rounded-lg blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative btn-primary text-lg px-8 py-4 w-full sm:w-auto">
+                {t('cta')}<ArrowRight className="w-5 h-5 ms-2 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+              </div>
+            </Link>
+            <a href="#services" className="btn-outline text-lg px-8 py-4 glass-panel bg-white/5 border-white/20 hover:bg-white/10">{t('learnMore')}</a>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }} className="mt-16 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 max-w-md mx-auto">
-            <p className="text-gold font-heading font-semibold text-sm mb-1">IBLT</p>
-            <p className="text-white/70 text-sm">Authorization N° 11-2015N-MESR/DES</p>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }} className="mt-20 p-6 glass-panel-dark rounded-2xl max-w-md mx-auto inline-flex flex-col md:flex-row items-center gap-4 text-start">
+            <div className="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center shrink-0">
+              <Award className="w-6 h-6 text-gold" />
+            </div>
+            <div>
+              <p className="text-gold font-heading font-semibold text-sm mb-1 tracking-wider uppercase">Official IBLT Partner</p>
+              <p className="text-white/80 text-sm font-medium">Authorization N° 11-2015N-MESR/DES</p>
+            </div>
           </motion.div>
         </div>
       </div>

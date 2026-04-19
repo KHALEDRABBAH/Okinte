@@ -16,11 +16,11 @@ export default function TermsPage() {
             <div className="prose prose-lg max-w-none text-gray-600 space-y-6">
               <p className="text-lg"><strong>Last updated:</strong> April 2026</p>
 
-              <h2 className="text-2xl font-heading font-semibold text-primary mt-8">1. About Bolila</h2>
-              <p>Bolila is a professional placement and connection service affiliated with IBLT (Authorization N° 11-2015N-MESR/DES). We connect individuals with international opportunities in education, internships, scholarships, employment, and sabbatical programs.</p>
+              <h2 className="text-2xl font-heading font-semibold text-primary mt-8">1. About Okinte</h2>
+              <p>Okinte is a professional placement and connection service affiliated with IBLT (Authorization N° 11-2015N-MESR/DES). We connect individuals with international opportunities in education, internships, scholarships, employment, and sabbatical programs.</p>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">2. Services</h2>
-              <p>Bolila provides the following placement services:</p>
+              <p>Okinte provides the following placement services:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>Study Connection:</strong> University admissions and academic transfers</li>
                 <li><strong>Internship Connection:</strong> Professional internship placements</li>
@@ -34,7 +34,7 @@ export default function TermsPage() {
                 <li>You must provide accurate and complete personal information</li>
                 <li>All submitted documents must be authentic and valid</li>
                 <li>You are responsible for maintaining the confidentiality of your account</li>
-                <li>Bolila reserves the right to reject applications that do not meet requirements</li>
+                <li>Okinte reserves the right to reject applications that do not meet requirements</li>
               </ul>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">4. Fees & Payment</h2>
@@ -46,7 +46,7 @@ export default function TermsPage() {
               </ul>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">5. Obligations</h2>
-              <p><strong>Bolila commits to:</strong></p>
+              <p><strong>Okinte commits to:</strong></p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Process all applications professionally and within reasonable timeframes</li>
                 <li>Provide accurate information about available opportunities</li>
@@ -62,15 +62,15 @@ export default function TermsPage() {
               </ul>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">6. Limitation of Liability</h2>
-              <p>Bolila acts as a placement intermediary. We do not guarantee admission, employment, or scholarship awards. Final decisions rest with the respective institutions and organizations. Bolila is not liable for decisions made by third-party institutions.</p>
+              <p>Okinte acts as a placement intermediary. We do not guarantee admission, employment, or scholarship awards. Final decisions rest with the respective institutions and organizations. Okinte is not liable for decisions made by third-party institutions.</p>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">7. Modifications</h2>
-              <p>Bolila reserves the right to modify these terms at any time. Users will be notified of significant changes via email or platform notification.</p>
+              <p>Okinte reserves the right to modify these terms at any time. Users will be notified of significant changes via email or platform notification.</p>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">8. Contact</h2>
               <p>For any questions regarding these terms, contact us at:</p>
-              <p><strong>Email:</strong> contact@bolila.com</p>
-              <p className="text-gold font-medium mt-4">Bolila — Placement Services affiliated with IBLT<br/>Authorization N° 11-2015N-MESR/DES</p>
+              <p><strong>Email:</strong> contact@okinte.com</p>
+              <p className="text-gold font-medium mt-4">Okinte — Placement Services affiliated with IBLT<br/>Authorization N° 11-2015N-MESR/DES</p>
             </div>
           </div>
         </div>

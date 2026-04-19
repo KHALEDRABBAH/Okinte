@@ -1,4 +1,4 @@
-// Prisma Schema for Bolila Platform
+// Prisma Schema for Okinte Platform
 // This defines ALL database tables, relationships, and constraints.
 // Run `npx prisma migrate dev` to apply changes to the database.
 
@@ -25,6 +25,9 @@ model User {
   passwordHash  String
   role          Role     @default(USER)
   emailVerified Boolean  @default(false)
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  avatarUrl        String?   // User profile picture URL
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -33,6 +36,7 @@ model User {
   documents    Document[]
   payments     Payment[]
   messages     Message[]
+  chatMessages ChatMessage[]
 
   @@map("users")
 }
@@ -43,7 +47,7 @@ enum Role {
 }
 
 // ============================================================
-// SERVICE: The 5 core services Bolila offers
+// SERVICE: The 5 core services Okinte offers
 // Stored in DB so admin can edit names, descriptions, prices
 // ============================================================
 model Service {
@@ -91,6 +95,7 @@ enum ApplicationStatus {
   UNDER_REVIEW
   APPROVED
   REJECTED
+  RETURNED
 }
 
 // ============================================================
@@ -112,6 +117,8 @@ model Document {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
+  // Unique constraint: one document per type per application (enables atomic upsert)
+  @@unique([applicationId, type], name: "applicationId_type_unique")
   @@map("documents")
 }
 
@@ -135,6 +142,8 @@ model Payment {
   amount                Decimal
   currency              String        @default("usd")
   status                PaymentStatus @default(PENDING)
+  discount              Decimal?      // Discount amount applied via promo code
+  promoCodeId           String?       // Reference to promo code used
   paidAt                DateTime?
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
@@ -154,7 +163,7 @@ enum PaymentStatus {
 }
 
 // ============================================================
-// PARTNER: Institutions and companies that partner with Bolila
+// PARTNER: Institutions and companies that partner with Okinte
 // Managed by admin; displayed on the platform
 // ============================================================
 model Partner {
@@ -190,4 +199,59 @@ model Message {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("messages")
+}
+
+// ============================================================
+// WEBHOOK_EVENT: Tracks processed Stripe webhook events for atomic idempotency
+// Prevents duplicate processing of the same event (e.g., due to retries)
+// Stripe sends each event exactly once with a unique event.id
+// ============================================================
+model WebhookEvent {
+  id          String   @id // Use Stripe's event.id as the primary key
+  type        String   // Event type (e.g., "checkout.session.completed")
+  processedAt DateTime @default(now())
+
+  @@map("webhook_events")
+}
+
+// ============================================================
+// PROMO CODE: Discount codes created by admin
+// Supports percentage or fixed amount discounts
+// ============================================================
+model PromoCode {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  type        PromoType
+  value       Decimal   // e.g., 20 for 20% or 20 for $20 off
+  maxUses     Int?      // null = unlimited
+  currentUses Int       @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("promo_codes")
+}
+
+enum PromoType {
+  PERCENTAGE
+  FIXED
+}
+
+// ============================================================
+// CHAT MESSAGE: Persistent messaging between admin and users
+// Each message belongs to a user conversation thread
+// ============================================================
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String   // The user this conversation belongs to
+  senderId  String   // Who sent it (userId or adminId)
+  content   String
+  isAdmin   Boolean  @default(false)
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
 }

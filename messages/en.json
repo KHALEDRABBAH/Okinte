@@ -1,8 +1,8 @@
-﻿{
+{
   "metadata": {
-    "siteTitle": "Bolila — Placement Services affiliated with IBLT",
+    "siteTitle": "Okinte — International Placement Services",
     "siteDescription": "Professional placement and connection services for international education, internships, scholarships, employment, and sabbatical programs.",
-    "authorization": "Authorization N° 11-2015N-MESR/DES"
+    "authorization": "Professional Placement Services"
   },
   "nav": {
     "home": "Home",
@@ -13,48 +13,45 @@
     "login": "Login",
     "selectLanguage": "Select Language",
     "dashboard": "Dashboard",
-    "logout": "Logout"
+    "logout": "Logout",
+    "admin": "Admin"
   },
   "hero": {
     "badge": "Professional Placement Services",
     "title": "Your Gateway to International Opportunities",
-    "subtitle": "Bolila — Placement Services affiliated with IBLT — professionally connects you with international universities, internships, scholarships, employment, and sabbatical programs.",
+    "subtitle": "Okinte connects you with international universities, internships, scholarships, employment, and sabbatical programs worldwide.",
     "cta": "Apply Now",
     "learnMore": "Our Services"
   },
   "about": {
     "label": "About Us",
-    "title": "About Bolila",
-    "subtitle": "Placement Services affiliated with IBLT",
-    "description": "Bolila is a professional placement and connection service affiliated with IBLT (Authorization N° 11-2015N-MESR/DES). We professionally connect individuals with international opportunities in education, internships, scholarships, employment, and sabbatical programs, strictly following our guidelines and standards.",
-    "mission": "Our Mission",
-    "missionText": "To provide professional, legal, and reliable placement services that connect ambitious individuals with international opportunities, following strict guidelines and recognized standards.",
-    "vision": "Our Vision",
-    "visionText": "To become the most trusted and professional placement service for international mobility, known for integrity, reliability, and results.",
+    "title": "About Okinte",
+    "subtitle": "Professional International Placement Services",
+    "description": "Okinte provides professional placement and connection services for international mobility. We connect individuals with opportunities in education, internships, scholarships, employment, and sabbatical programs across the globe.",
     "features": {
-      "global": {
-        "title": "International Reach",
-        "description": "Connections with universities and companies worldwide"
-      },
       "secure": {
         "title": "Legal & Professional",
         "description": "All services handled legally and professionally"
       },
-      "expert": {
-        "title": "Expert Guidance",
-        "description": "Dedicated professionals with international experience"
+      "quality": {
+        "title": "Quality Connections",
+        "description": "Verified institutions and partners worldwide"
+      },
+      "support": {
+        "title": "Personalized Support",
+        "description": "Dedicated assistance throughout your journey"
       }
     }
   },
   "services": {
     "label": "Our Services",
     "title": "International Placement Services",
-    "subtitle": "Authorized placement and connection services for global education, careers, and professional development",
+    "subtitle": "Connecting you with global education, careers, and professional development opportunities",
     "applyBtn": "Apply for this service",
     "study": {
       "title": "Study Abroad Placement",
       "subtitle": "International University Admissions",
-      "description": "Your pathway to international university admissions. We professionally match students with top universities across Europe, North America, and Asia for degree programs, academic transfers, and exchange semesters. Our authorized placement service handles the complete application process — from university selection and document preparation to enrollment confirmation."
+      "description": "Your pathway to international university admissions. We professionally match students with top universities across Europe, North America, and Asia for degree programs, academic transfers, and exchange semesters. Our placement service handles the complete application process — from university selection and document preparation to enrollment confirmation."
     },
     "internship": {
       "title": "International Internship Placement",
@@ -74,7 +71,7 @@
     "employment": {
       "title": "International Job Placement",
       "subtitle": "Global Career Opportunities",
-      "description": "Your bridge to international career opportunities. We legally match job seekers with verified employers across industries — from engineering and healthcare to IT and business management. Our authorized placement service ensures every opportunity is legitimate, professionally vetted, and aligned with your qualifications and career goals."
+      "description": "Your bridge to international career opportunities. We legally match job seekers with verified employers across industries — from engineering and healthcare to IT and business management. Our placement service ensures every opportunity is legitimate, professionally vetted, and aligned with your qualifications and career goals."
     }
   },
   "process": {
@@ -118,7 +115,7 @@
     "messageSent": "Your message has been sent. We'll get back to you soon.",
     "sendAnother": "Send Another Message",
     "addressLabel": "Address",
-    "addressText": "To be announced",
+    "addressText": "Contact us via email",
     "phoneLabel": "Phone / WhatsApp",
     "phoneText": "Contact us via WhatsApp",
     "emailLabel": "Email",
@@ -147,12 +144,11 @@
     "contact": "Contact Us"
   },
   "footer": {
-    "tagline": "Placement Services affiliated with IBLT",
-    "authorization": "Authorization N° 11-2015N-MESR/DES",
+    "tagline": "Professional International Placement Services",
     "quickLinks": "Quick Links",
     "services": "Services",
     "contactTitle": "Contact",
-    "copyright": "© {year} Bolila. All rights reserved.",
+    "copyright": "© {year} Okinte. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
@@ -183,7 +179,9 @@
       "service": "Select Service",
       "selectCountry": "Select a country",
       "next": "Next",
-      "password": "Password", "passwordHint": "Minimum 8 characters", "back": "Back"
+      "password": "Password",
+      "passwordHint": "Minimum 8 characters",
+      "back": "Back"
     },
     "documents": {
       "title": "Upload Required Documents",
@@ -221,16 +219,70 @@
     "submit": "Sign In",
     "noAccount": "Don't have an account?",
     "signUp": "Apply Now",
-    "forgotPassword": "Forgot Password?"
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "resetPasswordDescription": "Enter your email address and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "checkEmail": "Check Your Email",
+    "resetEmailSent": "We've sent a password reset link to {email}.",
+    "backToLogin": "Back to Login",
+    "invalidToken": "Invalid or Expired Link",
+    "invalidTokenDescription": "This password reset link is invalid or has expired.",
+    "requestNewLink": "Request New Link",
+    "createNewPassword": "Create New Password",
+    "createNewPasswordDescription": "Please enter your new password below. Make sure it's strong and secure.",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordResetSuccess": "Password Reset Successfully",
+    "passwordResetSuccessDescription": "Your password has been changed. You will be redirected to the login page.",
+    "goToLogin": "Go to Login",
+    "resetPasswordBtn": "Reset Password"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "editProfile": "Edit Profile",
+    "phone": "Phone",
+    "country": "Country",
+    "city": "City",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "myApplications": "My Applications",
+    "noApplications": "No applications yet",
+    "noApplicationsText": "Start your international journey by applying for one of our services.",
+    "applyNow": "Apply Now",
+    "logout": "Logout",
+    "applied": "Applied",
+    "documents": "documents",
+    "noPayment": "No payment",
+    "study": "Study Placement",
+    "internship": "Internship Placement",
+    "scholarship": "Scholarship Search",
+    "sabbatical": "Sabbatical Experience",
+    "employment": "Employment Placement"
   },
   "testimonials": {
     "label": "Testimonials",
     "title": "Success Stories",
     "subtitle": "Hear from Those Who Transformed Their Lives",
     "items": {
-      "t1": { "name": "Ahmed Hassan", "role": "Study Abroad — UK", "quote": "Bolila made my dream of studying at Oxford a reality. Their guidance throughout the application process was invaluable." },
-      "t2": { "name": "Sarah Johnson", "role": "Internship Program — Germany", "quote": "The internship placement exceeded my expectations. Professional, supportive, and truly care about your success." },
-      "t3": { "name": "Mohamed Ali", "role": "Scholarship Recipient", "quote": "I received a full scholarship through Bolila. Their team helped me find the perfect opportunity that matched my profile." }
+      "t1": {
+        "name": "Ahmed Hassan",
+        "role": "Study Abroad — UK",
+        "quote": "Okinte made my dream of studying at Oxford a reality. Their guidance throughout the application process was invaluable."
+      },
+      "t2": {
+        "name": "Sarah Johnson",
+        "role": "Internship Program — Germany",
+        "quote": "The internship placement exceeded my expectations. Professional, supportive, and truly care about your success."
+      },
+      "t3": {
+        "name": "Mohamed Ali",
+        "role": "Scholarship Recipient",
+        "quote": "I received a full scholarship through Okinte. Their team helped me find the perfect opportunity that matched my profile."
+      }
     }
   },
   "common": {
@@ -238,5 +290,15 @@
     "error": "An error occurred",
     "success": "Success",
     "required": "Required"
+  },
+  "trust": {
+    "title": "Why Choose Okinte",
+    "subtitle": "Numbers that prove our global expertise",
+    "stats": {
+      "universities": "Universities",
+      "countries": "Countries",
+      "students": "Students",
+      "success": "Success Rate"
+    }
   }
 }

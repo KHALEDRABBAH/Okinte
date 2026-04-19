@@ -50,19 +50,19 @@ async function main() {
 
   // ============================================================
   // SEED ADMIN USER (default admin account)
-  // Password: Admin@Bolila2026
+  // Password: Admin@Okinte2026
   // ============================================================
   const bcryptModule = await import('bcryptjs');
   const bcrypt = bcryptModule.default || bcryptModule;
-  const adminPassword = await bcrypt.hash('Admin@Bolila2026', 10);
+  const adminPassword = await bcrypt.hash('Admin@Okinte2026', 10);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@bolila.com' },
+    where: { email: 'admin@okinte.com' },
     update: {},
     create: {
       firstName: 'Admin',
-      lastName: 'Bolila',
-      email: 'admin@bolila.com',
+      lastName: 'Okinte',
+      email: 'admin@okinte.com',
       phone: '+000000000',
       country: 'International',
       city: 'HQ',

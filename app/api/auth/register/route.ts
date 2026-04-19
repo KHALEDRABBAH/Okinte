@@ -93,6 +93,11 @@ export async function POST(request: NextRequest) {
     // Step 6: Set the token as an httpOnly cookie
     await setAuthCookie(token);
 
+    // Send welcome email (non-blocking)
+    const { sendRegistrationEmail } = await import('@/lib/email');
+    await sendRegistrationEmail(user.email, user.firstName)
+      .catch(err => console.error('Failed to send registration email', err));
+
     // Step 7: Return the user (without sensitive data)
     return NextResponse.json({ user }, { status: 201 });
 

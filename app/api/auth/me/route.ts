@@ -45,6 +45,7 @@ export async function GET() {
         phone: true,
         country: true,
         city: true,
+        avatarUrl: true,
         role: true,
         emailVerified: true,
         createdAt: true,

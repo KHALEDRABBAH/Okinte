@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { MessageCircle, X, Facebook, Instagram, Mail } from 'lucide-react';
 
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61570781992726';
-const INSTAGRAM_URL = 'https://www.instagram.com/bolilanous';
+const INSTAGRAM_URL = 'https://www.instagram.com/okintenous';
 
 export default function FloatingContact() {
   const t = useTranslations('floating');
@@ -15,19 +15,19 @@ export default function FloatingContact() {
   const links = [
     { icon: Instagram, label: t('instagram'), href: INSTAGRAM_URL, color: 'bg-gradient-to-br from-purple-500 to-pink-500' },
     { icon: Facebook, label: t('facebook'), href: FACEBOOK_URL, color: 'bg-blue-600' },
-    { icon: Mail, label: t('email'), href: 'mailto:contact@bolila.com', color: 'bg-red-500' },
+    { icon: Mail, label: t('email'), href: 'mailto:contact@okinte.com', color: 'bg-red-500' },
     { icon: MessageCircle, label: t('whatsapp'), href: '#', color: 'bg-green-500' },
   ];
 
   return (
-    <div className="fixed bottom-6 end-6 z-50">
+    <div className="fixed z-[60] end-4 md:end-6" style={{ bottom: 'max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem))' }}>
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.8 }}
-            className="mb-4 space-y-3"
+            className="mb-4 space-y-3 origin-bottom-right"
           >
             {links.map((link, index) => (
               <motion.a
@@ -54,9 +54,9 @@ export default function FloatingContact() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${isOpen ? 'bg-gray-700 rotate-0' : 'bg-gold hover:bg-gold-dark'}`}
+        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${isOpen ? 'bg-gray-700 rotate-0' : 'bg-[#2563EB] hover:shadow-premium hover:bg-blue-700 hover:scale-105'}`}
       >
-        {isOpen ? <X className="w-6 h-6 text-white" /> : <MessageCircle className="w-6 h-6 text-primary" />}
+        {isOpen ? <X className="w-6 h-6 text-white" /> : <MessageCircle className="w-6 h-6 text-white" />}
       </button>
     </div>
   );

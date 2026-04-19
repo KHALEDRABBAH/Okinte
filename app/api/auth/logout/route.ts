@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
  * WHAT: Logs the user out by deleting the auth cookie
  * 
  * FLOW:
- * 1. Delete the "bolila-auth-token" httpOnly cookie
+ * 1. Delete the "okinte-auth-token" httpOnly cookie
  * 2. Return success message
  * 
  * WHY POST INSTEAD OF GET?

@@ -98,6 +98,26 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
 }
 
 // ============================================================
+// PROFILE UPDATE SCHEMA
+// ============================================================
+
+export const profileUpdateSchema = z.object({
+  firstName: z.string().trim().min(2, 'First name must be at least 2 characters').optional(),
+  lastName: z.string().trim().min(2, 'Last name must be at least 2 characters').optional(),
+  phone: z.string()
+    .trim()
+    .min(6, 'Phone number must be at least 6 characters')
+    .max(20, 'Phone number cannot exceed 20 characters')
+    .regex(/^\+?[0-9\s\-()]+$/, 'Phone number can only contain digits, spaces, and + - ( )')
+    .optional(),
+  country: z.string().trim().min(2, 'Country is required').optional(),
+  city: z.string().trim().min(2, 'City is required').optional(),
+  avatarUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+}).refine(data => data.firstName || data.lastName || data.phone || data.country || data.city || data.avatarUrl !== undefined, {
+  message: 'At least one field is required',
+});
+
+// ============================================================
 // TYPE EXPORTS (inferred from schemas)
 // ============================================================
 
@@ -105,3 +125,4 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ApplicationInput = z.infer<typeof applicationSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
+export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;

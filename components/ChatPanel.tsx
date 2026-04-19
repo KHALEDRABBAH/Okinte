@@ -1,24 +1,36 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, X, Send, Minimize2, Maximize2, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Mock messages for frontend testing
-const MOCK_MESSAGES = [
-  { id: '1', text: 'Welcome to Bolila Support! How can we help you?', isSupport: true, time: '10:00 AM' },
-  { id: '2', text: 'I have a question about my application.', isSupport: false, time: '10:05 AM' },
-  { id: '3', text: 'Sure! Please provide your application reference number.', isSupport: true, time: '10:06 AM' }
-];
+interface ChatPanelProps {
+  user?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+  };
+  inline?: boolean;
+}
 
-export default function ChatPanel() {
+interface ChatMsg {
+  id: string;
+  content: string;
+  isAdmin: boolean;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export default function ChatPanel({ user, inline = false }: ChatPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState(MOCK_MESSAGES);
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [inputText, setInputText] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -27,45 +39,91 @@ export default function ChatPanel() {
     scrollToBottom();
   }, [messages, isOpen, isMinimized]);
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
+  // Load messages from API
+  const loadMessages = useCallback(async () => {
+    if (!user) return;
+    try {
+      const res = await fetch('/api/chat');
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data.messages || []);
+      }
+    } catch (err) {
+      console.error('Failed to load chat messages:', err);
+    } finally {
+      setHasLoaded(true);
+    }
+  }, [user]);
 
-    // Add user message
-    const newMessage = {
-      id: Date.now().toString(),
-      text: inputText,
-      isSupport: false,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  // Load on open/mount
+  useEffect(() => {
+    if ((isOpen || inline) && user && !hasLoaded) {
+      loadMessages();
+    }
+  }, [isOpen, inline, user, hasLoaded, loadMessages]);
+
+  // Poll for new messages every 10 seconds while chat is open
+  useEffect(() => {
+    if ((!isOpen && !inline) || !user) return;
+    const interval = setInterval(loadMessages, 10000);
+    return () => clearInterval(interval);
+  }, [isOpen, inline, user, loadMessages]);
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim() || !user || isSending) return;
+
+    const messageText = inputText.trim();
+    setIsSending(true);
+
+    // Optimistic add
+    const tempMsg: ChatMsg = {
+      id: `temp-${Date.now()}`,
+      content: messageText,
+      isAdmin: false,
+      isRead: false,
+      createdAt: new Date().toISOString(),
     };
-    
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, tempMsg]);
     setInputText('');
 
-    // TODO: Connect to backend API for sending chat message
-    // Simulate support reply for now
-    setTimeout(() => {
-      const reply = {
-        id: (Date.now() + 1).toString(),
-        text: 'Thank you for your message. An agent will respond shortly.',
-        isSupport: true,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages(prev => [...prev, reply]);
-    }, 1000);
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: messageText }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Replace temp message with real one
+        setMessages(prev => prev.map(m => m.id === tempMsg.id ? data.message : m));
+      } else {
+        // Remove optimistic message on failure
+        setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
+      }
+    } catch {
+      setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const formatTime = (dateStr: string) => {
+    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
     <>
       {/* Floating Chat Button */}
       <AnimatePresence>
-        {!isOpen && (
+        {!inline && !isOpen && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => { setIsOpen(true); setIsMinimized(false); }}
-            className="fixed bottom-6 end-6 bg-gold hover:bg-gold/90 text-primary w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-105 z-50"
+            className="fixed bottom-6 end-6 bg-[#2563EB] hover:bg-[#1D4ED8] text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-105 z-50"
             aria-label="Open support chat"
           >
             <MessageSquare className="w-6 h-6" />
@@ -75,50 +133,55 @@ export default function ChatPanel() {
 
       {/* Chat Window */}
       <AnimatePresence>
-        {isOpen && (
+        {(inline || isOpen) && (
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ 
+            initial={inline ? { opacity: 0 } : { opacity: 0, y: 50, scale: 0.95 }}
+            animate={inline ? { opacity: 1 } : { 
               opacity: 1, 
               y: 0, 
               scale: 1,
               height: isMinimized ? 'auto' : '500px'
             }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            exit={inline ? { opacity: 0 } : { opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 end-6 w-[350px] bg-white rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col border border-gray-100 sm:bottom-6 sm:end-6 bottom-0 end-0 sm:w-[350px] w-full sm:rounded-2xl rounded-t-2xl rounded-b-none"
-            style={{ maxHeight: isMinimized ? 'auto' : '85vh' }}
+            className={inline 
+              ? "w-full max-w-lg mx-auto bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100 h-[500px]"
+              : "fixed bottom-6 end-6 w-[350px] bg-white rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col border border-gray-100 sm:bottom-6 sm:end-6 bottom-0 end-0 sm:w-[350px] w-full sm:rounded-2xl rounded-t-2xl rounded-b-none"
+            }
+            style={{ maxHeight: (inline || !isMinimized) ? '85vh' : 'auto' }}
           >
             {/* Header */}
-            <div className="bg-primary text-white p-4 flex items-center justify-between shadow-sm cursor-pointer" onClick={() => setIsMinimized(!isMinimized)}>
+            <div className={`bg-[#0f172a] text-white p-4 flex items-center justify-between ${inline ? '' : 'cursor-pointer shadow-sm'}`} onClick={() => !inline && setIsMinimized(!isMinimized)}>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
                   <User className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-semibold text-sm">Bolila Support</h3>
+                  <h3 className="font-heading font-semibold text-sm">Okinte Support</h3>
                   <p className="text-[10px] text-white/70">Typically replies in a few minutes</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setIsMinimized(!isMinimized); }} 
-                  className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/80"
-                >
-                  {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-                </button>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} 
-                  className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/80"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+              {!inline && (
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setIsMinimized(!isMinimized); }} 
+                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/80"
+                  >
+                    {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} 
+                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/80"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Chat Body & Input (Hidden when minimized) */}
+            {/* Chat Body & Input */}
             <AnimatePresence>
-              {!isMinimized && (
+              {(inline || !isMinimized) && (
                 <motion.div 
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'calc(100% - 64px)', opacity: 1 }}
@@ -127,17 +190,21 @@ export default function ChatPanel() {
                 >
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
-                    <div className="text-center text-xs text-gray-400 mb-6">Today</div>
+                    {messages.length === 0 && hasLoaded && (
+                      <div className="text-center text-sm text-gray-400 py-8">
+                        Send a message to start a conversation with our support team.
+                      </div>
+                    )}
                     {messages.map((msg) => (
-                      <div key={msg.id} className={`flex ${msg.isSupport ? 'justify-start' : 'justify-end'}`}>
+                      <div key={msg.id} className={`flex ${msg.isAdmin ? 'justify-start' : 'justify-end'}`}>
                         <div className={`max-w-[80%] rounded-2xl p-3 text-sm flex flex-col ${
-                          msg.isSupport 
+                          msg.isAdmin 
                             ? 'bg-gray-100 text-gray-800 rounded-tl-sm' 
-                            : 'bg-primary text-white rounded-tr-sm'
+                            : 'bg-[#2563EB] text-white rounded-tr-sm'
                         }`}>
-                          <span>{msg.text}</span>
-                          <span className={`text-[10px] mt-1 text-end ${msg.isSupport ? 'text-gray-400' : 'text-white/60'}`}>
-                            {msg.time}
+                          <span>{msg.content}</span>
+                          <span className={`text-[10px] mt-1 text-end ${msg.isAdmin ? 'text-gray-400' : 'text-white/60'}`}>
+                            {formatTime(msg.createdAt)}
                           </span>
                         </div>
                       </div>
@@ -157,15 +224,19 @@ export default function ChatPanel() {
                         }
                       }}
                       placeholder="Type a message..."
-                      className="flex-1 max-h-32 min-h-[44px] border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-gold resize-none"
+                      className="flex-1 max-h-32 min-h-[44px] border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#2563EB] resize-none"
                       rows={1}
                     />
                     <button
                       type="submit"
-                      disabled={!inputText.trim()}
-                      className="bg-gold text-primary p-2.5 rounded-xl hover:bg-gold/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                      disabled={!inputText.trim() || isSending || !user}
+                      className="bg-[#2563EB] text-white p-2.5 rounded-xl hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 flex justify-center items-center"
                     >
-                      <Send className="w-5 h-5 -ml-0.5" />
+                      {isSending ? (
+                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin -ml-0.5" />
+                      ) : (
+                        <Send className="w-5 h-5 -ml-0.5" />
+                      )}
                     </button>
                   </form>
                 </motion.div>

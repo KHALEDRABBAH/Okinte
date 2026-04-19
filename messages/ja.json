@@ -1,256 +1,302 @@
-﻿{
-    "metadata":  {
-                     "siteTitle":  "Bolila — IBLTに所属する就職サービス",
-                     "siteDescription":  "国際教育、インターンシップ、奨学金、就職、サバティカルプログラムのための専門的な就職・接続サービス。",
-                     "authorization":  "認可番号 11-2015N-MESR/DES"
-                 },
-    "nav":  {
-                "home":  "ホーム",
-                "services":  "サービス",
-                "about":  "会社概要",
-                "contact":  "お問い合わせ",
-                "apply":  "今すぐ申請",
-                "login":  "ログイン",
-                "selectLanguage": "言語を選択",
+{
+  "metadata": {
+    "siteTitle": "Okinte — 専門的な就職サービス",
+    "siteDescription": "国際教育、インターンシップ、奨学金、就職、サバティカルプログラムのための専門的な就職・接続サービス。"
+  },
+  "nav": {
+    "home": "ホーム",
+    "services": "サービス",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "apply": "今すぐ申請",
+    "login": "ログイン",
+    "selectLanguage": "言語を選択",
     "dashboard": "ダッシュボード",
     "logout": "ログアウト"
-            },
-    "hero":  {
-                 "badge":  "プロフェッショナル就職サービス",
-                 "title":  "国際的な機会へのゲートウェイ",
-                 "subtitle":  "Bolila — IBLTに所属する就職サービス — 国際大学、インターンシップ、奨学金、就職、サバティカルプログラムに専門的に接続します。",
-                 "cta":  "今すぐ申請",
-                 "learnMore":  "サービス一覧"
-             },
-    "about":  {
-                  "label":  "会社概要",
-                  "title":  "Bolilaについて",
-                  "subtitle":  "IBLTに所属する就職サービス",
-                  "description":  "Bolilaは、IBLT（認可番号11-2015N-MESR/DES）に所属するプロフェッショナルな就職・接続サービスです。教育、インターンシップ、奨学金、就職、サバティカルプログラムにおける国際的な機会に、厳格なガイドラインと基準に従って専門的に個人を接続します。",
-                  "mission":  "私たちのミッション",
-                  "missionText":  "厳格なガイドラインと認知された基準に従い、意欲的な個人を国際的な機会に接続する、専門的で合法的で信頼性の高い就職サービスを提供すること。",
-                  "vision":  "私たちのビジョン",
-                  "visionText":  "誠実さ、信頼性、結果で知られる、国際的モビリティのための最も信頼される就職サービスになること。",
-                  "features":  {
-                                   "global":  {
-                                                  "title":  "国際的なリーチ",
-                                                  "description":  "世界中の大学や企業との接続"
-                                              },
-                                   "secure":  {
-                                                  "title":  "合法的かつ専門的",
-                                                  "description":  "すべてのサービスは合法的かつ専門的に処理されます"
-                                              },
-                                   "expert":  {
-                                                  "title":  "専門家によるガイダンス",
-                                                  "description":  "国際経験を持つ専門のプロフェッショナル"
-                                              }
-                               }
-              },
-    "services":  {
-                     "label":  "サービス",
-                     "title":  "国際人材紹介サービス",
-                     "subtitle":  "グローバル教育・キャリア・専門能力開発のための認定人材紹介サービス",
-                     "applyBtn":  "このサービスに申請",
-                     "study":  {
-                                   "title":  "海外留学プレースメント",
-                                   "subtitle":  "国際大学入学支援",
-                                   "description":  "国際大学入学への道。ヨーロッパ、北米、アジアのトップ大学と学生をプロフェッショナルにマッチングし、学位プログラム、編入、交換留学を支援します。認定プレースメントサービスが大学選定から書類準備、入学確認まで全プロセスを管理します。"
-                               },
-                     "internship":  {
-                                        "title":  "国際インターンシップ紹介",
-                                        "subtitle":  "海外での専門的経験",
-                                        "description":  "プロフェッショナルにマッチングされたインターンシップで国際的なキャリアをスタート。エンジニアリング、ビジネス、IT、医療などの分野で、ヨーロッパ、北米、アジアの検証済み企業と意欲的な卒業生・学生をつなぎます。"
-                                    },
-                     "scholarship":  {
-                                         "title":  "奨学金検索・申請サポート",
-                                         "subtitle":  "教育資金調達の機会",
-                                         "description":  "知らなかった奨学金にアクセス。世界中の大学で利用可能な成績優秀者向け奨学金、経済的支援、政府奨学金と適格な候補者を積極的にマッチングします。エラスムス+からチーヴニングまで、プロフィールに合った機会を特定し資金獲得の可能性を最大化します。"
-                                     },
-                     "sabbatical":  {
-                                        "title":  "サバティカル専門体験",
-                                        "subtitle":  "キャリアを豊かにする休暇プログラム",
-                                        "description":  "休暇時間をキャリアを豊かにする海外での専門体験に変えましょう。サバティカル休暇中の専門家向けに、休暇先での短期就業プレースメントを手配します。国際的な視野を広げ、専門的ネットワークを拡大し、スキルを向上させて戻りましょう。"
-                                    },
-                     "employment":  {
-                                        "title":  "国際就職プレースメント",
-                                        "subtitle":  "グローバルキャリア機会",
-                                        "description":  "国際的なキャリア機会への架け橋。エンジニアリングから医療、ITから経営管理まで、あらゆる業界の検証済み雇用主と求職者を合法的にマッチングします。認定プレースメントサービスがすべての機会の正当性と適合性を保証します。"
-                                    }
-                 },
-    "process":  {
-                    "label":  "ご利用方法",
-                    "title":  "ご利用方法",
-                    "subtitle":  "あなたの旅を始めるための簡単なステップ",
-                    "step1":  {
-                                  "title":  "登録",
-                                  "description":  "個人情報を入力し、サービスを選択します。"
-                              },
-                    "step2":  {
-                                  "title":  "書類アップロード",
-                                  "description":  "必要な書類を安全にアップロードします。"
-                              },
-                    "step3":  {
-                                  "title":  "お支払い",
-                                  "description":  "事前登録料のお支払いを完了します。"
-                              },
-                    "step4":  {
-                                  "title":  "接続",
-                                  "description":  "あなたの申請を処理し、適切な機会に接続します。"
-                              }
-                },
-    "partners":  {
-                     "label":  "パートナー",
-                     "title":  "パートナー",
-                     "subtitle":  "世界中の主要機関とのパートナーシップを構築中",
-                     "comingSoon":  "近日公開",
-                     "comingSoonText":  "主要機関とのパートナーシップを最終調整中です。エキサイティングな発表をお待ちください！"
-                 },
-    "contact":  {
-                    "label":  "お問い合わせ",
-                    "title":  "お問い合わせ",
-                    "subtitle":  "あなたの成功をお手伝いします",
-                    "name":  "氏名",
-                    "email":  "メールアドレス",
-                    "phone":  "電話番号",
-                    "message":  "メッセージ",
-                    "send":  "メッセージを送信",
-                    "thankYou":  "ありがとうございます！",
-                    "messageSent":  "メッセージが送信されました。すぐにご連絡いたします。",
-                    "sendAnother":  "別のメッセージを送信",
-                    "addressLabel":  "住所",
-                    "addressText":  "近日発表",
-                    "phoneLabel":  "電話 / WhatsApp",
-                    "phoneText":  "WhatsAppでお問い合わせ",
-                    "emailLabel":  "メール",
-                    "emailText":  "メールでお問い合わせ",
-                    "social":  "フォローする"
-                },
-    "faq":  {
-                "label":  "よくある質問",
-                "title":  "よくある質問",
-                "subtitle":  "一般的な質問への回答",
-                "q1":  "申請に必要な書類は何ですか？",
-                "a1":  "有効なパスポート、CV/履歴書、学位証明書、支払い証明書が必要です。すべての書類はPDFまたは画像形式（JPG、PNG）、ファイルあたり最大5MBで提出してください。",
-                "q2":  "申請プロセスにはどのくらいかかりますか？",
-                "a2":  "処理時間はサービスと機関によって異なります。通常、完全な提出後2〜8週間で回答が届きます。",
-                "q3":  "個人情報は安全ですか？",
-                "a3":  "もちろんです。すべてのデータと書類を専門的かつ安全に、厳格な機密保持のもとで取り扱います。",
-                "q4":  "どのような支払い方法を受け入れていますか？",
-                "a4":  "クレジットカードおよびデビットカードの支払いを受け付けています。事前登録料は申請の処理前にお支払いいただく必要があります。",
-                "q5":  "複数のサービスに申請できますか？",
-                "a5":  "はい、異なるサービスに対して個別の申請を提出できます。各申請は独立して処理されます。"
-            },
-    "cta":  {
-                "title":  "旅を始める準備はできましたか？",
-                "subtitle":  "国際的な未来への第一歩を踏み出しましょう。今すぐ申請して、適切な機会に接続しましょう。",
-                "apply":  "今すぐ申請",
-                "contact":  "お問い合わせ"
-            },
-    "footer":  {
-                   "tagline":  "IBLTに所属する就職サービス",
-                   "authorization":  "認可番号 11-2015N-MESR/DES",
-                   "quickLinks":  "クイックリンク",
-                   "services":  "サービス",
-                   "contactTitle":  "お問い合わせ",
-                   "copyright":  "© {year} Bolila. 無断複写・転載を禁じます。",
-                   "privacy":  "プライバシーポリシー",
-                   "terms":  "利用規約"
-               },
-    "floating":  {
-                     "contactUs":  "お問い合わせ",
-                     "whatsapp":  "WhatsApp",
-                     "email":  "メール",
-                     "facebook":  "Facebook",
-                     "instagram":  "Instagram"
-                 },
-    "apply":  {
-                  "title":  "今すぐ申請",
-                  "subtitle":  "4つの簡単なステップで申請を完了",
-                  "steps":  {
-                                "personalInfo":  "個人情報",
-                                "documents":  "書類",
-                                "payment":  "お支払い",
-                                "confirmation":  "確認"
-                            },
-                  "form":  {
-                               "firstName":  "名",
-                               "lastName":  "姓",
-                               "phone":  "電話番号",
-                               "phoneHint":  "どの国でも、どの形式でも",
-                               "email":  "メール",
-                               "country":  "国",
-                               "city":  "市",
-                               "service":  "サービスを選択",
-                               "selectCountry":  "国を選択",
-                               "next":  "次へ",
-                               "password":  "パスワード",
-                               "passwordHint":  "8文字以上",
-                               "back":  "戻る"
-                           },
-                  "documents":  {
-                                    "title":  "必要書類のアップロード",
-                                    "subtitle":  "対応形式：PDF、JPG、JPEG、PNG。ファイルあたり最大5MB。",
-                                    "passport":  "パスポート",
-                                    "cv":  "CV / 履歴書",
-                                    "diploma":  "卒業証書",
-                                    "paymentReceipt":  "支払い領収書",
-                                    "uploaded":  "アップロード済み",
-                                    "clickToUpload":  "クリックしてアップロード",
-                                    "formats":  "PDF、JPG、PNG — 最大5MB"
-                                },
-                  "payment":  {
-                                  "title":  "お支払いを完了",
-                                  "orderSummary":  "注文概要",
-                                  "service":  "サービス",
-                                  "processingFee":  "事前登録料",
-                                  "total":  "合計",
-                                  "paymentMethod":  "お支払い方法",
-                                  "card":  "クレジット/デビットカード",
-                                  "payNow":  "今すぐ支払う"
-                              },
-                  "confirmation":  {
-                                       "title":  "申請が送信されました！",
-                                       "message":  "あなたの申請を受け付けました。すぐにご連絡いたします。",
-                                       "reference":  "申請リファレンス",
-                                       "emailSent":  "確認メールがメールアドレスに送信されました。",
-                                       "backHome":  "ホームに戻る"
-                                   }
-              },
-    "auth":  {
-                 "loginTitle":  "おかえりなさい",
-                 "email":  "メール",
-                 "password":  "パスワード",
-                 "submit":  "ログイン",
-                 "noAccount":  "アカウントをお持ちでないですか？",
-                 "signUp":  "今すぐ申請",
-                 "forgotPassword":  "パスワードをお忘れですか？"
-             },
-    "testimonials":  {
-                         "label":  "お客様の声",
-                         "title":  "成功事例",
-                         "subtitle":  "人生を変えた方々の声をお聞きください",
-                         "items":  {
-                                       "t1":  {
-                                                  "name":  "アフメド・ハッサン",
-                                                  "role":  "留学 — イギリス",
-                                                  "quote":  "Bolilaはオックスフォードで学ぶという私の夢を実現してくれました。申請プロセス全体を通じた彼らのガイダンスは非常に貴重でした。"
-                                              },
-                                       "t2":  {
-                                                  "name":  "サラ・ジョンソン",
-                                                  "role":  "インターンプログラム — ドイツ",
-                                                  "quote":  "インターンシップの配置は私の期待を超えていました。プロフェッショナルで、サポート力があり、あなたの成功を本当に大事にしています。"
-                                              },
-                                       "t3":  {
-                                                  "name":  "モハメド・アリ",
-                                                  "role":  "奨学金受給者",
-                                                  "quote":  "Bolilaを通じてフルの奨学金を受けました。チームが私のプロフィールに合った完璧な機会を見つけるのを助けてくれました。"
-                                              }
-                                   }
-                     },
-    "common":  {
-                   "loading":  "読み込み中...",
-                   "error":  "エラーが発生しました",
-                   "success":  "成功",
-                   "required":  "必須"
-               }
+  },
+  "hero": {
+    "badge": "プロフェッショナル就職サービス",
+    "title": "国際的な機会へのゲートウェイ",
+    "subtitle": "Okinte — IBLTに所属する就職サービス — 国際大学、インターンシップ、奨学金、就職、サバティカルプログラムに専門的に接続します。",
+    "cta": "今すぐ申請",
+    "learnMore": "サービス一覧"
+  },
+  "about": {
+    "label": "会社概要",
+    "title": "Okinteについて",
+    "subtitle": "IBLTに所属する就職サービス",
+    "description": "Okinteは、IBLT（認可番号11-2015N-MESR/DES）に所属するプロフェッショナルな就職・接続サービスです。教育、インターンシップ、奨学金、就職、サバティカルプログラムにおける国際的な機会に、厳格なガイドラインと基準に従って専門的に個人を接続します。",
+    "features": {
+      "secure": {
+        "title": "合法的かつ専門的",
+        "description": "すべてのサービスは合法的かつ専門的に処理されます"
+      },
+      "quality": {
+        "title": "質の高い接続",
+        "description": "世界中の認証された機関とパートナー"
+      },
+      "support": {
+        "title": "個別サポート",
+        "description": "あなたの旅を通じた専門的なサポート"
+      }
+    }
+  },
+  "services": {
+    "label": "サービス",
+    "title": "国際人材紹介サービス",
+    "subtitle": "グローバル教育・キャリア・専門能力開発のための認定人材紹介サービス",
+    "applyBtn": "このサービスに申請",
+    "study": {
+      "title": "海外留学プレースメント",
+      "subtitle": "国際大学入学支援",
+      "description": "国際大学入学への道。ヨーロッパ、北米、アジアのトップ大学と学生をプロフェッショナルにマッチングし、学位プログラム、編入、交換留学を支援します。認定プレースメントサービスが大学選定から書類準備、入学確認まで全プロセスを管理します。"
+    },
+    "internship": {
+      "title": "国際インターンシップ紹介",
+      "subtitle": "海外での専門的経験",
+      "description": "プロフェッショナルにマッチングされたインターンシップで国際的なキャリアをスタート。エンジニアリング、ビジネス、IT、医療などの分野で、ヨーロッパ、北米、アジアの検証済み企業と意欲的な卒業生・学生をつなぎます。"
+    },
+    "scholarship": {
+      "title": "奨学金検索・申請サポート",
+      "subtitle": "教育資金調達の機会",
+      "description": "知らなかった奨学金にアクセス。世界中の大学で利用可能な成績優秀者向け奨学金、経済的支援、政府奨学金と適格な候補者を積極的にマッチングします。エラスムス+からチーヴニングまで、プロフィールに合った機会を特定し資金獲得の可能性を最大化します。"
+    },
+    "sabbatical": {
+      "title": "サバティカル専門体験",
+      "subtitle": "キャリアを豊かにする休暇プログラム",
+      "description": "休暇時間をキャリアを豊かにする海外での専門体験に変えましょう。サバティカル休暇中の専門家向けに、休暇先での短期就業プレースメントを手配します。国際的な視野を広げ、専門的ネットワークを拡大し、スキルを向上させて戻りましょう。"
+    },
+    "employment": {
+      "title": "国際就職プレースメント",
+      "subtitle": "グローバルキャリア機会",
+      "description": "国際的なキャリア機会への架け橋。エンジニアリングから医療、ITから経営管理まで、あらゆる業界の検証済み雇用主と求職者を合法的にマッチングします。認定プレースメントサービスがすべての機会の正当性と適合性を保証します。"
+    }
+  },
+  "process": {
+    "label": "ご利用方法",
+    "title": "ご利用方法",
+    "subtitle": "あなたの旅を始めるための簡単なステップ",
+    "step1": {
+      "title": "登録",
+      "description": "個人情報を入力し、サービスを選択します。"
+    },
+    "step2": {
+      "title": "書類アップロード",
+      "description": "必要な書類を安全にアップロードします。"
+    },
+    "step3": {
+      "title": "お支払い",
+      "description": "事前登録料のお支払いを完了します。"
+    },
+    "step4": {
+      "title": "接続",
+      "description": "あなたの申請を処理し、適切な機会に接続します。"
+    }
+  },
+  "partners": {
+    "label": "パートナー",
+    "title": "パートナー",
+    "subtitle": "世界中の主要機関とのパートナーシップを構築中",
+    "comingSoon": "近日公開",
+    "comingSoonText": "主要機関とのパートナーシップを最終調整中です。エキサイティングな発表をお待ちください！"
+  },
+  "contact": {
+    "label": "お問い合わせ",
+    "title": "お問い合わせ",
+    "subtitle": "あなたの成功をお手伝いします",
+    "name": "氏名",
+    "email": "メールアドレス",
+    "phone": "電話番号",
+    "message": "メッセージ",
+    "send": "メッセージを送信",
+    "thankYou": "ありがとうございます！",
+    "messageSent": "メッセージが送信されました。すぐにご連絡いたします。",
+    "sendAnother": "別のメッセージを送信",
+    "addressLabel": "住所",
+    "addressText": "近日発表",
+    "phoneLabel": "電話 / WhatsApp",
+    "phoneText": "WhatsAppでお問い合わせ",
+    "emailLabel": "メール",
+    "emailText": "メールでお問い合わせ",
+    "social": "フォローする"
+  },
+  "faq": {
+    "label": "よくある質問",
+    "title": "よくある質問",
+    "subtitle": "一般的な質問への回答",
+    "q1": "申請に必要な書類は何ですか？",
+    "a1": "有効なパスポート、CV/履歴書、学位証明書、支払い証明書が必要です。すべての書類はPDFまたは画像形式（JPG、PNG）、ファイルあたり最大5MBで提出してください。",
+    "q2": "申請プロセスにはどのくらいかかりますか？",
+    "a2": "処理時間はサービスと機関によって異なります。通常、完全な提出後2〜8週間で回答が届きます。",
+    "q3": "個人情報は安全ですか？",
+    "a3": "もちろんです。すべてのデータと書類を専門的かつ安全に、厳格な機密保持のもとで取り扱います。",
+    "q4": "どのような支払い方法を受け入れていますか？",
+    "a4": "クレジットカードおよびデビットカードの支払いを受け付けています。事前登録料は申請の処理前にお支払いいただく必要があります。",
+    "q5": "複数のサービスに申請できますか？",
+    "a5": "はい、異なるサービスに対して個別の申請を提出できます。各申請は独立して処理されます。"
+  },
+  "cta": {
+    "title": "旅を始める準備はできましたか？",
+    "subtitle": "国際的な未来への第一歩を踏み出しましょう。今すぐ申請して、適切な機会に接続しましょう。",
+    "apply": "今すぐ申請",
+    "contact": "お問い合わせ"
+  },
+  "footer": {
+    "tagline": "専門的な就職サービス",
+    "quickLinks": "クイックリンク",
+    "services": "サービス",
+    "contactTitle": "お問い合わせ",
+    "copyright": "© {year} Okinte. 無断複写・転載を禁じます。",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約"
+  },
+  "floating": {
+    "contactUs": "お問い合わせ",
+    "whatsapp": "WhatsApp",
+    "email": "メール",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "apply": {
+    "title": "今すぐ申請",
+    "subtitle": "4つの簡単なステップで申請を完了",
+    "steps": {
+      "personalInfo": "個人情報",
+      "documents": "書類",
+      "payment": "お支払い",
+      "confirmation": "確認"
+    },
+    "form": {
+      "firstName": "名",
+      "lastName": "姓",
+      "phone": "電話番号",
+      "phoneHint": "どの国でも、どの形式でも",
+      "email": "メール",
+      "country": "国",
+      "city": "市",
+      "service": "サービスを選択",
+      "selectCountry": "国を選択",
+      "next": "次へ",
+      "password": "パスワード",
+      "passwordHint": "8文字以上",
+      "back": "戻る"
+    },
+    "documents": {
+      "title": "必要書類のアップロード",
+      "subtitle": "対応形式：PDF、JPG、JPEG、PNG。ファイルあたり最大5MB。",
+      "passport": "パスポート",
+      "cv": "CV / 履歴書",
+      "diploma": "卒業証書",
+      "paymentReceipt": "支払い領収書",
+      "uploaded": "アップロード済み",
+      "clickToUpload": "クリックしてアップロード",
+      "formats": "PDF、JPG、PNG — 最大5MB"
+    },
+    "payment": {
+      "title": "お支払いを完了",
+      "orderSummary": "注文概要",
+      "service": "サービス",
+      "processingFee": "事前登録料",
+      "total": "合計",
+      "paymentMethod": "お支払い方法",
+      "card": "クレジット/デビットカード",
+      "payNow": "今すぐ支払う"
+    },
+    "confirmation": {
+      "title": "申請が送信されました！",
+      "message": "あなたの申請を受け付けました。すぐにご連絡いたします。",
+      "reference": "申請リファレンス",
+      "emailSent": "確認メールがメールアドレスに送信されました。",
+      "backHome": "ホームに戻る"
+    }
+  },
+  "auth": {
+    "loginTitle": "おかえりなさい",
+    "email": "メール",
+    "password": "パスワード",
+    "submit": "ログイン",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "signUp": "今すぐ申請",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "resetPassword": "パスワードリセット",
+    "resetPasswordDescription": "メールアドレスを入力してください。",
+    "sendResetLink": "リンクを送信",
+    "checkEmail": "メールを確認",
+    "resetEmailSent": "{email}にリンクを送信しました。",
+    "backToLogin": "ログインに戻る",
+    "invalidToken": "無効なリンク",
+    "invalidTokenDescription": "リンクが期限切れです。",
+    "requestNewLink": "新しいリンクをリクエスト",
+    "createNewPassword": "新しいパスワード",
+    "createNewPasswordDescription": "新しいパスワードを入力してください。",
+    "newPassword": "新しいパスワード",
+    "confirmNewPassword": "パスワード確認",
+    "passwordsDoNotMatch": "パスワードが一致しません",
+    "passwordTooShort": "8文字以上必要です",
+    "passwordResetSuccess": "パスワードリセット完了",
+    "passwordResetSuccessDescription": "ログインページにリダイレクトされます。",
+    "goToLogin": "ログインへ",
+    "resetPasswordBtn": "リセット"
+  },
+  "testimonials": {
+    "label": "お客様の声",
+    "title": "成功事例",
+    "subtitle": "人生を変えた方々の声をお聞きください",
+    "items": {
+      "t1": {
+        "name": "アフメド・ハッサン",
+        "role": "留学 — イギリス",
+        "quote": "Okinteはオックスフォードで学ぶという私の夢を実現してくれました。申請プロセス全体を通じた彼らのガイダンスは非常に貴重でした。"
+      },
+      "t2": {
+        "name": "サラ・ジョンソン",
+        "role": "インターンプログラム — ドイツ",
+        "quote": "インターンシップの配置は私の期待を超えていました。プロフェッショナルで、サポート力があり、あなたの成功を本当に大事にしています。"
+      },
+      "t3": {
+        "name": "モハメド・アリ",
+        "role": "奨学金受給者",
+        "quote": "Okinteを通じてフルの奨学金を受けました。チームが私のプロフィールに合った完璧な機会を見つけるのを助けてくれました。"
+      }
+    }
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "success": "成功",
+    "required": "必須"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "editProfile": "プロフィール編集",
+    "phone": "電話番号",
+    "country": "国",
+    "city": "都市",
+    "cancel": "キャンセル",
+    "saving": "保存中...",
+    "saveChanges": "保存",
+    "myApplications": "マイ申請",
+    "noApplications": "申請なし",
+    "noApplicationsText": "サービスに申し込みましょう。",
+    "applyNow": "申し込む",
+    "logout": "ログアウト",
+    "applied": "申請日",
+    "documents": "書類",
+    "noPayment": "支払いなし",
+    "study": "🎓 留学",
+    "internship": "💼 インターン",
+    "scholarship": "🏆 奨学金",
+    "sabbatical": "✈️ サバティカル",
+    "employment": "🔧 就職"
+  },
+  "trust": {
+    "title": "Okinteを選ぶ理由",
+    "subtitle": "グローバルな専門知識を証明する数字",
+    "stats": {
+      "universities": "大学",
+      "countries": "国",
+      "students": "学生",
+      "success": "成功率"
+    }
+  }
 }

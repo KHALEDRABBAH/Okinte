@@ -13,6 +13,7 @@ build/
 .env
 .env.local
 .env.production
+.env.sentry-build-plugin
 
 # debug
 npm-debug.log*
@@ -25,3 +26,6 @@ npm-debug.log*
 prisma/migrations/migration_lock.toml
 
 .vercel
+
+# backup directories (development artifacts)
+_*_backup/

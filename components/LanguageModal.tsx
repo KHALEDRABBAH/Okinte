@@ -27,7 +27,7 @@ export default function LanguageModal() {
 
   useEffect(() => {
     // Only show if user hasn't chosen before
-    const saved = localStorage.getItem('bolila-lang-chosen');
+    const saved = localStorage.getItem('okinte-lang-chosen');
     if (!saved) {
       // Brief delay so the page loads first
       const timer = setTimeout(() => setShow(true), 800);
@@ -37,8 +37,8 @@ export default function LanguageModal() {
 
   const handleSelect = (code: string) => {
     setSelected(code);
-    localStorage.setItem('bolila-lang-chosen', 'true');
-    localStorage.setItem('bolila-lang', code);
+    localStorage.setItem('okinte-lang-chosen', 'true');
+    localStorage.setItem('okinte-lang', code);
 
     // Replace locale segment in current path
     const segments = pathname.split('/');
@@ -101,7 +101,7 @@ export default function LanguageModal() {
 
             <button
               onClick={() => {
-                localStorage.setItem('bolila-lang-chosen', 'true');
+                localStorage.setItem('okinte-lang-chosen', 'true');
                 setShow(false);
               }}
               className="w-full text-center text-gray-400 hover:text-gray-600 text-sm mt-6 transition-colors"

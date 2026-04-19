@@ -8,7 +8,7 @@ import '../globals.css';
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://bolila-platform.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte.com';
   return {
     title: t('siteTitle'),
     description: t('siteDescription'),
@@ -18,7 +18,7 @@ export async function generateMetadata({ params: { locale } }: { params: { local
       title: t('siteTitle'),
       description: t('siteDescription'),
       url: appUrl,
-      siteName: 'Bolila',
+      siteName: 'Okinte',
       locale: locale,
       type: 'website',
     },

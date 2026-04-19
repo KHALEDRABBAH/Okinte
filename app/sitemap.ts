@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://bolila-platform.vercel.app';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-platform.vercel.app';
 const locales = ['fr', 'en', 'ar', 'tr', 'ja', 'es', 'it'];
 
 export default function sitemap(): MetadataRoute.Sitemap {

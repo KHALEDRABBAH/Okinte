@@ -2,10 +2,10 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Facebook, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Mail } from 'lucide-react';
 
-const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61570781992726';
-const INSTAGRAM_URL = 'https://www.instagram.com/bolilanous';
+const FACEBOOK_URL = 'https://www.facebook.com/okinte';
+const INSTAGRAM_URL = 'https://www.instagram.com/okinte';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -16,69 +16,86 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-white">
-      <div className="container mx-auto px-4 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          <div>
-            <Link href="/" className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                <svg viewBox="0 0 40 40" className="w-8 h-8 text-gold">
-                  <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <ellipse cx="20" cy="20" rx="8" ry="16" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <line x1="4" y1="20" x2="36" y2="20" stroke="currentColor" strokeWidth="2" />
-                  <circle cx="20" cy="12" r="3" fill="currentColor" />
-                </svg>
+    <footer className="bg-[#0f172a] text-white">
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-6 lg:px-12 py-14 md:py-18">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+          {/* Brand Column */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-3 mb-5 group">
+              <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-105">
+                <span className="font-heading font-extrabold text-[#0f172a] text-xl tracking-tighter">Ok</span>
               </div>
-              <span className="font-heading font-bold text-2xl">Bolila</span>
+              <span className="font-heading font-bold text-2xl tracking-tight text-white group-hover:text-white/90 transition-colors">Okinte</span>
             </Link>
-            <p className="text-white/70 mb-2">{t('tagline')}</p>
-            <p className="text-gold text-sm font-medium mb-6">{t('authorization')}</p>
-            <div className="flex gap-4">
-              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-gold transition-colors"><Facebook className="w-5 h-5" /></a>
-              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-gold transition-colors"><Instagram className="w-5 h-5" /></a>
-              <a href="mailto:contact@bolila.com" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-gold transition-colors"><Mail className="w-5 h-5" /></a>
+            <p className="text-white/60 text-sm mb-1 leading-relaxed">{t('tagline')}</p>
+            
+            {/* Social Links */}
+            <div className="flex gap-3 mt-6">
+              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                <Facebook className="w-4.5 h-4.5" />
+              </a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                <Instagram className="w-4.5 h-4.5" />
+              </a>
+              <a href="mailto:contact@okinte.com" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                <Mail className="w-4.5 h-4.5" />
+              </a>
             </div>
           </div>
 
+          {/* Quick Links */}
           <div>
-            <h3 className="font-heading font-semibold text-lg mb-6">{t('quickLinks')}</h3>
-            <ul className="space-y-4">
-              <li><Link href="/" className="text-white/70 hover:text-gold transition-colors">{tNav('home')}</Link></li>
-              <li><Link href="/apply" className="text-white/70 hover:text-gold transition-colors">{tNav('services')}</Link></li>
-              <li><a href="#about" className="text-white/70 hover:text-gold transition-colors">{tNav('about')}</a></li>
-              <li><a href="#contact" className="text-white/70 hover:text-gold transition-colors">{tNav('contact')}</a></li>
+            <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('quickLinks')}</h3>
+            <ul className="space-y-3">
+              <li><Link href="/" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('home')}</Link></li>
+              <li><Link href="/apply" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('services')}</Link></li>
+              <li><a href="#about" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('about')}</a></li>
+              <li><Link href="/contact" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('contact')}</Link></li>
             </ul>
           </div>
 
+          {/* Services */}
           <div>
-            <h3 className="font-heading font-semibold text-lg mb-6">{t('services')}</h3>
-            <ul className="space-y-4">
-              <li><Link href="/apply?service=study" className="text-white/70 hover:text-gold transition-colors">{tServices('study.title')}</Link></li>
-              <li><Link href="/apply?service=internship" className="text-white/70 hover:text-gold transition-colors">{tServices('internship.title')}</Link></li>
-              <li><Link href="/apply?service=scholarship" className="text-white/70 hover:text-gold transition-colors">{tServices('scholarship.title')}</Link></li>
-              <li><Link href="/apply?service=sabbatical" className="text-white/70 hover:text-gold transition-colors">{tServices('sabbatical.title')}</Link></li>
-              <li><Link href="/apply?service=employment" className="text-white/70 hover:text-gold transition-colors">{tServices('employment.title')}</Link></li>
+            <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('services')}</h3>
+            <ul className="space-y-3">
+              <li><Link href="/apply?service=study" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('study.title')}</Link></li>
+              <li><Link href="/apply?service=internship" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('internship.title')}</Link></li>
+              <li><Link href="/apply?service=scholarship" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('scholarship.title')}</Link></li>
+              <li><Link href="/apply?service=sabbatical" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('sabbatical.title')}</Link></li>
+              <li><Link href="/apply?service=employment" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('employment.title')}</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h3 className="font-heading font-semibold text-lg mb-6">{t('contactTitle')}</h3>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3 text-white/70"><Phone className="w-5 h-5 text-gold flex-shrink-0" /><span>{tContact('phoneText')}</span></li>
-              <li className="flex items-center gap-3 text-white/70"><Mail className="w-5 h-5 text-gold flex-shrink-0" /><span>{tContact('emailText')}</span></li>
-              <li className="flex items-center gap-3 text-white/70"><MapPin className="w-5 h-5 text-gold flex-shrink-0" /><span>{tContact('addressText')}</span></li>
+          {/* Contact */}
+          <div className="col-span-2 md:col-span-1">
+            <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('contactTitle')}</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3 text-white/60 text-sm">
+                <span className="w-4.5 h-4.5 mt-0.5 text-[#2563EB] flex-shrink-0">📱</span>
+                <span>{tContact('phoneText')}</span>
+              </li>
+              <li className="flex items-start gap-3 text-white/60 text-sm">
+                <span className="w-4.5 h-4.5 mt-0.5 text-[#2563EB] flex-shrink-0">✉️</span>
+                <span>{tContact('emailText')}</span>
+              </li>
+              <li className="flex items-start gap-3 text-white/60 text-sm">
+                <span className="w-4.5 h-4.5 mt-0.5 text-[#2563EB] flex-shrink-0">📍</span>
+                <span>{tContact('addressText')}</span>
+              </li>
             </ul>
           </div>
         </div>
       </div>
 
+      {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="container mx-auto px-4 lg:px-8 py-6">
+        <div className="container mx-auto px-6 lg:px-12 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/60 text-sm">{t('copyright', { year: String(currentYear) })}</p>
+            <p className="text-white/40 text-sm">{t('copyright', { year: String(currentYear) })}</p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="text-white/60 text-sm hover:text-gold transition-colors">{t('privacy')}</Link>
-              <Link href="/terms" className="text-white/60 text-sm hover:text-gold transition-colors">{t('terms')}</Link>
+              <Link href="/privacy" className="text-white/40 text-sm hover:text-[#2563EB] transition-colors">{t('privacy')}</Link>
+              <Link href="/terms" className="text-white/40 text-sm hover:text-[#2563EB] transition-colors">{t('terms')}</Link>
             </div>
           </div>
         </div>

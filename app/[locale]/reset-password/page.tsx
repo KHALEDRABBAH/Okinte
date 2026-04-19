@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export default function ResetPassword() {
+  const t = useTranslations('auth');
+  const locale = useLocale();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,39 +28,53 @@ export default function ResetPassword() {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('passwordsDoNotMatch'));
       setIsLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
+      setError(t('passwordTooShort'));
       setIsLoading(false);
       return;
     }
 
-    // TODO: Connect to /api/auth/reset-password when backend is ready
-    // Mocking the API response for now (Frontend Only Mode)
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to reset password');
+      }
+
       setIsSuccess(true);
-      setIsLoading(false);
-      
+
       // Auto redirect after 3 seconds
       setTimeout(() => {
-        router.push('/login');
+        router.push(`/${locale}/login`);
       }, 3000);
-    }, 1500);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-cream flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full text-center border border-red-100">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-primary mb-2">Invalid or Missing Token</h2>
-          <p className="text-gray-500 mb-6">The password reset link is invalid or has expired.</p>
+          <h2 className="text-2xl font-bold text-[#1a1a2e] mb-2">{t('invalidToken')}</h2>
+          <p className="text-gray-500 mb-6">{t('invalidTokenDescription')}</p>
           <Link href="/forgot-password" className="btn-primary w-full justify-center">
-            Request New Link
+            {t('requestNewLink')}
           </Link>
         </div>
       </div>
@@ -65,14 +82,14 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
       <Header />
       <div className="flex-1 flex flex-col justify-center py-24 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-            <h2 className="text-3xl font-heading font-bold text-primary">Create New Password</h2>
+            <h2 className="text-3xl font-heading font-bold text-[#1a1a2e]">{t('createNewPassword')}</h2>
             <p className="mt-2 text-gray-600 text-sm max-w-sm mx-auto">
-              Please enter your new password below. Make sure it's strong and secure.
+              {t('createNewPasswordDescription')}
             </p>
           </motion.div>
 
@@ -84,18 +101,18 @@ export default function ResetPassword() {
                   <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CheckCircle className="w-8 h-8 text-green-500" />
                   </div>
-                  <h3 className="text-xl font-bold text-primary mb-2">Password Reset Successfully</h3>
+                  <h3 className="text-xl font-bold text-[#1a1a2e] mb-2">{t('passwordResetSuccess')}</h3>
                   <p className="text-gray-500 text-sm mb-6">
-                    Your password has been changed. You will be redirected to the login page momentarily.
+                    {t('passwordResetSuccessDescription')}
                   </p>
                   <Link href="/login" className="btn-secondary w-full justify-center">
-                    Go to Login
+                    {t('goToLogin')}
                   </Link>
                 </div>
               ) : (
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div>
-                    <label className="block text-sm font-medium text-primary mb-2">New Password</label>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('newPassword')}</label>
                     <div className="relative">
                       <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
@@ -110,7 +127,7 @@ export default function ResetPassword() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-primary mb-2">Confirm New Password</label>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('confirmNewPassword')}</label>
                     <div className="relative">
                       <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
@@ -133,7 +150,7 @@ export default function ResetPassword() {
 
                   <div>
                     <button type="submit" disabled={isLoading} className="btn-primary w-full justify-center mt-2 disabled:opacity-70 disabled:cursor-not-allowed">
-                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Reset Password'}
+                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('resetPasswordBtn')}
                     </button>
                   </div>
                 </form>

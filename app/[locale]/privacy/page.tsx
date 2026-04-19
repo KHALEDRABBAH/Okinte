@@ -17,7 +17,7 @@ export default function PrivacyPage() {
               <p className="text-lg"><strong>Last updated:</strong> April 2026</p>
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">1. Information We Collect</h2>
-              <p>When you use Bolila's placement services, we collect the following personal information:</p>
+              <p>When you use Okinte's placement services, we collect the following personal information:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>Identity information:</strong> First name, last name, date of birth</li>
                 <li><strong>Contact information:</strong> Email address, phone number, postal address</li>
@@ -67,8 +67,8 @@ export default function PrivacyPage() {
 
               <h2 className="text-2xl font-heading font-semibold text-primary mt-8">7. Contact</h2>
               <p>For any privacy-related questions or requests, contact us at:</p>
-              <p><strong>Email:</strong> contact@bolila.com</p>
-              <p className="text-gold font-medium mt-4">Bolila — Placement Services affiliated with IBLT<br/>Authorization N° 11-2015N-MESR/DES</p>
+              <p><strong>Email:</strong> contact@okinte.com</p>
+              <p className="text-gold font-medium mt-4">Okinte — Placement Services affiliated with IBLT<br/>Authorization N° 11-2015N-MESR/DES</p>
             </div>
           </div>
         </div>

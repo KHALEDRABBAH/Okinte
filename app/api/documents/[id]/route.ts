@@ -26,9 +26,11 @@ import { getSignedUrl } from '@/lib/storage';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     // Step 1: Authenticate
     const currentUser = await getUserFromRequest(request);
     if (!currentUser) {
@@ -37,7 +39,7 @@ export async function GET(
 
     // Step 2: Find document
     const document = await db.document.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!document) {
@@ -56,19 +58,8 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to generate download URL' }, { status: 500 });
     }
 
-    // Step 5: Return
-    return NextResponse.json({
-      document: {
-        id: document.id,
-        type: document.type,
-        fileName: document.fileName,
-        mimeType: document.mimeType,
-        fileSize: document.fileSize,
-        url: signedUrl,          // ← This URL expires in 1 hour
-        expiresIn: 3600,         // seconds
-        uploadedAt: document.uploadedAt,
-      },
-    });
+    // Step 5: Redirect to the signed URL for direct viewing/downloading
+    return NextResponse.redirect(signedUrl);
 
   } catch (error) {
     console.error('Document URL error:', error);

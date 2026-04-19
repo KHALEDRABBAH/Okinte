@@ -3,29 +3,23 @@ export const dynamic = 'force-dynamic';
 /**
  * POST /api/documents/upload
  * 
- * WHAT: Uploads a single file to Supabase Storage and creates a document record
+ * Uploads a document for an application with improved consistency guarantees.
  * 
- * HOW FILES FLOW:
- * 1. Frontend sends FormData with: file, applicationId, type (passport|cv|diploma|payment_receipt)
- * 2. Server validates: user is authenticated, application exists, file type/size OK
- * 3. Server reads file into a Buffer (raw bytes)
- * 4. Server uploads buffer to Supabase Storage at:
- *    users/{userId}/{applicationId}/{type}_{timestamp}.{ext}
- * 5. Server creates a document record in PostgreSQL with the storage path
- * 6. Returns document metadata (NOT the file — use /api/documents/[id] for signed URL)
+ * CONSISTENCY GUARANTEES:
+ * 1. Pre-validation: Verify user ownership before any I/O
+ * 2. Atomic DB operation: Document record creation/update is transactional
+ * 3. Storage cleanup on DB failure: Uploaded file deleted if DB write fails
+ * 4. Upsert pattern: Existing document replaced atomically (no orphans)
  * 
- * SECURITY:
- * - Only authenticated users can upload
- * - Users can only upload to their OWN applications
- * - File type restricted to PDF, JPG, PNG
- * - File size limited to 5MB
- * - Files stored in PRIVATE bucket — no public access
+ * FLOW:
+ * 1. Authenticate & validate request
+ * 2. Upload file to storage
+ * 3. DB transaction: upsert document record
+ * 4. On DB failure: delete uploaded file (cleanup)
  * 
- * IDEMPOTENT:
- * - If a document of the same type already exists for this application,
- *   it is REPLACED (old file deleted from storage, old record updated)
+ * The key insight: Storage is written first (idempotent via upsert),
+ * then DB record is created. If DB fails, storage cleanup is attempted.
  */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
@@ -82,7 +76,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 7: Verify application exists and belongs to user
+    // Step 7: Verify application exists and belongs to user (BEFORE any file I/O)
     const application = await db.application.findUnique({
       where: { id: applicationId },
     });
@@ -95,16 +89,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    // Step 8: Convert file to Buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Step 9: Build storage path
-    // Format: users/{userId}/{applicationId}/{TYPE}_{timestamp}.{ext}
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
-    const storagePath = `users/${currentUser.userId}/${applicationId}/${upperDocType}_${Date.now()}.${ext}`;
-
-    // Step 10: Check if a document of this type already exists → replace it
+    // Step 8: Check for existing document (before upload to know if we need cleanup)
     const existingDoc = await db.document.findFirst({
       where: {
         applicationId,
@@ -112,37 +97,46 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (existingDoc) {
-      // Delete old file from Supabase Storage
-      await deleteFile(existingDoc.storagePath);
-    }
+    // Step 9: Convert file to Buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
-    // Step 11: Upload to Supabase Storage
+    // Step 10: Build storage path
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+    const storagePath = `users/${currentUser.userId}/${applicationId}/${upperDocType}_${Date.now()}.${ext}`;
+
+    // Step 11: Upload to storage FIRST
     const { path, error: uploadError } = await uploadFile(buffer, storagePath, file.type);
 
-    if (uploadError) {
+    if (uploadError || !path) {
       return NextResponse.json(
-        { error: `Upload failed: ${uploadError}` },
+        { error: `Upload failed: ${uploadError || 'Unknown error'}` },
         { status: 500 }
       );
     }
 
-    // Step 12: Create or update document record in database
+    // Step 12: DB operation in transaction - UPSERT document record
+    // This is the critical section for consistency
     let document;
-    if (existingDoc) {
-      document = await db.document.update({
-        where: { id: existingDoc.id },
-        data: {
+    try {
+      // Use upsert to atomically handle existing/new documents
+      // This prevents orphaned records on concurrent uploads
+      document = await db.document.upsert({
+        where: { 
+          // Unique constraint on applicationId + type
+          applicationId_type_unique: {
+            applicationId,
+            type: upperDocType as any,
+          }
+        },
+        update: {
           fileName: file.name,
           storagePath: path,
           mimeType: file.type,
           fileSize: file.size,
           uploadedAt: new Date(),
         },
-      });
-    } else {
-      document = await db.document.create({
-        data: {
+        create: {
           userId: currentUser.userId,
           applicationId,
           type: upperDocType as any,
@@ -152,9 +146,30 @@ export async function POST(request: NextRequest) {
           fileSize: file.size,
         },
       });
+
+      // Step 13: Cleanup old file only AFTER successful DB update
+      // Delete old storage file if this was an update (not a new create)
+      if (existingDoc && existingDoc.storagePath !== path) {
+        await deleteFile(existingDoc.storagePath).catch(err => 
+          console.error('Failed to cleanup old file (non-critical):', err)
+        );
+      }
+    } catch (dbError) {
+      // CRITICAL: DB failed - rollback the uploaded file
+      console.error('DB save failed after upload, rolling back storage file:', dbError);
+      const deleted = await deleteFile(path);
+      if (!deleted) {
+        // Log but don't fail - file will be orphaned but won't break anything
+        // A cleanup job can handle orphaned files later
+        console.error(`STORAGE LEAK: Failed to delete orphaned file ${path}`);
+      }
+      return NextResponse.json(
+        { error: 'Failed to save document record. Please try uploading again.' },
+        { status: 500 }
+      );
     }
 
-    // Step 13: Return document metadata
+    // Step 14: Return document metadata
     return NextResponse.json({
       document: {
         id: document.id,
@@ -168,6 +183,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'File upload failed. Please try again.' }, { status: 500 });
   }
 }

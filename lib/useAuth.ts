@@ -34,7 +34,7 @@ export function useAuth(): AuthState {
   const checkAuth = useCallback(async () => {
     try {
       // Try sessionStorage cache first for instant render
-      const cached = sessionStorage.getItem('bolila-auth');
+      const cached = sessionStorage.getItem('okinte-auth');
       if (cached) {
         const parsed = JSON.parse(cached);
         setUser(parsed);
@@ -46,14 +46,14 @@ export function useAuth(): AuthState {
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
-        sessionStorage.setItem('bolila-auth', JSON.stringify(data.user));
+        sessionStorage.setItem('okinte-auth', JSON.stringify(data.user));
       } else {
         setUser(null);
-        sessionStorage.removeItem('bolila-auth');
+        sessionStorage.removeItem('okinte-auth');
       }
     } catch {
       setUser(null);
-      sessionStorage.removeItem('bolila-auth');
+      sessionStorage.removeItem('okinte-auth');
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ export function useAuth(): AuthState {
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     setUser(null);
-    sessionStorage.removeItem('bolila-auth');
+    sessionStorage.removeItem('okinte-auth');
   }, []);
 
   return {

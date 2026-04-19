@@ -13,7 +13,7 @@
  * 5. When someone needs to view the file, we generate a signed URL
  *    that expires after 1 hour — this prevents unauthorized access
  * 
- * BUCKET: "bolila-documents" (must be created in Supabase Dashboard)
+ * BUCKET: "bolila-documents" (configured in Supabase Dashboard)
  */
 
 import { createClient } from '@supabase/supabase-js';

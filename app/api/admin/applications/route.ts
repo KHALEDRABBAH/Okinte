@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const search = searchParams.get('search')?.trim();
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const skip = (page - 1) * limit;
@@ -35,6 +36,14 @@ export async function GET(request: NextRequest) {
     const where: any = {};
     if (status) {
       where.status = status;
+    }
+    if (search) {
+      where.OR = [
+        { referenceCode: { contains: search, mode: 'insensitive' } },
+        { user: { firstName: { contains: search, mode: 'insensitive' } } },
+        { user: { lastName: { contains: search, mode: 'insensitive' } } },
+        { user: { email: { contains: search, mode: 'insensitive' } } },
+      ];
     }
 
     // Fetch applications with all related data
@@ -105,18 +114,9 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const { applicationId, status, notes } = body;
 
-    if (!applicationId || !status) {
+    if (!applicationId) {
       return NextResponse.json(
-        { error: 'applicationId and status are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate status transition
-    const validStatuses = ['UNDER_REVIEW', 'APPROVED', 'REJECTED'];
-    if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: `Status must be one of: ${validStatuses.join(', ')}` },
+        { error: 'applicationId is required' },
         { status: 400 }
       );
     }
@@ -128,6 +128,49 @@ export async function PATCH(request: NextRequest) {
 
     if (!application) {
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
+    }
+
+    // --- Notes-only update (no status change) ---
+    if (!status && notes !== undefined) {
+      const updated = await db.application.update({
+        where: { id: applicationId },
+        data: { notes },
+      });
+      return NextResponse.json({
+        application: updated,
+        message: `Notes updated for ${updated.referenceCode}`,
+      });
+    }
+
+    // --- Status transition (original logic) ---
+    if (!status) {
+      return NextResponse.json(
+        { error: 'status or notes is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate status transition
+    const validStatuses = ['UNDER_REVIEW', 'APPROVED', 'REJECTED', 'RETURNED'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: `Status must be one of: ${validStatuses.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    // Enforce valid status transitions
+    const allowedTransitions: Record<string, string[]> = {
+      SUBMITTED: ['UNDER_REVIEW', 'RETURNED'],
+      UNDER_REVIEW: ['APPROVED', 'REJECTED', 'RETURNED'],
+    };
+
+    const allowed = allowedTransitions[application.status];
+    if (!allowed || !allowed.includes(status)) {
+      return NextResponse.json(
+        { error: `Cannot transition from ${application.status.replace('_', ' ')} to ${status.replace('_', ' ')}. Invalid workflow step.` },
+        { status: 422 }
+      );
     }
 
     // Update application
@@ -143,6 +186,16 @@ export async function PATCH(request: NextRequest) {
         service: { select: { key: true } },
       },
     });
+
+    // Send status update email (non-blocking)
+    const { sendStatusUpdateEmail } = await import('@/lib/email');
+    await sendStatusUpdateEmail(
+      updated.user.email,
+      updated.user.firstName,
+      updated.referenceCode,
+      updated.status,
+      updated.notes
+    ).catch(err => console.error('Failed to send status update email', err));
 
     return NextResponse.json({
       application: updated,

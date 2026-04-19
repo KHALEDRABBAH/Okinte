@@ -1,256 +1,302 @@
-﻿{
-    "metadata":  {
-                     "siteTitle":  "Bolila — IBLT\u0027ye Bağlı Yerleştirme Hizmetleri",
-                     "siteDescription":  "Uluslararası eğitim, staj, burs, istihdam ve izinli programlar için profesyonel yerleştirme ve bağlantı hizmetleri.",
-                     "authorization":  "Yetki No: 11-2015N-MESR/DES"
-                 },
-    "nav":  {
-                "home":  "Ana Sayfa",
-                "services":  "Hizmetler",
-                "about":  "Hakkımızda",
-                "contact":  "İletişim",
-                "apply":  "Başvur",
-                "login":  "Giriş",
-                "selectLanguage": "Dil Seçin",
+{
+  "metadata": {
+    "siteTitle": "Okinte — Profesyonel Yerleştirme Hizmetleri",
+    "siteDescription": "Uluslararası eğitim, staj, burs, istihdam ve izinli programlar için profesyonel yerleştirme ve bağlantı hizmetleri."
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "services": "Hizmetler",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "apply": "Başvur",
+    "login": "Giriş",
+    "selectLanguage": "Dil Seçin",
     "dashboard": "Kontrol Paneli",
     "logout": "Çıkış"
-            },
-    "hero":  {
-                 "badge":  "Profesyonel Yerleştirme Hizmetleri",
-                 "title":  "Uluslararası Fırsatlara Kapınız",
-                 "subtitle":  "Bolila — IBLT\u0027ye bağlı Yerleştirme Hizmetleri — sizi uluslararası üniversiteler, stajlar, burslar, istihdam ve izinli programlarla profesyonelce buluşturur.",
-                 "cta":  "Şimdi Başvurun",
-                 "learnMore":  "Hizmetlerimiz"
-             },
-    "about":  {
-                  "label":  "Hakkımızda",
-                  "title":  "Bolila Hakkında",
-                  "subtitle":  "IBLT\u0027ye Bağlı Yerleştirme Hizmetleri",
-                  "description":  "Bolila, IBLT\u0027ye bağlı (Yetki No: 11-2015N-MESR/DES) profesyonel bir yerleştirme ve bağlantı hizmetidir. Bireyleri eğitim, staj, burs, istihdam ve izinli programlarda uluslararası fırsatlarla profesyonelce buluşturuyoruz.",
-                  "mission":  "Misyonumuz",
-                  "missionText":  "Katı yönergeler ve tanınmış standartları izleyerek hırslı bireyleri uluslararası fırsatlarla buluşturan profesyonel, yasal ve güvenilir yerleştirme hizmetleri sunmak.",
-                  "vision":  "Vizyonumuz",
-                  "visionText":  "Dürüstlüğü, güvenilirliği ve sonuçlarıyla tanınan uluslararası hareketlilik için en güvenilir yerleştirme hizmeti olmak.",
-                  "features":  {
-                                   "global":  {
-                                                  "title":  "Uluslararası Erişim",
-                                                  "description":  "Dünya çapında üniversiteler ve şirketlerle bağlantılar"
-                                              },
-                                   "secure":  {
-                                                  "title":  "Yasal ve Profesyonel",
-                                                  "description":  "Tüm hizmetler yasal ve profesyonel olarak yürütülür"
-                                              },
-                                   "expert":  {
-                                                  "title":  "Uzman Rehberlik",
-                                                  "description":  "Uluslararası deneyime sahip uzman profesyoneller"
-                                              }
-                               }
-              },
-    "services":  {
-                     "label":  "Hizmetlerimiz",
-                     "title":  "Uluslararasi Yerlestirme Hizmetleri",
-                     "subtitle":  "Kuresel egitim, kariyer ve mesleki gelisim icin yetkili yerlestirme hizmetleri",
-                     "applyBtn":  "Bu hizmet için başvurun",
-                     "study":  {
-                                   "title":  "Yurt Disinda Egitim Yerlestirme",
-                                   "subtitle":  "Uluslararasi Universite Kabulleri",
-                                   "description":  "Uluslararasi universite kabullerine giden yolunuz. Ogrencileri Avrupa, Kuzey Amerika ve Asya\u0027\u0027daki en iyi universitelerle lisans, yuksek lisans ve degisim programlari icin profesyonelce eslestiriyoruz. Yetkili yerlestirme hizmetimiz universite seciminden belge hazirlama ve kayit onayina kadar tum sureci yonetir."
-                               },
-                     "internship":  {
-                                        "title":  "Uluslararasi Staj Yerlestirme",
-                                        "subtitle":  "Yurt Disinda Mesleki Deneyim",
-                                        "description":  "Profesyonelce eslestirilen bir stajla uluslararasi kariyerinizi baslatin. Muhendislik, isletme, BT, saglik ve daha fazlasinda staj icin dogrulanmis sirketlerle baglantinizi sagliyoruz. Her firsat kalite, yasallik ve kariyer uygunlugu acisindan taranir."
-                                    },
-                     "scholarship":  {
-                                         "title":  "Burs Arama ve Basvuru",
-                                         "subtitle":  "Finanse Edilen Egitim Firsatlari",
-                                         "description":  "Varligini bilmediginiz burslara ulasin. Ekibimiz uygun adaylari dunya genelindeki universitelerde basari burslari, ihtiyac burslari ve devlet burslariyla aktif olarak eslestirir. Profilinize uyan firsatlari belirler ve finansman elde etme sansinizi en ust duzeye cikarir."
-                                     },
-                     "sabbatical":  {
-                                        "title":  "Sabbatikal Mesleki Deneyim",
-                                        "subtitle":  "Kariyer Zenginlestiren Tatil Programlari",
-                                        "description":  "Bos zamaninizi yurt disinda kariyer zenginlestiren mesleki deneyime donusturun. Sabbatikal izindeki profesyoneller icin tasarlanmis, tatil destinasyonunuzda kisa sureli is yerlestirmeleri duzenliyoruz. Uluslararasi bakis acisi kazanin, profesyonel aginizi genisletin."
-                                    },
-                     "employment":  {
-                                        "title":  "Uluslararasi Is Yerlestirme",
-                                        "subtitle":  "Kuresel Kariyer Firsatlari",
-                                        "description":  "Uluslararasi kariyer firsatlarina koprunuz. Is arayanlari tum sektorlerdeki dogrulanmis isverenlerle yasal olarak eslestiriyoruz. Yetkili yerlestirme hizmetimiz her firsatin meşru, profesyonelce incelenmis ve niteliklerinize uygun oldugunu garanti eder."
-                                    }
-                 },
-    "process":  {
-                    "label":  "Nasıl Çalışır",
-                    "title":  "Nasıl Çalışır",
-                    "subtitle":  "Yolculuğunuza başlamak için basit adımlar",
-                    "step1":  {
-                                  "title":  "Kayıt",
-                                  "description":  "Kişisel bilgilerinizi doldurun ve bir hizmet seçin."
-                              },
-                    "step2":  {
-                                  "title":  "Belge Yükleme",
-                                  "description":  "Gerekli belgelerinizi güvenle yükleyin."
-                              },
-                    "step3":  {
-                                  "title":  "Ödeme",
-                                  "description":  "Ön kayıt ücreti ödemesini tamamlayın."
-                              },
-                    "step4":  {
-                                  "title":  "Bağlantı",
-                                  "description":  "Başvurunuzu işleme alıyor ve sizi doğru fırsatlarla buluşturuyoruz."
-                              }
-                },
-    "partners":  {
-                     "label":  "Ortaklarımız",
-                     "title":  "Ortaklarımız",
-                     "subtitle":  "Dünya çapındaki önde gelen kurumlarla ortaklıklar kuruyoruz",
-                     "comingSoon":  "Yakında",
-                     "comingSoonText":  "Önde gelen kurumlarla ortaklıklarımızı sonuçlandırıyoruz. Heyecan verici duyuruları takip edin!"
-                 },
-    "contact":  {
-                    "label":  "İletişim",
-                    "title":  "İletişime Geçin",
-                    "subtitle":  "Başarmanıza yardımcı olmak için buradayız",
-                    "name":  "Tam Ad",
-                    "email":  "E-posta Adresi",
-                    "phone":  "Telefon Numarası",
-                    "message":  "Mesajınız",
-                    "send":  "Mesaj Gönder",
-                    "thankYou":  "Teşekkürler!",
-                    "messageSent":  "Mesajınız gönderildi. En kısa sürede size dönüş yapacağız.",
-                    "sendAnother":  "Başka Mesaj Gönder",
-                    "addressLabel":  "Adres",
-                    "addressText":  "Yakında açıklanacak",
-                    "phoneLabel":  "Telefon / WhatsApp",
-                    "phoneText":  "WhatsApp ile iletişime geçin",
-                    "emailLabel":  "E-posta",
-                    "emailText":  "E-posta ile iletişime geçin",
-                    "social":  "Bizi Takip Edin"
-                },
-    "faq":  {
-                "label":  "SSS",
-                "title":  "Sıkça Sorulan Sorular",
-                "subtitle":  "Yaygın soruların cevaplarını bulun",
-                "q1":  "Başvurmak için hangi belgelere ihtiyacım var?",
-                "a1":  "Geçerli pasaport, CV, eğitim sertifikası veya diploma ve ödeme kanıtı gerekir. Tüm belgeler PDF veya resim formatında (JPG, PNG) olmalı, dosya başına maks. 5MB.",
-                "q2":  "Başvuru süreci ne kadar sürer?",
-                "a2":  "İşlem süreleri hizmete ve kuruma göre değişir. Genel olarak, eksiksiz bir başvurudan sonra 2-8 hafta içinde cevap alabilirsiniz.",
-                "q3":  "Kişisel bilgilerim güvende mi?",
-                "a3":  "Kesinlikle. Tüm verilerinizi ve belgelerinizi profesyonel ve güvenli bir şekilde, sıkı gizlilik ile işliyoruz.",
-                "q4":  "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
-                "a4":  "Kredi ve banka kartı ödemeleri kabul ediyoruz. Ön kayıt ücreti, başvurunuzun işlenebilmesi için ödenmelidir.",
-                "q5":  "Birden fazla hizmet için başvurabilir miyim?",
-                "a5":  "Evet, farklı hizmetler için ayrı başvurular gönderebilirsiniz. Her başvuru bağımsız olarak işlenir."
-            },
-    "cta":  {
-                "title":  "Yolculuğunuza Başlamaya Hazır mısınız?",
-                "subtitle":  "Uluslararası geleceğinize doğru ilk adımı atın. Şimdi başvurun ve sizi doğru fırsatlarla buluşturalım.",
-                "apply":  "Şimdi Başvurun",
-                "contact":  "İletişime Geçin"
-            },
-    "footer":  {
-                   "tagline":  "IBLT\u0027ye Bağlı Yerleştirme Hizmetleri",
-                   "authorization":  "Yetki No: 11-2015N-MESR/DES",
-                   "quickLinks":  "Hızlı Bağlantılar",
-                   "services":  "Hizmetler",
-                   "contactTitle":  "İletişim",
-                   "copyright":  "© {year} Bolila. Tüm hakları saklıdır.",
-                   "privacy":  "Gizlilik Politikası",
-                   "terms":  "Kullanım Şartları"
-               },
-    "floating":  {
-                     "contactUs":  "İletişim",
-                     "whatsapp":  "WhatsApp",
-                     "email":  "E-posta",
-                     "facebook":  "Facebook",
-                     "instagram":  "Instagram"
-                 },
-    "apply":  {
-                  "title":  "Şimdi Başvurun",
-                  "subtitle":  "Başvurunuzu 4 basit adımda tamamlayın",
-                  "steps":  {
-                                "personalInfo":  "Kişisel Bilgi",
-                                "documents":  "Belgeler",
-                                "payment":  "Ödeme",
-                                "confirmation":  "Onay"
-                            },
-                  "form":  {
-                               "firstName":  "Ad",
-                               "lastName":  "Soyad",
-                               "phone":  "Telefon",
-                               "phoneHint":  "Herhangi bir ülke, herhangi bir format",
-                               "email":  "E-posta",
-                               "country":  "Ülke",
-                               "city":  "Şehir",
-                               "service":  "Hizmet Seçin",
-                               "selectCountry":  "Ülke seçin",
-                               "next":  "İleri",
-                               "password":  "Sifre",
-                               "passwordHint":  "En az 8 karakter",
-                               "back":  "Geri"
-                           },
-                  "documents":  {
-                                    "title":  "Gerekli Belgeleri Yükleyin",
-                                    "subtitle":  "Kabul edilen formatlar: PDF, JPG, JPEG, PNG. Dosya başına maks. 5MB.",
-                                    "passport":  "Pasaport",
-                                    "cv":  "CV / Özgeçmiş",
-                                    "diploma":  "Diploma / Sertifika",
-                                    "paymentReceipt":  "Ödeme Makbuzu",
-                                    "uploaded":  "Yüklendi",
-                                    "clickToUpload":  "Yüklemek için tıklayın",
-                                    "formats":  "PDF, JPG, PNG — Maks. 5MB"
-                                },
-                  "payment":  {
-                                  "title":  "Ödemeyi Tamamlayın",
-                                  "orderSummary":  "Sipariş Özeti",
-                                  "service":  "Hizmet",
-                                  "processingFee":  "Ön Kayıt Ücreti",
-                                  "total":  "Toplam",
-                                  "paymentMethod":  "Ödeme Yöntemi",
-                                  "card":  "Kredi / Banka Kartı",
-                                  "payNow":  "Şimdi Öde"
-                              },
-                  "confirmation":  {
-                                       "title":  "Başvuru Gönderildi!",
-                                       "message":  "Başvurunuz alındı. Sizinle en kısa sürede iletişime geçeceğiz.",
-                                       "reference":  "Başvuru Referansı",
-                                       "emailSent":  "Onay e-postası e-posta adresinize gönderildi.",
-                                       "backHome":  "Ana Sayfaya Dön"
-                                   }
-              },
-    "auth":  {
-                 "loginTitle":  "Tekrar Hoş Geldiniz",
-                 "email":  "E-posta",
-                 "password":  "Şifre",
-                 "submit":  "Giriş Yap",
-                 "noAccount":  "Hesabınız yok mu?",
-                 "signUp":  "Şimdi Başvurun",
-                 "forgotPassword":  "Şifremi Unuttum"
-             },
-    "testimonials":  {
-                         "label":  "Referanslar",
-                         "title":  "Basari Hikayeleri",
-                         "subtitle":  "Hayatlarini Donusturenlerin Hikayelerini Dinleyin",
-                         "items":  {
-                                       "t1":  {
-                                                  "name":  "Ahmed Hassan",
-                                                  "role":  "Yurt Disi Egitim - Ingiltere",
-                                                  "quote":  "Bolila Oxford\u0027da okuma hayalimi gercege donusturdu. Basvuru sureci boyunca rehberlikleri cok degerli oldu."
-                                              },
-                                       "t2":  {
-                                                  "name":  "Sarah Johnson",
-                                                  "role":  "Staj Programi - Almanya",
-                                                  "quote":  "Staj yerlestirmesi beklentilerimi asti. Profesyonel, destekleyici ve basarinizi gercekten onemsiyorlar."
-                                              },
-                                       "t3":  {
-                                                  "name":  "Mohamed Ali",
-                                                  "role":  "Burs Alicisi",
-                                                  "quote":  "Bolila sayesinde tam burs aldim. Ekipleri profilime uyan mukemmel firsati bulmama yardimci oldu."
-                                              }
-                                   }
-                     },
-    "common":  {
-                   "loading":  "Yükleniyor...",
-                   "error":  "Bir hata oluştu",
-                   "success":  "Başarılı",
-                   "required":  "Zorunlu"
-               }
+  },
+  "hero": {
+    "badge": "Profesyonel Yerleştirme Hizmetleri",
+    "title": "Uluslararası Fırsatlara Kapınız",
+    "subtitle": "Okinte — IBLT'ye bağlı Yerleştirme Hizmetleri — sizi uluslararası üniversiteler, stajlar, burslar, istihdam ve izinli programlarla profesyonelce buluşturur.",
+    "cta": "Şimdi Başvurun",
+    "learnMore": "Hizmetlerimiz"
+  },
+  "about": {
+    "label": "Hakkımızda",
+    "title": "Okinte Hakkında",
+    "subtitle": "IBLT'ye Bağlı Yerleştirme Hizmetleri",
+    "description": "Okinte, IBLT'ye bağlı (Yetki No: 11-2015N-MESR/DES) profesyonel bir yerleştirme ve bağlantı hizmetidir. Bireyleri eğitim, staj, burs, istihdam ve izinli programlarda uluslararası fırsatlarla profesyonelce buluşturuyoruz.",
+    "features": {
+      "secure": {
+        "title": "Yasal ve Profesyonel",
+        "description": "Tüm hizmetler yasal ve profesyonel olarak yürütülür"
+      },
+      "quality": {
+        "title": "Kaliteli Bağlantılar",
+        "description": "Dünya çapında doğrulanmış kurumlar ve ortaklar"
+      },
+      "support": {
+        "title": "Kişisel Destek",
+        "description": "Yolculuğunuz boyunca özel yardım"
+      }
+    }
+  },
+  "services": {
+    "label": "Hizmetlerimiz",
+    "title": "Uluslararasi Yerlestirme Hizmetleri",
+    "subtitle": "Kuresel egitim, kariyer ve mesleki gelisim icin yetkili yerlestirme hizmetleri",
+    "applyBtn": "Bu hizmet için başvurun",
+    "study": {
+      "title": "Yurt Disinda Egitim Yerlestirme",
+      "subtitle": "Uluslararasi Universite Kabulleri",
+      "description": "Uluslararasi universite kabullerine giden yolunuz. Ogrencileri Avrupa, Kuzey Amerika ve Asya''daki en iyi universitelerle lisans, yuksek lisans ve degisim programlari icin profesyonelce eslestiriyoruz. Yetkili yerlestirme hizmetimiz universite seciminden belge hazirlama ve kayit onayina kadar tum sureci yonetir."
+    },
+    "internship": {
+      "title": "Uluslararasi Staj Yerlestirme",
+      "subtitle": "Yurt Disinda Mesleki Deneyim",
+      "description": "Profesyonelce eslestirilen bir stajla uluslararasi kariyerinizi baslatin. Muhendislik, isletme, BT, saglik ve daha fazlasinda staj icin dogrulanmis sirketlerle baglantinizi sagliyoruz. Her firsat kalite, yasallik ve kariyer uygunlugu acisindan taranir."
+    },
+    "scholarship": {
+      "title": "Burs Arama ve Basvuru",
+      "subtitle": "Finanse Edilen Egitim Firsatlari",
+      "description": "Varligini bilmediginiz burslara ulasin. Ekibimiz uygun adaylari dunya genelindeki universitelerde basari burslari, ihtiyac burslari ve devlet burslariyla aktif olarak eslestirir. Profilinize uyan firsatlari belirler ve finansman elde etme sansinizi en ust duzeye cikarir."
+    },
+    "sabbatical": {
+      "title": "Sabbatikal Mesleki Deneyim",
+      "subtitle": "Kariyer Zenginlestiren Tatil Programlari",
+      "description": "Bos zamaninizi yurt disinda kariyer zenginlestiren mesleki deneyime donusturun. Sabbatikal izindeki profesyoneller icin tasarlanmis, tatil destinasyonunuzda kisa sureli is yerlestirmeleri duzenliyoruz. Uluslararasi bakis acisi kazanin, profesyonel aginizi genisletin."
+    },
+    "employment": {
+      "title": "Uluslararasi Is Yerlestirme",
+      "subtitle": "Kuresel Kariyer Firsatlari",
+      "description": "Uluslararasi kariyer firsatlarina koprunuz. Is arayanlari tum sektorlerdeki dogrulanmis isverenlerle yasal olarak eslestiriyoruz. Yetkili yerlestirme hizmetimiz her firsatin meşru, profesyonelce incelenmis ve niteliklerinize uygun oldugunu garanti eder."
+    }
+  },
+  "process": {
+    "label": "Nasıl Çalışır",
+    "title": "Nasıl Çalışır",
+    "subtitle": "Yolculuğunuza başlamak için basit adımlar",
+    "step1": {
+      "title": "Kayıt",
+      "description": "Kişisel bilgilerinizi doldurun ve bir hizmet seçin."
+    },
+    "step2": {
+      "title": "Belge Yükleme",
+      "description": "Gerekli belgelerinizi güvenle yükleyin."
+    },
+    "step3": {
+      "title": "Ödeme",
+      "description": "Ön kayıt ücreti ödemesini tamamlayın."
+    },
+    "step4": {
+      "title": "Bağlantı",
+      "description": "Başvurunuzu işleme alıyor ve sizi doğru fırsatlarla buluşturuyoruz."
+    }
+  },
+  "partners": {
+    "label": "Ortaklarımız",
+    "title": "Ortaklarımız",
+    "subtitle": "Dünya çapındaki önde gelen kurumlarla ortaklıklar kuruyoruz",
+    "comingSoon": "Yakında",
+    "comingSoonText": "Önde gelen kurumlarla ortaklıklarımızı sonuçlandırıyoruz. Heyecan verici duyuruları takip edin!"
+  },
+  "contact": {
+    "label": "İletişim",
+    "title": "İletişime Geçin",
+    "subtitle": "Başarmanıza yardımcı olmak için buradayız",
+    "name": "Tam Ad",
+    "email": "E-posta Adresi",
+    "phone": "Telefon Numarası",
+    "message": "Mesajınız",
+    "send": "Mesaj Gönder",
+    "thankYou": "Teşekkürler!",
+    "messageSent": "Mesajınız gönderildi. En kısa sürede size dönüş yapacağız.",
+    "sendAnother": "Başka Mesaj Gönder",
+    "addressLabel": "Adres",
+    "addressText": "Yakında açıklanacak",
+    "phoneLabel": "Telefon / WhatsApp",
+    "phoneText": "WhatsApp ile iletişime geçin",
+    "emailLabel": "E-posta",
+    "emailText": "E-posta ile iletişime geçin",
+    "social": "Bizi Takip Edin"
+  },
+  "faq": {
+    "label": "SSS",
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "Yaygın soruların cevaplarını bulun",
+    "q1": "Başvurmak için hangi belgelere ihtiyacım var?",
+    "a1": "Geçerli pasaport, CV, eğitim sertifikası veya diploma ve ödeme kanıtı gerekir. Tüm belgeler PDF veya resim formatında (JPG, PNG) olmalı, dosya başına maks. 5MB.",
+    "q2": "Başvuru süreci ne kadar sürer?",
+    "a2": "İşlem süreleri hizmete ve kuruma göre değişir. Genel olarak, eksiksiz bir başvurudan sonra 2-8 hafta içinde cevap alabilirsiniz.",
+    "q3": "Kişisel bilgilerim güvende mi?",
+    "a3": "Kesinlikle. Tüm verilerinizi ve belgelerinizi profesyonel ve güvenli bir şekilde, sıkı gizlilik ile işliyoruz.",
+    "q4": "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
+    "a4": "Kredi ve banka kartı ödemeleri kabul ediyoruz. Ön kayıt ücreti, başvurunuzun işlenebilmesi için ödenmelidir.",
+    "q5": "Birden fazla hizmet için başvurabilir miyim?",
+    "a5": "Evet, farklı hizmetler için ayrı başvurular gönderebilirsiniz. Her başvuru bağımsız olarak işlenir."
+  },
+  "cta": {
+    "title": "Yolculuğunuza Başlamaya Hazır mısınız?",
+    "subtitle": "Uluslararası geleceğinize doğru ilk adımı atın. Şimdi başvurun ve sizi doğru fırsatlarla buluşturalım.",
+    "apply": "Şimdi Başvurun",
+    "contact": "İletişime Geçin"
+  },
+  "footer": {
+    "tagline": "Profesyonel Yerleştirme Hizmetleri",
+    "quickLinks": "Hızlı Bağlantılar",
+    "services": "Hizmetler",
+    "contactTitle": "İletişim",
+    "copyright": "© {year} Okinte. Tüm hakları saklıdır.",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Şartları"
+  },
+  "floating": {
+    "contactUs": "İletişim",
+    "whatsapp": "WhatsApp",
+    "email": "E-posta",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "apply": {
+    "title": "Şimdi Başvurun",
+    "subtitle": "Başvurunuzu 4 basit adımda tamamlayın",
+    "steps": {
+      "personalInfo": "Kişisel Bilgi",
+      "documents": "Belgeler",
+      "payment": "Ödeme",
+      "confirmation": "Onay"
+    },
+    "form": {
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "phone": "Telefon",
+      "phoneHint": "Herhangi bir ülke, herhangi bir format",
+      "email": "E-posta",
+      "country": "Ülke",
+      "city": "Şehir",
+      "service": "Hizmet Seçin",
+      "selectCountry": "Ülke seçin",
+      "next": "İleri",
+      "password": "Sifre",
+      "passwordHint": "En az 8 karakter",
+      "back": "Geri"
+    },
+    "documents": {
+      "title": "Gerekli Belgeleri Yükleyin",
+      "subtitle": "Kabul edilen formatlar: PDF, JPG, JPEG, PNG. Dosya başına maks. 5MB.",
+      "passport": "Pasaport",
+      "cv": "CV / Özgeçmiş",
+      "diploma": "Diploma / Sertifika",
+      "paymentReceipt": "Ödeme Makbuzu",
+      "uploaded": "Yüklendi",
+      "clickToUpload": "Yüklemek için tıklayın",
+      "formats": "PDF, JPG, PNG — Maks. 5MB"
+    },
+    "payment": {
+      "title": "Ödemeyi Tamamlayın",
+      "orderSummary": "Sipariş Özeti",
+      "service": "Hizmet",
+      "processingFee": "Ön Kayıt Ücreti",
+      "total": "Toplam",
+      "paymentMethod": "Ödeme Yöntemi",
+      "card": "Kredi / Banka Kartı",
+      "payNow": "Şimdi Öde"
+    },
+    "confirmation": {
+      "title": "Başvuru Gönderildi!",
+      "message": "Başvurunuz alındı. Sizinle en kısa sürede iletişime geçeceğiz.",
+      "reference": "Başvuru Referansı",
+      "emailSent": "Onay e-postası e-posta adresinize gönderildi.",
+      "backHome": "Ana Sayfaya Dön"
+    }
+  },
+  "auth": {
+    "loginTitle": "Tekrar Hoş Geldiniz",
+    "email": "E-posta",
+    "password": "Şifre",
+    "submit": "Giriş Yap",
+    "noAccount": "Hesabınız yok mu?",
+    "signUp": "Şimdi Başvurun",
+    "forgotPassword": "Şifremi Unuttum",
+    "resetPassword": "Şifreyi Sıfırla",
+    "resetPasswordDescription": "E-posta adresinizi girin.",
+    "sendResetLink": "Bağlantı Gönder",
+    "checkEmail": "E-postanızı Kontrol Edin",
+    "resetEmailSent": "{email} adresine bağlantı gönderdik.",
+    "backToLogin": "Girişe Dön",
+    "invalidToken": "Geçersiz Bağlantı",
+    "invalidTokenDescription": "Bağlantının süresi dolmuş.",
+    "requestNewLink": "Yeni Bağlantı İste",
+    "createNewPassword": "Yeni Şifre Oluştur",
+    "createNewPasswordDescription": "Yeni şifrenizi girin.",
+    "newPassword": "Yeni Şifre",
+    "confirmNewPassword": "Şifreyi Onayla",
+    "passwordsDoNotMatch": "Şifreler eşleşmiyor",
+    "passwordTooShort": "En az 8 karakter",
+    "passwordResetSuccess": "Şifre Sıfırlandı",
+    "passwordResetSuccessDescription": "Giriş sayfasına yönlendirileceksiniz.",
+    "goToLogin": "Girişe Git",
+    "resetPasswordBtn": "Sıfırla"
+  },
+  "testimonials": {
+    "label": "Referanslar",
+    "title": "Basari Hikayeleri",
+    "subtitle": "Hayatlarini Donusturenlerin Hikayelerini Dinleyin",
+    "items": {
+      "t1": {
+        "name": "Ahmed Hassan",
+        "role": "Yurt Disi Egitim - Ingiltere",
+        "quote": "Okinte Oxford'da okuma hayalimi gercege donusturdu. Basvuru sureci boyunca rehberlikleri cok degerli oldu."
+      },
+      "t2": {
+        "name": "Sarah Johnson",
+        "role": "Staj Programi - Almanya",
+        "quote": "Staj yerlestirmesi beklentilerimi asti. Profesyonel, destekleyici ve basarinizi gercekten onemsiyorlar."
+      },
+      "t3": {
+        "name": "Mohamed Ali",
+        "role": "Burs Alicisi",
+        "quote": "Okinte sayesinde tam burs aldim. Ekipleri profilime uyan mukemmel firsati bulmama yardimci oldu."
+      }
+    }
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "success": "Başarılı",
+    "required": "Zorunlu"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "editProfile": "Profili Düzenle",
+    "phone": "Telefon",
+    "country": "Ülke",
+    "city": "Şehir",
+    "cancel": "İptal",
+    "saving": "Kaydediliyor...",
+    "saveChanges": "Kaydet",
+    "myApplications": "Başvurularım",
+    "noApplications": "Başvuru yok",
+    "noApplicationsText": "Hizmetlerimize başvurun.",
+    "applyNow": "Başvur",
+    "logout": "Çıkış",
+    "applied": "Tarih",
+    "documents": "belgeler",
+    "noPayment": "Ödeme yok",
+    "study": "🎓 Eğitim",
+    "internship": "💼 Staj",
+    "scholarship": "🏆 Burs",
+    "sabbatical": "✈️ Sabbatical",
+    "employment": "🔧 İstihdam"
+  },
+  "trust": {
+    "title": "Neden Okinte",
+    "subtitle": "Küresel uzmanlığımızı kanıtlayan rakamlar",
+    "stats": {
+      "universities": "Üniversiteler",
+      "countries": "Ülkeler",
+      "students": "Öğrenciler",
+      "success": "Başarı Oranı"
+    }
+  }
 }

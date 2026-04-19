@@ -13,12 +13,6 @@ const config: Config = {
           light: '#1a3a5c',
           dark: '#061428',
         },
-        gold: {
-          DEFAULT: '#d4af37',
-          light: '#e5c454',
-          dark: '#c9a227',
-        },
-        cream: '#f3efe6',
         'off-white': '#fafafa',
       },
       fontFamily: {

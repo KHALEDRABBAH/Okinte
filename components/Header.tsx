@@ -43,9 +43,9 @@ export default function Header() {
 
   const navLinks = [
     { href: '/' as const, label: t('home') },
-    { href: '/apply' as const, label: t('services') },
+    { href: '/#services' as const, label: t('services') },
     { href: '/#about' as const, label: t('about') },
-    { href: '/#contact' as const, label: t('contact') },
+    { href: '/contact' as any, label: t('contact') },
   ];
 
   return (
@@ -53,102 +53,192 @@ export default function Header() {
       initial={{ y: -100 }} 
       animate={{ y: 0 }} 
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className={`fixed top-0 start-0 end-0 z-50 transition-all duration-300 ${isScrolled ? 'glass-panel' : 'bg-transparent'}`}
+      className={`fixed top-0 start-0 end-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'glass-panel shadow-md' 
+          : 'bg-transparent'
+      }`}
     >
       <nav className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg">
-              <svg viewBox="0 0 40 40" className="w-8 h-8 text-gold">
-                <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="2" />
-                <ellipse cx="20" cy="20" rx="8" ry="16" fill="none" stroke="currentColor" strokeWidth="2" />
-                <line x1="4" y1="20" x2="36" y2="20" stroke="currentColor" strokeWidth="2" />
-                <circle cx="20" cy="12" r="3" fill="currentColor" />
-              </svg>
+        <div className="flex items-center justify-between h-16 md:h-18">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-transform duration-300 group-hover:scale-105">
+              <span className="font-heading font-extrabold text-[#0f172a] text-lg tracking-tighter">Ok</span>
             </div>
-            <span className={`font-heading font-bold text-2xl ${isScrolled ? 'text-primary' : 'text-white'}`}>Bolila</span>
+            <span className="font-heading font-bold text-xl md:text-2xl tracking-tight text-white">Okinte</span>
           </Link>
 
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={`font-medium transition-colors ${isScrolled ? 'text-primary hover:text-gold' : 'text-white/90 hover:text-white'}`}>
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className="text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
+              >
                 {link.label}
               </Link>
             ))}
           </div>
 
+          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-4">
+            {/* Language Selector */}
             <div className="relative">
-              <button onClick={() => setIsLangMenuOpen(!isLangMenuOpen)} className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${isScrolled ? 'text-primary hover:bg-gray-100' : 'text-white/90 hover:bg-white/10'}`}>
+              <button 
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)} 
+                className="flex items-center gap-2 px-3 py-2 rounded-xl transition-colors duration-200 text-white/70 hover:bg-white/10"
+              >
                 <Globe className="w-5 h-5" />
-                <span className="font-medium">{languageNames[locale]}</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+                <span className="text-sm font-medium">{languageNames[locale]}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
               </button>
+              
               <AnimatePresence>
                 {isLangMenuOpen && (
-                  <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute end-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+                  <motion.div 
+                    initial={{ opacity: 0, y: -8 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute end-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"
+                  >
                     {locales.map((loc) => (
-                      <button key={loc} onClick={() => switchLanguage(loc)} className={`w-full px-4 py-3 text-start transition-colors ${loc === locale ? 'bg-gold/10 text-gold font-medium' : 'text-primary hover:bg-gray-50'}`}>
-                        {languageNames[loc]}
+                      <button 
+                        key={loc} 
+                        onClick={() => switchLanguage(loc)} 
+                        className={`w-full px-4 py-3 flex items-center justify-between text-start transition-colors duration-150 ${
+                          loc === locale 
+                            ? 'bg-[#0f172a]/5 text-[#0f172a] font-medium' 
+                            : 'text-[#0f172a]/80 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{languageNames[loc]}</span>
+                        {loc === locale && <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />}
                       </button>
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+            
+            {/* Auth Section */}
             {!authLoading && (
               isAuthenticated ? (
                 <>
-                  <Link href={isAdmin ? '/admin' as any : '/dashboard' as any} className={`flex items-center gap-1.5 font-medium transition-colors ${isScrolled ? 'text-primary hover:text-gold' : 'text-white/90 hover:text-white'}`}>
+                  <Link 
+                    href={isAdmin ? '/admin' as any : '/dashboard' as any} 
+                    className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
+                  >
                     <LayoutDashboard className="w-4 h-4" />
-                    {isAdmin ? 'Admin' : t('dashboard')}
+                    {isAdmin ? t('admin') : t('dashboard')}
                   </Link>
-                  <button onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} className={`flex items-center gap-1.5 font-medium transition-colors ${isScrolled ? 'text-primary hover:text-red-500' : 'text-white/90 hover:text-red-300'}`}>
+                  <button 
+                    onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
+                    className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-red-400"
+                  >
                     <LogOut className="w-4 h-4" />
                     {t('logout')}
                   </button>
                 </>
               ) : (
-                <Link href="/login" className={`font-medium transition-colors ${isScrolled ? 'text-primary hover:text-gold' : 'text-white/90 hover:text-white'}`}>{t('login')}</Link>
+                <Link 
+                  href="/login" 
+                  className="text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
+                >
+                  {t('login')}
+                </Link>
               )
             )}
-            <Link href="/apply" className="btn-primary text-sm">{t('apply')}</Link>
+            
+            <Link href="/apply" className="btn-primary text-sm">
+              {t('apply')}
+            </Link>
           </div>
 
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className={`lg:hidden p-2 rounded-lg ${isScrolled ? 'text-primary' : 'text-white'}`}>
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+            className="lg:hidden p-2.5 rounded-xl text-white"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="lg:hidden bg-white border-t">
-            <div className="container mx-auto px-4 py-6 space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: 'auto' }} 
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden bg-[#0f172a] border-t border-white/10"
+          >
+            <div className="container mx-auto px-4 py-5 space-y-3">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-primary font-medium">{link.label}</Link>
+                <Link 
+                  key={link.href} 
+                  href={link.href} 
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className="block py-2.5 text-white font-medium"
+                >
+                  {link.label}
+                </Link>
               ))}
-              <hr className="my-4" />
+              
+              <hr className="my-3 border-white/10" />
+              
               {!authLoading && (
                 isAuthenticated ? (
                   <>
-                    <Link href={isAdmin ? '/admin' as any : '/dashboard' as any} className="block py-2 text-primary font-medium flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <LayoutDashboard className="w-4 h-4" /> {isAdmin ? 'Admin' : t('dashboard')}
+                    <Link 
+                      href={isAdmin ? '/admin' as any : '/dashboard' as any} 
+                      className="block py-2.5 text-white font-medium flex items-center gap-2" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <LayoutDashboard className="w-4 h-4" /> 
+                      {isAdmin ? t('admin') : t('dashboard')}
                     </Link>
-                    <button onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} className="block py-2 text-red-500 font-medium flex items-center gap-2 w-full text-start">
-                      <LogOut className="w-4 h-4" /> {t('logout')}
+                    <button 
+                      onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
+                      className="block py-2.5 text-red-400 font-medium flex items-center gap-2 w-full text-start"
+                    >
+                      <LogOut className="w-4 h-4" /> 
+                      {t('logout')}
                     </button>
                   </>
                 ) : (
-                  <Link href="/login" className="block py-2 text-primary font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('login')}</Link>
+                  <Link 
+                    href="/login" 
+                    className="block py-2.5 text-white font-medium" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {t('login')}
+                  </Link>
                 )
               )}
-              <Link href="/apply" className="btn-primary text-center block" onClick={() => setIsMobileMenuOpen(false)}>{t('apply')}</Link>
-              <div className="pt-4">
-                <p className="text-sm text-gray-500 mb-2">{t('selectLanguage')}:</p>
+              
+              <Link href="/apply" className="btn-primary text-center block mt-4" onClick={() => setIsMobileMenuOpen(false)}>
+                {t('apply')}
+              </Link>
+              
+              {/* Language Selection */}
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-xs text-white/40 mb-3">{t('selectLanguage')}:</p>
                 <div className="flex flex-wrap gap-2">
                   {locales.map((loc) => (
-                    <button key={loc} onClick={() => switchLanguage(loc)} className={`px-3 py-1 rounded-lg text-sm transition-colors ${loc === locale ? 'bg-primary text-white' : 'bg-gray-100 text-primary hover:bg-gray-200'}`}>
+                    <button 
+                      key={loc} 
+                      onClick={() => switchLanguage(loc)} 
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        loc === locale 
+                          ? 'bg-[#2563EB] text-white' 
+                          : 'bg-white/10 text-white/70 hover:bg-white/20'
+                      }`}
+                    >
                       {languageNames[loc]}
                     </button>
                   ))}

@@ -27,8 +27,8 @@ export default function ExpandableText({ text, maxLength = 150, className = '' }
         {expanded ? text : `${text.slice(0, maxLength)}...`}
       </span>
       <button
-        onClick={() => setExpanded(!expanded)}
-        className="inline-flex items-center gap-1 text-gold hover:text-gold/80 text-sm font-medium ms-2 transition-colors"
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpanded(!expanded); }}
+        className="inline-flex items-center gap-1 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-medium ms-2 transition-colors relative z-20"
       >
         {expanded ? (
           <>Show Less <ChevronUp className="w-3.5 h-3.5" /></>

@@ -1,8 +1,7 @@
-﻿{
+{
   "metadata": {
-    "siteTitle": "Bolila — Services de Placement affiliés à l'IBLT",
-    "siteDescription": "Services professionnels de placement et de mise en relation pour l'éducation internationale, les stages, les bourses, l'emploi et les programmes sabbatiques.",
-    "authorization": "Autorisation N° 11-2015N-MESR/DES"
+    "siteTitle": "Okinte — Services de Placement Professionnels",
+    "siteDescription": "Services professionnels de placement et de mise en relation pour l'éducation internationale, les stages, les bourses, l'emploi et les programmes sabbatiques."
   },
   "nav": {
     "home": "Accueil",
@@ -18,31 +17,27 @@
   "hero": {
     "badge": "Services de Placement Professionnels",
     "title": "Votre Passerelle vers les Opportunités Internationales",
-    "subtitle": "Bolila — Services de Placement affiliés à l'IBLT — vous connecte professionnellement avec des universités internationales, des stages, des bourses, des emplois et des programmes sabbatiques.",
+    "subtitle": "Okinte — Services de Placement affiliés à l'IBLT — vous connecte professionnellement avec des universités internationales, des stages, des bourses, des emplois et des programmes sabbatiques.",
     "cta": "Postuler Maintenant",
     "learnMore": "Nos Services"
   },
   "about": {
     "label": "À Propos",
-    "title": "À Propos de Bolila",
+    "title": "À Propos de Okinte",
     "subtitle": "Services de Placement affiliés à l'IBLT",
-    "description": "Bolila est un service professionnel de placement et de mise en relation affilié à l'IBLT (Autorisation N° 11-2015N-MESR/DES). Nous connectons professionnellement les individus avec des opportunités internationales en éducation, stages, bourses, emploi et programmes sabbatiques, en suivant strictement nos directives et normes.",
-    "mission": "Notre Mission",
-    "missionText": "Fournir des services de placement professionnels, légaux et fiables qui connectent les individus ambitieux avec des opportunités internationales, en suivant des directives strictes et des normes reconnues.",
-    "vision": "Notre Vision",
-    "visionText": "Devenir le service de placement le plus fiable et professionnel pour la mobilité internationale, reconnu pour son intégrité, sa fiabilité et ses résultats.",
+    "description": "Okinte est un service professionnel de placement et de mise en relation affilié à l'IBLT (Autorisation N° 11-2015N-MESR/DES). Nous connectons professionnellement les individus avec des opportunités internationales en éducation, stages, bourses, emploi et programmes sabbatiques, en suivant strictement nos directives et normes.",
     "features": {
-      "global": {
-        "title": "Portée Internationale",
-        "description": "Relations avec des universités et entreprises du monde entier"
-      },
       "secure": {
         "title": "Légal et Professionnel",
         "description": "Tous les services sont traités légalement et professionnellement"
       },
-      "expert": {
-        "title": "Accompagnement Expert",
-        "description": "Professionnels dédiés avec une expérience internationale"
+      "quality": {
+        "title": "Connexions de qualité",
+        "description": "Institutions et partenaires vérifiés dans le monde entier"
+      },
+      "support": {
+        "title": "Accompagnement personnalisé",
+        "description": "Assistance dédiée tout au long de votre parcours"
       }
     }
   },
@@ -147,12 +142,11 @@
     "contact": "Nous Contacter"
   },
   "footer": {
-    "tagline": "Services de Placement affiliés à l'IBLT",
-    "authorization": "Autorisation N° 11-2015N-MESR/DES",
+    "tagline": "Services de Placement Professionnels",
     "quickLinks": "Liens Rapides",
     "services": "Services",
     "contactTitle": "Contact",
-    "copyright": "© {year} Bolila. Tous droits réservés.",
+    "copyright": "© {year} Okinte. Tous droits réservés.",
     "privacy": "Politique de Confidentialité",
     "terms": "Conditions d'Utilisation"
   },
@@ -183,7 +177,9 @@
       "service": "Sélectionnez un Service",
       "selectCountry": "Sélectionnez un pays",
       "next": "Suivant",
-      "password": "Mot de passe", "passwordHint": "Minimum 8 caractères", "back": "Retour"
+      "password": "Mot de passe",
+      "passwordHint": "Minimum 8 caractères",
+      "back": "Retour"
     },
     "documents": {
       "title": "Téléchargez les Documents Requis",
@@ -221,16 +217,70 @@
     "submit": "Se Connecter",
     "noAccount": "Vous n'avez pas de compte ?",
     "signUp": "Postuler",
-    "forgotPassword": "Mot de passe oublié ?"
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "resetPasswordDescription": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "checkEmail": "Vérifiez votre e-mail",
+    "resetEmailSent": "Nous avons envoyé un lien de réinitialisation du mot de passe à {email}.",
+    "backToLogin": "Retour à la connexion",
+    "invalidToken": "Lien invalide ou expiré",
+    "invalidTokenDescription": "Le lien de réinitialisation du mot de passe est invalide ou a expiré.",
+    "requestNewLink": "Demander un nouveau lien",
+    "createNewPassword": "Créer un nouveau mot de passe",
+    "createNewPasswordDescription": "Veuillez entrer votre nouveau mot de passe ci-dessous.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
+    "passwordResetSuccessDescription": "Votre mot de passe a été modifié. Vous serez redirigé vers la page de connexion.",
+    "goToLogin": "Aller à la connexion",
+    "resetPasswordBtn": "Réinitialiser le mot de passe"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "editProfile": "Modifier le profil",
+    "phone": "Téléphone",
+    "country": "Pays",
+    "city": "Ville",
+    "cancel": "Annuler",
+    "saving": "Enregistrement...",
+    "saveChanges": "Sauvegarder",
+    "myApplications": "Mes Candidatures",
+    "noApplications": "Aucune candidature pour le moment",
+    "noApplicationsText": "Commencez votre parcours international en postulant à l'un de nos services.",
+    "applyNow": "Postuler maintenant",
+    "logout": "Déconnexion",
+    "applied": "Soumise le",
+    "documents": "documents",
+    "noPayment": "Aucun paiement",
+    "study": "🎓 Placement pour Études",
+    "internship": "💼 Placement en Stage",
+    "scholarship": "🏆 Recherche de Bourses",
+    "sabbatical": "✈️ Expérience Sabbatique",
+    "employment": "🔧 Placement en Emploi"
   },
   "testimonials": {
     "label": "Témoignages",
     "title": "Histoires de Réussite",
     "subtitle": "Découvrez ceux qui ont transformé leur vie",
     "items": {
-      "t1": { "name": "Ahmed Hassan", "role": "Études à l'étranger — Royaume-Uni", "quote": "Bolila a réalisé mon rêve d'étudier à Oxford. Leur accompagnement tout au long du processus de candidature était inestimable." },
-      "t2": { "name": "Sarah Johnson", "role": "Programme de stage — Allemagne", "quote": "Le placement de stage a dépassé mes attentes. Professionnels, solidaires et vraiment soucieux de votre réussite." },
-      "t3": { "name": "Mohamed Ali", "role": "Bénéficiaire de bourse", "quote": "J'ai reçu une bourse complète grâce à Bolila. Leur équipe m'a aidé à trouver l'opportunité parfaite correspondant à mon profil." }
+      "t1": {
+        "name": "Ahmed Hassan",
+        "role": "Études à l'étranger — Royaume-Uni",
+        "quote": "Okinte a réalisé mon rêve d'étudier à Oxford. Leur accompagnement tout au long du processus de candidature était inestimable."
+      },
+      "t2": {
+        "name": "Sarah Johnson",
+        "role": "Programme de stage — Allemagne",
+        "quote": "Le placement de stage a dépassé mes attentes. Professionnels, solidaires et vraiment soucieux de votre réussite."
+      },
+      "t3": {
+        "name": "Mohamed Ali",
+        "role": "Bénéficiaire de bourse",
+        "quote": "J'ai reçu une bourse complète grâce à Okinte. Leur équipe m'a aidé à trouver l'opportunité parfaite correspondant à mon profil."
+      }
     }
   },
   "common": {
@@ -238,5 +288,15 @@
     "error": "Une erreur est survenue",
     "success": "Succès",
     "required": "Obligatoire"
+  },
+  "trust": {
+    "title": "Pourquoi choisir Okinte",
+    "subtitle": "Des chiffres qui prouvent notre expertise mondiale",
+    "stats": {
+      "universities": "Universités",
+      "countries": "Pays",
+      "students": "Étudiants",
+      "success": "Taux de réussite"
+    }
   }
 }

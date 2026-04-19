@@ -63,6 +63,7 @@ export async function GET(request: NextRequest) {
             select: { firstName: true, lastName: true, email: true, country: true },
           },
           service: { select: { key: true } },
+          documents: { select: { id: true, type: true, fileName: true } },
           payment: { select: { status: true, amount: true } },
         },
       }),
@@ -84,10 +85,45 @@ export async function GET(request: NextRequest) {
         unreadMessages,
       },
       recentApplications,
+      // Monthly analytics for charts (last 6 months)
+      monthlyData: await getMonthlyData(),
     });
 
   } catch (error) {
     console.error('Admin stats error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+async function getMonthlyData() {
+  const months = [];
+  const now = new Date();
+
+  for (let i = 5; i >= 0; i--) {
+    const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+    const label = start.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+
+    const [apps, revenue, users] = await Promise.all([
+      db.application.count({
+        where: { createdAt: { gte: start, lte: end } },
+      }),
+      db.payment.aggregate({
+        where: { status: 'SUCCEEDED', paidAt: { gte: start, lte: end } },
+        _sum: { amount: true },
+      }),
+      db.user.count({
+        where: { role: 'USER', createdAt: { gte: start, lte: end } },
+      }),
+    ]);
+
+    months.push({
+      label,
+      applications: apps,
+      revenue: Number(revenue._sum.amount || 0),
+      users,
+    });
+  }
+
+  return months;
 }

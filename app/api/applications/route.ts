@@ -31,7 +31,7 @@ function generateReferenceCode(): string {
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return `BOL-${year}-${code}`;
+  return `OKT-${year}-${code}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -79,11 +79,19 @@ export async function POST(request: NextRequest) {
     // Step 5: Generate unique reference code (retry if collision)
     let referenceCode = generateReferenceCode();
     let attempts = 0;
+    let isUnique = false;
     while (attempts < 5) {
       const exists = await db.application.findUnique({ where: { referenceCode } });
-      if (!exists) break;
+      if (!exists) { isUnique = true; break; }
       referenceCode = generateReferenceCode();
       attempts++;
+    }
+
+    if (!isUnique) {
+      return NextResponse.json(
+        { error: 'Unable to generate a unique reference code. Please try again.' },
+        { status: 503 }
+      );
     }
 
     // Step 6: Create application

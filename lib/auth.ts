@@ -23,11 +23,21 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fallback-secret-for-development-only'
-);
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('FATAL: JWT_SECRET environment variable is not set. Refusing to start in production without it.');
+    }
+    console.warn('⚠️  JWT_SECRET not set — using development-only fallback. Do NOT deploy this to production.');
+    return new TextEncoder().encode('dev-only-fallback-do-not-deploy');
+  }
+  return new TextEncoder().encode(secret);
+}
 
-const COOKIE_NAME = 'bolila-auth-token';
+const JWT_SECRET = getJwtSecret();
+
+const COOKIE_NAME = 'okinte-auth-token';
 const TOKEN_EXPIRY = '7d'; // Token valid for 7 days
 
 // ============================================================

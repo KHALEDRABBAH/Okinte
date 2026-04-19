@@ -9,7 +9,7 @@ export default function JsonLd() {
   const tFaq = useTranslations('faq');
   const tContact = useTranslations('contact');
   const tAbout = useTranslations('about');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://bolila-platform.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-platform.vercel.app';
 
   // ─────────────────────────────────────────────
   // 1. Organization Schema (Google Knowledge Panel)
@@ -18,8 +18,8 @@ export default function JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${appUrl}/#organization`,
-    name: 'Bolila',
-    alternateName: 'Bolila — Placement Services affiliated with IBLT',
+    name: 'Okinte',
+    alternateName: 'Okinte — Placement Services affiliated with IBLT',
     url: appUrl,
     logo: {
       '@type': 'ImageObject',
@@ -55,7 +55,7 @@ export default function JsonLd() {
       {
         '@type': 'ContactPoint',
         contactType: 'customer service',
-        email: 'contact@bolila.com',
+        email: 'contact@okinte.com',
         availableLanguage: [
           { '@type': 'Language', name: 'French', alternateName: 'fr' },
           { '@type': 'Language', name: 'English', alternateName: 'en' },
@@ -69,7 +69,7 @@ export default function JsonLd() {
     ],
     sameAs: [
       'https://www.facebook.com/profile.php?id=61570781992726',
-      'https://www.instagram.com/bolilanous',
+      'https://www.instagram.com/okintenous',
     ],
     hasCredential: {
       '@type': 'EducationalOccupationalCredential',
@@ -92,7 +92,7 @@ export default function JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${appUrl}/#website`,
-    name: 'Bolila',
+    name: 'Okinte',
     url: appUrl,
     inLanguage: locale,
     description: tMeta('siteDescription'),
@@ -190,7 +190,7 @@ export default function JsonLd() {
       {
         '@type': 'ListItem',
         position: 1,
-        name: 'Bolila',
+        name: 'Okinte',
         item: `${appUrl}/${locale}`,
       },
     ],

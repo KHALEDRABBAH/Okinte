@@ -1,256 +1,302 @@
-﻿{
-    "metadata":  {
-                     "siteTitle":  "Bolila — Servizi di Collocamento affiliati a IBLT",
-                     "siteDescription":  "Servizi professionali di collocamento e connessione per istruzione internazionale, stage, borse di studio, impiego e programmi sabbatici.",
-                     "authorization":  "Autorizzazione N° 11-2015N-MESR/DES"
-                 },
-    "nav":  {
-                "home":  "Home",
-                "services":  "Servizi",
-                "about":  "Chi Siamo",
-                "contact":  "Contatti",
-                "apply":  "Candidati",
-                "login":  "Accedi",
-                "selectLanguage": "Seleziona Lingua",
+{
+  "metadata": {
+    "siteTitle": "Okinte — Servizi di Collocamento Professionali",
+    "siteDescription": "Servizi professionali di collocamento e connessione per istruzione internazionale, stage, borse di studio, impiego e programmi sabbatici."
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Servizi",
+    "about": "Chi Siamo",
+    "contact": "Contatti",
+    "apply": "Candidati",
+    "login": "Accedi",
+    "selectLanguage": "Seleziona Lingua",
     "dashboard": "Pannello di Controllo",
     "logout": "Esci"
-            },
-    "hero":  {
-                 "badge":  "Servizi di Collocamento Professionali",
-                 "title":  "La Tua Porta verso le Opportunità Internazionali",
-                 "subtitle":  "Bolila — Servizi di Collocamento affiliati a IBLT — ti connette professionalmente con università internazionali, stage, borse di studio, impiego e programmi sabbatici.",
-                 "cta":  "Candidati Ora",
-                 "learnMore":  "I Nostri Servizi"
-             },
-    "about":  {
-                  "label":  "Chi Siamo",
-                  "title":  "Chi è Bolila",
-                  "subtitle":  "Servizi di Collocamento affiliati a IBLT",
-                  "description":  "Bolila è un servizio professionale di collocamento e connessione affiliato a IBLT (Autorizzazione N° 11-2015N-MESR/DES). Connettiamo professionalmente individui con opportunità internazionali in istruzione, stage, borse di studio, impiego e programmi sabbatici, seguendo rigorosamente le nostre linee guida e standard.",
-                  "mission":  "La Nostra Missione",
-                  "missionText":  "Fornire servizi di collocamento professionali, legali e affidabili che connettano individui ambiziosi con opportunità internazionali, seguendo linee guida rigorose e standard riconosciuti.",
-                  "vision":  "La Nostra Visione",
-                  "visionText":  "Diventare il servizio di collocamento più affidabile e professionale per la mobilità internazionale, conosciuto per integrità, affidabilità e risultati.",
-                  "features":  {
-                                   "global":  {
-                                                  "title":  "Portata Internazionale",
-                                                  "description":  "Connessioni con università e aziende in tutto il mondo"
-                                              },
-                                   "secure":  {
-                                                  "title":  "Legale e Professionale",
-                                                  "description":  "Tutti i servizi sono gestiti in modo legale e professionale"
-                                              },
-                                   "expert":  {
-                                                  "title":  "Guida Esperta",
-                                                  "description":  "Professionisti dedicati con esperienza internazionale"
-                                              }
-                               }
-              },
-    "services":  {
-                     "label":  "I Nostri Servizi",
-                     "title":  "Servizi di Collocamento Internazionale",
-                     "subtitle":  "Servizi autorizzati di collocamento e connessione per istruzione globale, carriere e sviluppo professionale",
-                     "applyBtn":  "Candidati per questo servizio",
-                     "study":  {
-                                   "title":  "Collocamento per Studi all\u0027\u0027Estero",
-                                   "subtitle":  "Ammissioni Universitarie Internazionali",
-                                   "description":  "Il tuo percorso verso le ammissioni universitarie internazionali. Abbiniamo professionalmente gli studenti con le migliori universita in Europa, Nord America e Asia per programmi di laurea, trasferimenti accademici e semestri di scambio. Il nostro servizio autorizzato gestisce l\u0027\u0027intero processo di candidatura."
-                               },
-                     "internship":  {
-                                        "title":  "Collocamento Tirocinio Internazionale",
-                                        "subtitle":  "Esperienza Professionale all\u0027\u0027Estero",
-                                        "description":  "Avvia la tua carriera internazionale con un tirocinio professionale su misura. Connettiamo laureati e studenti ambiziosi con aziende verificate in Europa, Nord America e Asia per tirocini in ingegneria, business, IT, sanita e altro. Ogni opportunita viene verificata per qualita, legalita e rilevanza professionale."
-                                    },
-                     "scholarship":  {
-                                         "title":  "Ricerca e Candidatura Borse di Studio",
-                                         "subtitle":  "Opportunita di Istruzione Finanziata",
-                                         "description":  "Accedi a borse di studio che non sapevi esistessero. Il nostro team ricerca attivamente e abbina candidati idonei con borse di merito, borse sociali e borse governative presso universita di tutto il mondo. Da Erasmus+ a Chevening, identifichiamo le opportunita che corrispondono al tuo profilo."
-                                     },
-                     "sabbatical":  {
-                                        "title":  "Esperienza Professionale Sabbatica",
-                                        "subtitle":  "Programmi Vacanza Arricchenti per la Carriera",
-                                        "description":  "Trasforma il tuo tempo libero in un\u0027\u0027esperienza professionale arricchente all\u0027\u0027estero. Progettato per professionisti in anno sabbatico, organizziamo collocamenti di lavoro a breve termine nella tua destinazione di vacanza. Acquisisci una prospettiva internazionale e amplia la tua rete professionale."
-                                    },
-                     "employment":  {
-                                        "title":  "Collocamento Lavorativo Internazionale",
-                                        "subtitle":  "Opportunita di Carriera Globali",
-                                        "description":  "Il tuo ponte verso opportunita di carriera internazionali. Abbiniamo legalmente i cercatori di lavoro con datori di lavoro verificati in tutti i settori. Il nostro servizio autorizzato garantisce che ogni opportunita sia legittima, verificata professionalmente e allineata con le tue qualifiche e obiettivi di carriera."
-                                    }
-                 },
-    "process":  {
-                    "label":  "Come Funziona",
-                    "title":  "Come Funziona",
-                    "subtitle":  "Semplici passi per iniziare il tuo viaggio",
-                    "step1":  {
-                                  "title":  "Registrazione",
-                                  "description":  "Compila le tue informazioni personali e seleziona un servizio."
-                              },
-                    "step2":  {
-                                  "title":  "Carica Documenti",
-                                  "description":  "Carica i tuoi documenti richiesti in modo sicuro."
-                              },
-                    "step3":  {
-                                  "title":  "Pagamento",
-                                  "description":  "Completa il pagamento della quota di pre-registrazione."
-                              },
-                    "step4":  {
-                                  "title":  "Connessione",
-                                  "description":  "Elaboriamo la tua candidatura e ti connettiamo con le giuste opportunità."
-                              }
-                },
-    "partners":  {
-                     "label":  "Partner",
-                     "title":  "I Nostri Partner",
-                     "subtitle":  "Costruendo partnership con istituzioni leader in tutto il mondo",
-                     "comingSoon":  "Prossimamente",
-                     "comingSoonText":  "Stiamo finalizzando partnership con istituzioni leader. Restate sintonizzati per annunci entusiasmanti!"
-                 },
-    "contact":  {
-                    "label":  "Contattaci",
-                    "title":  "Contattaci",
-                    "subtitle":  "Siamo qui per aiutarti ad avere successo",
-                    "name":  "Nome Completo",
-                    "email":  "Indirizzo Email",
-                    "phone":  "Numero di Telefono",
-                    "message":  "Il Tuo Messaggio",
-                    "send":  "Invia Messaggio",
-                    "thankYou":  "Grazie!",
-                    "messageSent":  "Il tuo messaggio è stato inviato. Ti risponderemo presto.",
-                    "sendAnother":  "Invia un Altro Messaggio",
-                    "addressLabel":  "Indirizzo",
-                    "addressText":  "Da annunciare",
-                    "phoneLabel":  "Telefono / WhatsApp",
-                    "phoneText":  "Contattaci via WhatsApp",
-                    "emailLabel":  "Email",
-                    "emailText":  "Contattaci via email",
-                    "social":  "Seguici"
-                },
-    "faq":  {
-                "label":  "FAQ",
-                "title":  "Domande Frequenti",
-                "subtitle":  "Trova risposte alle domande comuni",
-                "q1":  "Quali documenti servono per candidarsi?",
-                "a1":  "Avrai bisogno di un passaporto valido, CV, certificati di istruzione e prova di pagamento. Tutti i documenti devono essere in formato PDF o immagine (JPG, PNG), max 5MB per file.",
-                "q2":  "Quanto tempo richiede il processo di candidatura?",
-                "a2":  "I tempi variano a seconda del servizio e dell\u0027istituzione. Generalmente, puoi aspettarti una risposta entro 2-8 settimane dopo una presentazione completa.",
-                "q3":  "Le mie informazioni personali sono sicure?",
-                "a3":  "Assolutamente. Gestiamo tutti i tuoi dati e documenti in modo professionale e sicuro, con rigorosa riservatezza.",
-                "q4":  "Quali metodi di pagamento accettate?",
-                "a4":  "Accettiamo pagamenti con carta di credito e debito. La quota di pre-registrazione deve essere pagata prima che la tua candidatura possa essere elaborata.",
-                "q5":  "Posso candidarmi per più servizi?",
-                "a5":  "Sì, puoi inviare candidature separate per servizi diversi. Ogni candidatura viene elaborata in modo indipendente."
-            },
-    "cta":  {
-                "title":  "Pronto per Iniziare il Tuo Viaggio?",
-                "subtitle":  "Fai il primo passo verso il tuo futuro internazionale. Candidati ora e lasciaci connetterti con le giuste opportunità.",
-                "apply":  "Candidati Ora",
-                "contact":  "Contattaci"
-            },
-    "footer":  {
-                   "tagline":  "Servizi di Collocamento affiliati a IBLT",
-                   "authorization":  "Autorizzazione N° 11-2015N-MESR/DES",
-                   "quickLinks":  "Link Rapidi",
-                   "services":  "Servizi",
-                   "contactTitle":  "Contatti",
-                   "copyright":  "© {year} Bolila. Tutti i diritti riservati.",
-                   "privacy":  "Politica sulla Privacy",
-                   "terms":  "Termini di Servizio"
-               },
-    "floating":  {
-                     "contactUs":  "Contattaci",
-                     "whatsapp":  "WhatsApp",
-                     "email":  "Email",
-                     "facebook":  "Facebook",
-                     "instagram":  "Instagram"
-                 },
-    "apply":  {
-                  "title":  "Candidati Ora",
-                  "subtitle":  "Completa la tua candidatura in 4 semplici passi",
-                  "steps":  {
-                                "personalInfo":  "Info Personali",
-                                "documents":  "Documenti",
-                                "payment":  "Pagamento",
-                                "confirmation":  "Conferma"
-                            },
-                  "form":  {
-                               "firstName":  "Nome",
-                               "lastName":  "Cognome",
-                               "phone":  "Telefono",
-                               "phoneHint":  "Qualsiasi paese, qualsiasi formato",
-                               "email":  "Email",
-                               "country":  "Paese",
-                               "city":  "Città",
-                               "service":  "Seleziona Servizio",
-                               "selectCountry":  "Seleziona un paese",
-                               "next":  "Avanti",
-                               "password":  "Password",
-                               "passwordHint":  "Minimo 8 caratteri",
-                               "back":  "Indietro"
-                           },
-                  "documents":  {
-                                    "title":  "Carica i Documenti Richiesti",
-                                    "subtitle":  "Formati accettati: PDF, JPG, JPEG, PNG. Max 5MB per file.",
-                                    "passport":  "Passaporto",
-                                    "cv":  "CV / Curriculum",
-                                    "diploma":  "Diploma / Certificato",
-                                    "paymentReceipt":  "Ricevuta di Pagamento",
-                                    "uploaded":  "Caricato",
-                                    "clickToUpload":  "Clicca per caricare",
-                                    "formats":  "PDF, JPG, PNG — Max 5MB"
-                                },
-                  "payment":  {
-                                  "title":  "Completa il Pagamento",
-                                  "orderSummary":  "Riepilogo Ordine",
-                                  "service":  "Servizio",
-                                  "processingFee":  "Quota di Pre-registrazione",
-                                  "total":  "Totale",
-                                  "paymentMethod":  "Metodo di Pagamento",
-                                  "card":  "Carta di Credito / Debito",
-                                  "payNow":  "Paga Ora"
-                              },
-                  "confirmation":  {
-                                       "title":  "Candidatura Inviata!",
-                                       "message":  "La tua candidatura è stata ricevuta. Ti contatteremo presto.",
-                                       "reference":  "Riferimento Candidatura",
-                                       "emailSent":  "Un\u0027email di conferma è stata inviata al tuo indirizzo.",
-                                       "backHome":  "Torna alla Home"
-                                   }
-              },
-    "auth":  {
-                 "loginTitle":  "Bentornato",
-                 "email":  "Email",
-                 "password":  "Password",
-                 "submit":  "Accedi",
-                 "noAccount":  "Non hai un account?",
-                 "signUp":  "Candidati Ora",
-                 "forgotPassword":  "Password dimenticata?"
-             },
-    "testimonials":  {
-                         "label":  "Testimonianze",
-                         "title":  "Storie di Successo",
-                         "subtitle":  "Ascolta chi ha trasformato la propria vita",
-                         "items":  {
-                                       "t1":  {
-                                                  "name":  "Ahmed Hassan",
-                                                  "role":  "Studio all\u0027estero — Regno Unito",
-                                                  "quote":  "Bolila ha realizzato il mio sogno di studiare a Oxford. La loro guida durante tutto il processo di candidatura e stata inestimabile."
-                                              },
-                                       "t2":  {
-                                                  "name":  "Sarah Johnson",
-                                                  "role":  "Programma di Tirocinio — Germania",
-                                                  "quote":  "Il tirocinio ha superato le mie aspettative. Professionali, di supporto e si preoccupano davvero del tuo successo."
-                                              },
-                                       "t3":  {
-                                                  "name":  "Mohamed Ali",
-                                                  "role":  "Beneficiario di Borsa",
-                                                  "quote":  "Ho ricevuto una borsa di studio completa tramite Bolila. Il loro team mi ha aiutato a trovare l\u0027opportunita perfetta per il mio profilo."
-                                              }
-                                   }
-                     },
-    "common":  {
-                   "loading":  "Caricamento...",
-                   "error":  "Si è verificato un errore",
-                   "success":  "Successo",
-                   "required":  "Obbligatorio"
-               }
+  },
+  "hero": {
+    "badge": "Servizi di Collocamento Professionali",
+    "title": "La Tua Porta verso le Opportunità Internazionali",
+    "subtitle": "Okinte — Servizi di Collocamento affiliati a IBLT — ti connette professionalmente con università internazionali, stage, borse di studio, impiego e programmi sabbatici.",
+    "cta": "Candidati Ora",
+    "learnMore": "I Nostri Servizi"
+  },
+  "about": {
+    "label": "Chi Siamo",
+    "title": "Chi è Okinte",
+    "subtitle": "Servizi di Collocamento affiliati a IBLT",
+    "description": "Okinte è un servizio professionale di collocamento e connessione. Connettiamo professionalmente individui con opportunità internazionali in istruzione, stage, borse di studio, impiego e programmi sabbatici, seguendo rigorosamente le nostre linee guida e standard.",
+    "features": {
+      "secure": {
+        "title": "Legale e Professionale",
+        "description": "Tutti i servizi sono gestiti in modo legale e professionale"
+      },
+      "quality": {
+        "title": "Connessioni di qualità",
+        "description": "Istituzioni e partner verificati in tutto il mondo"
+      },
+      "support": {
+        "title": "Supporto personalizzato",
+        "description": "Assistenza dedicata durante tutto il tuo percorso"
+      }
+    }
+  },
+  "services": {
+    "label": "I Nostri Servizi",
+    "title": "Servizi di Collocamento Internazionale",
+    "subtitle": "Servizi autorizzati di collocamento e connessione per istruzione globale, carriere e sviluppo professionale",
+    "applyBtn": "Candidati per questo servizio",
+    "study": {
+      "title": "Collocamento per Studi all''Estero",
+      "subtitle": "Ammissioni Universitarie Internazionali",
+      "description": "Il tuo percorso verso le ammissioni universitarie internazionali. Abbiniamo professionalmente gli studenti con le migliori universita in Europa, Nord America e Asia per programmi di laurea, trasferimenti accademici e semestri di scambio. Il nostro servizio autorizzato gestisce l''intero processo di candidatura."
+    },
+    "internship": {
+      "title": "Collocamento Tirocinio Internazionale",
+      "subtitle": "Esperienza Professionale all''Estero",
+      "description": "Avvia la tua carriera internazionale con un tirocinio professionale su misura. Connettiamo laureati e studenti ambiziosi con aziende verificate in Europa, Nord America e Asia per tirocini in ingegneria, business, IT, sanita e altro. Ogni opportunita viene verificata per qualita, legalita e rilevanza professionale."
+    },
+    "scholarship": {
+      "title": "Ricerca e Candidatura Borse di Studio",
+      "subtitle": "Opportunita di Istruzione Finanziata",
+      "description": "Accedi a borse di studio che non sapevi esistessero. Il nostro team ricerca attivamente e abbina candidati idonei con borse di merito, borse sociali e borse governative presso universita di tutto il mondo. Da Erasmus+ a Chevening, identifichiamo le opportunita che corrispondono al tuo profilo."
+    },
+    "sabbatical": {
+      "title": "Esperienza Professionale Sabbatica",
+      "subtitle": "Programmi Vacanza Arricchenti per la Carriera",
+      "description": "Trasforma il tuo tempo libero in un''esperienza professionale arricchente all''estero. Progettato per professionisti in anno sabbatico, organizziamo collocamenti di lavoro a breve termine nella tua destinazione di vacanza. Acquisisci una prospettiva internazionale e amplia la tua rete professionale."
+    },
+    "employment": {
+      "title": "Collocamento Lavorativo Internazionale",
+      "subtitle": "Opportunita di Carriera Globali",
+      "description": "Il tuo ponte verso opportunita di carriera internazionali. Abbiniamo legalmente i cercatori di lavoro con datori di lavoro verificati in tutti i settori. Il nostro servizio autorizzato garantisce che ogni opportunita sia legittima, verificata professionalmente e allineata con le tue qualifiche e obiettivi di carriera."
+    }
+  },
+  "process": {
+    "label": "Come Funziona",
+    "title": "Come Funziona",
+    "subtitle": "Semplici passi per iniziare il tuo viaggio",
+    "step1": {
+      "title": "Registrazione",
+      "description": "Compila le tue informazioni personali e seleziona un servizio."
+    },
+    "step2": {
+      "title": "Carica Documenti",
+      "description": "Carica i tuoi documenti richiesti in modo sicuro."
+    },
+    "step3": {
+      "title": "Pagamento",
+      "description": "Completa il pagamento della quota di pre-registrazione."
+    },
+    "step4": {
+      "title": "Connessione",
+      "description": "Elaboriamo la tua candidatura e ti connettiamo con le giuste opportunità."
+    }
+  },
+  "partners": {
+    "label": "Partner",
+    "title": "I Nostri Partner",
+    "subtitle": "Costruendo partnership con istituzioni leader in tutto il mondo",
+    "comingSoon": "Prossimamente",
+    "comingSoonText": "Stiamo finalizzando partnership con istituzioni leader. Restate sintonizzati per annunci entusiasmanti!"
+  },
+  "contact": {
+    "label": "Contattaci",
+    "title": "Contattaci",
+    "subtitle": "Siamo qui per aiutarti ad avere successo",
+    "name": "Nome Completo",
+    "email": "Indirizzo Email",
+    "phone": "Numero di Telefono",
+    "message": "Il Tuo Messaggio",
+    "send": "Invia Messaggio",
+    "thankYou": "Grazie!",
+    "messageSent": "Il tuo messaggio è stato inviato. Ti risponderemo presto.",
+    "sendAnother": "Invia un Altro Messaggio",
+    "addressLabel": "Indirizzo",
+    "addressText": "Da annunciare",
+    "phoneLabel": "Telefono / WhatsApp",
+    "phoneText": "Contattaci via WhatsApp",
+    "emailLabel": "Email",
+    "emailText": "Contattaci via email",
+    "social": "Seguici"
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Domande Frequenti",
+    "subtitle": "Trova risposte alle domande comuni",
+    "q1": "Quali documenti servono per candidarsi?",
+    "a1": "Avrai bisogno di un passaporto valido, CV, certificati di istruzione e prova di pagamento. Tutti i documenti devono essere in formato PDF o immagine (JPG, PNG), max 5MB per file.",
+    "q2": "Quanto tempo richiede il processo di candidatura?",
+    "a2": "I tempi variano a seconda del servizio e dell'istituzione. Generalmente, puoi aspettarti una risposta entro 2-8 settimane dopo una presentazione completa.",
+    "q3": "Le mie informazioni personali sono sicure?",
+    "a3": "Assolutamente. Gestiamo tutti i tuoi dati e documenti in modo professionale e sicuro, con rigorosa riservatezza.",
+    "q4": "Quali metodi di pagamento accettate?",
+    "a4": "Accettiamo pagamenti con carta di credito e debito. La quota di pre-registrazione deve essere pagata prima che la tua candidatura possa essere elaborata.",
+    "q5": "Posso candidarmi per più servizi?",
+    "a5": "Sì, puoi inviare candidature separate per servizi diversi. Ogni candidatura viene elaborata in modo indipendente."
+  },
+  "cta": {
+    "title": "Pronto per Iniziare il Tuo Viaggio?",
+    "subtitle": "Fai il primo passo verso il tuo futuro internazionale. Candidati ora e lasciaci connetterti con le giuste opportunità.",
+    "apply": "Candidati Ora",
+    "contact": "Contattaci"
+  },
+  "footer": {
+    "tagline": "Servizi di Collocamento Professionali",
+    "quickLinks": "Link Rapidi",
+    "services": "Servizi",
+    "contactTitle": "Contatti",
+    "copyright": "© {year} Okinte. Tutti i diritti riservati.",
+    "privacy": "Politica sulla Privacy",
+    "terms": "Termini di Servizio"
+  },
+  "floating": {
+    "contactUs": "Contattaci",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "facebook": "Facebook",
+    "instagram": "Instagram"
+  },
+  "apply": {
+    "title": "Candidati Ora",
+    "subtitle": "Completa la tua candidatura in 4 semplici passi",
+    "steps": {
+      "personalInfo": "Info Personali",
+      "documents": "Documenti",
+      "payment": "Pagamento",
+      "confirmation": "Conferma"
+    },
+    "form": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "phone": "Telefono",
+      "phoneHint": "Qualsiasi paese, qualsiasi formato",
+      "email": "Email",
+      "country": "Paese",
+      "city": "Città",
+      "service": "Seleziona Servizio",
+      "selectCountry": "Seleziona un paese",
+      "next": "Avanti",
+      "password": "Password",
+      "passwordHint": "Minimo 8 caratteri",
+      "back": "Indietro"
+    },
+    "documents": {
+      "title": "Carica i Documenti Richiesti",
+      "subtitle": "Formati accettati: PDF, JPG, JPEG, PNG. Max 5MB per file.",
+      "passport": "Passaporto",
+      "cv": "CV / Curriculum",
+      "diploma": "Diploma / Certificato",
+      "paymentReceipt": "Ricevuta di Pagamento",
+      "uploaded": "Caricato",
+      "clickToUpload": "Clicca per caricare",
+      "formats": "PDF, JPG, PNG — Max 5MB"
+    },
+    "payment": {
+      "title": "Completa il Pagamento",
+      "orderSummary": "Riepilogo Ordine",
+      "service": "Servizio",
+      "processingFee": "Quota di Pre-registrazione",
+      "total": "Totale",
+      "paymentMethod": "Metodo di Pagamento",
+      "card": "Carta di Credito / Debito",
+      "payNow": "Paga Ora"
+    },
+    "confirmation": {
+      "title": "Candidatura Inviata!",
+      "message": "La tua candidatura è stata ricevuta. Ti contatteremo presto.",
+      "reference": "Riferimento Candidatura",
+      "emailSent": "Un'email di conferma è stata inviata al tuo indirizzo.",
+      "backHome": "Torna alla Home"
+    }
+  },
+  "auth": {
+    "loginTitle": "Bentornato",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Accedi",
+    "noAccount": "Non hai un account?",
+    "signUp": "Candidati Ora",
+    "forgotPassword": "Password dimenticata?",
+    "resetPassword": "Reimposta password",
+    "resetPasswordDescription": "Inserisci la tua email.",
+    "sendResetLink": "Invia link",
+    "checkEmail": "Controlla email",
+    "resetEmailSent": "Link inviato a {email}.",
+    "backToLogin": "Torna al login",
+    "invalidToken": "Link non valido",
+    "invalidTokenDescription": "Il link è scaduto.",
+    "requestNewLink": "Richiedi nuovo link",
+    "createNewPassword": "Crea nuova password",
+    "createNewPasswordDescription": "Inserisci la nuova password.",
+    "newPassword": "Nuova password",
+    "confirmNewPassword": "Conferma password",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "passwordTooShort": "Minimo 8 caratteri",
+    "passwordResetSuccess": "Password reimpostata",
+    "passwordResetSuccessDescription": "Sarai reindirizzato al login.",
+    "goToLogin": "Vai al login",
+    "resetPasswordBtn": "Reimposta"
+  },
+  "testimonials": {
+    "label": "Testimonianze",
+    "title": "Storie di Successo",
+    "subtitle": "Ascolta chi ha trasformato la propria vita",
+    "items": {
+      "t1": {
+        "name": "Ahmed Hassan",
+        "role": "Studio all'estero — Regno Unito",
+        "quote": "Okinte ha realizzato il mio sogno di studiare a Oxford. La loro guida durante tutto il processo di candidatura e stata inestimabile."
+      },
+      "t2": {
+        "name": "Sarah Johnson",
+        "role": "Programma di Tirocinio — Germania",
+        "quote": "Il tirocinio ha superato le mie aspettative. Professionali, di supporto e si preoccupano davvero del tuo successo."
+      },
+      "t3": {
+        "name": "Mohamed Ali",
+        "role": "Beneficiario di Borsa",
+        "quote": "Ho ricevuto una borsa di studio completa tramite Okinte. Il loro team mi ha aiutato a trovare l'opportunita perfetta per il mio profilo."
+      }
+    }
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Si è verificato un errore",
+    "success": "Successo",
+    "required": "Obbligatorio"
+  },
+  "dashboard": {
+    "title": "Pannello",
+    "editProfile": "Modifica Profilo",
+    "phone": "Telefono",
+    "country": "Paese",
+    "city": "Città",
+    "cancel": "Annulla",
+    "saving": "Salvataggio...",
+    "saveChanges": "Salva",
+    "myApplications": "Le Mie Candidature",
+    "noApplications": "Nessuna candidatura",
+    "noApplicationsText": "Inizia candidandoti.",
+    "applyNow": "Candidati",
+    "logout": "Esci",
+    "applied": "Candidatura",
+    "documents": "documenti",
+    "noPayment": "Nessun pagamento",
+    "study": "🎓 Studio",
+    "internship": "💼 Tirocinio",
+    "scholarship": "🏆 Borse",
+    "sabbatical": "✈️ Sabbatico",
+    "employment": "🔧 Impiego"
+  },
+  "trust": {
+    "title": "Perché scegliere Okinte",
+    "subtitle": "Numeri che dimostrano la nostra competenza globale",
+    "stats": {
+      "universities": "Università",
+      "countries": "Paesi",
+      "students": "Studenti",
+      "success": "Tasso di successo"
+    }
+  }
 }

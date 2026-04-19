@@ -17,19 +17,22 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
+import { deleteFile } from '@/lib/storage';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const currentUser = await getUserFromRequest(request);
     if (!currentUser) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const application = await db.application.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         service: true,
         documents: {
@@ -79,6 +82,52 @@ export async function GET(
 
   } catch (error) {
     console.error('Application detail error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const currentUser = await getUserFromRequest(request);
+    if (!currentUser) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const application = await db.application.findUnique({
+      where: { id },
+      include: { documents: true },
+    });
+
+    if (!application) {
+      return NextResponse.json({ error: 'Application not found' }, { status: 404 });
+    }
+
+    // Only owner can delete (or admin)
+    if (application.userId !== currentUser.userId && currentUser.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // 1. Delete all associated documents from Supabase storage first
+    for (const doc of application.documents) {
+      if (doc.storagePath) {
+         await deleteFile(doc.storagePath);
+      }
+    }
+
+    // 2. Delete the application (cascade deletes DB document records and payments)
+    await db.application.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ success: true, message: 'Application deleted successfully' });
+
+  } catch (error) {
+    console.error('Application delete error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

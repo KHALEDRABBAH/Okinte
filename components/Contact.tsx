@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Mail, Phone, MapPin, Facebook, Instagram, Send, CheckCircle, MessageCircle } from 'lucide-react';
 
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61570781992726';
-const INSTAGRAM_URL = 'https://www.instagram.com/bolilanous';
+const INSTAGRAM_URL = 'https://www.instagram.com/okintenous';
 
 export default function Contact() {
   const t = useTranslations('contact');
@@ -42,59 +42,135 @@ export default function Contact() {
   };
 
   return (
-    <section className="py-24 bg-cream" id="contact">
-      <div className="container mx-auto px-4 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-gold font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
-          <h2 className="section-title mt-2">{t('title')}</h2>
+    <section className="relative section-spacing bg-gray-50/50" id="contact">
+      {/* Seamless top transition */}
+      <div className="absolute top-0 start-0 end-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none" />
+      
+      <div className="container mx-auto px-6 lg:px-12">
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }} 
+          className="text-center max-w-2xl mx-auto mb-14 md:mb-16"
+        >
+          <span className="section-label">{t('label')}</span>
+          <h2 className="section-title mt-3">{t('title')}</h2>
           <p className="section-subtitle mx-auto">{t('subtitle')}</p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <div className="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-8 md:p-12 h-full text-white">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Left - Contact Info */}
+          <motion.div 
+            initial={{ opacity: 0, x: -40 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true }}
+          >
+            <div className="bg-[#0f172a] rounded-3xl p-8 md:p-12 h-full text-white">
               <h3 className="font-heading font-bold text-2xl mb-8">{t('title')}</h3>
+              
               <div className="space-y-6 mb-12">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0"><MapPin className="w-6 h-6 text-gold" /></div>
-                  <div><p className="font-semibold mb-1">{t('addressLabel')}</p><p className="text-white/70">{t('addressText')}</p></div>
+                  <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">{t('addressLabel')}</p>
+                    <p className="text-white/70 text-sm leading-relaxed">{t('addressText')}</p>
+                  </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0"><MessageCircle className="w-6 h-6 text-gold" /></div>
-                  <div><p className="font-semibold mb-1">{t('phoneLabel')}</p><p className="text-white/70">{t('phoneText')}</p></div>
+                  <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MessageCircle className="w-5 h-5 text-[#2563EB]" />
+                  </div>
+<div>
+                    <p className="font-semibold mb-1">{t('phoneLabel')}</p>
+                    <p className="text-white/70 text-sm">{t('phoneText')}</p>
+                  </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0"><Mail className="w-6 h-6 text-gold" /></div>
-                  <div><p className="font-semibold mb-1">{t('emailLabel')}</p><p className="text-white/70">{t('emailText')}</p></div>
+                  <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">{t('emailLabel')}</p>
+                    <p className="text-white/70 text-sm">{t('emailText')}</p>
+                  </div>
                 </div>
               </div>
+              
+              {/* Social Links */}
               <div>
                 <p className="font-semibold mb-4">{t('social')}</p>
-                <div className="flex gap-4">
-                  <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center hover:bg-gold transition-colors"><Facebook className="w-6 h-6" /></a>
-                  <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center hover:bg-gold transition-colors"><Instagram className="w-6 h-6" /></a>
-                  <a href="mailto:contact@bolila.com" className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center hover:bg-gold transition-colors"><Mail className="w-6 h-6" /></a>
+                <div className="flex gap-3">
+                  <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                  <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                  <a href="mailto:contact@okinte.com" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                    <Mail className="w-5 h-5" />
+                  </a>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+          {/* Right - Contact Form */}
+          <motion.div 
+            initial={{ opacity: 0, x: 40 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true }}
+          >
+            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-premium border border-gray-100">
               {isSubmitted ? (
                 <div className="text-center py-12">
-                  <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-                  <h3 className="font-heading font-bold text-2xl text-primary mb-4">{t('thankYou')}</h3>
-                  <p className="text-gray-600">{t('messageSent')}</p>
-                  <button onClick={() => setIsSubmitted(false)} className="mt-6 btn-primary">{t('sendAnother')}</button>
+                  <motion.div 
+                    initial={{ scale: 0 }} 
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6"
+                  >
+                    <CheckCircle className="w-10 h-10 text-emerald-500" />
+                  </motion.div>
+                  <h3 className="font-heading font-bold text-2xl text-[#1a1a2e] mb-3">{t('thankYou')}</h3>
+                  <p className="text-gray-600 mb-6">{t('messageSent')}</p>
+                  <button onClick={() => setIsSubmitted(false)} className="btn-primary">{t('sendAnother')}</button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div><label className="block text-sm font-medium text-primary mb-2">{t('name')}</label><input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="input-field" /></div>
-                  <div><label className="block text-sm font-medium text-primary mb-2">{t('email')}</label><input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-field" /></div>
-                  <div><label className="block text-sm font-medium text-primary mb-2">{t('phone')}</label><input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="input-field" /></div>
-                  <div><label className="block text-sm font-medium text-primary mb-2">{t('message')}</label><textarea required rows={4} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="input-field resize-none" /></div>
-                  <button type="submit" className="btn-primary w-full"><Send className="w-5 h-5 me-2" />{t('send')}</button>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('name')}</label>
+                    <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('email')}</label>
+                    <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('phone')}</label>
+                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('message')}</label>
+                    <textarea required rows={4} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="input-field resize-none" />
+                  </div>
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                      {error}
+                    </div>
+                  )}
+                  <button type="submit" disabled={isLoading} className="btn-primary w-full justify-center disabled:opacity-50">
+                    {isLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        Sending...
+                      </span>
+                    ) : (
+                      <><Send className="w-4.5 h-4.5 me-2" />{t('send')}</>
+                    )}
+                  </button>
                 </form>
               )}
             </div>

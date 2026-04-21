@@ -20,9 +20,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
 import { messageSchema } from '@/lib/validations';
+import { rateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 5 messages per 10 minutes per IP
+    const ip = getClientIp(request);
+    const rl = rateLimit(`contact:${ip}`, RATE_LIMITS.contact);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many messages sent. Please wait before trying again.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+
     // Step 1: Validate input
     const body = await request.json();
     const validation = messageSchema.safeParse(body);

@@ -1,4 +1,5 @@
-export const dynamic = 'force-dynamic';
+// Cache services for 1 hour — this data rarely changes
+export const revalidate = 3600;
 
 /**
  * GET /api/services

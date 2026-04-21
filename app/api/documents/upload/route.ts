@@ -1,4 +1,6 @@
 export const dynamic = 'force-dynamic';
+// Allow up to 60 seconds for file uploads (Vercel default is ~10-15s)
+export const maxDuration = 60;
 
 /**
  * POST /api/documents/upload

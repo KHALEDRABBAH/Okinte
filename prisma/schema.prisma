@@ -86,6 +86,10 @@ model Application {
   documents Document[]
   payment   Payment?
 
+  @@index([userId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([createdAt])
   @@map("applications")
 }
 
@@ -119,6 +123,8 @@ model Document {
 
   // Unique constraint: one document per type per application (enables atomic upsert)
   @@unique([applicationId, type], name: "applicationId_type_unique")
+  @@index([userId])
+  @@index([applicationId])
   @@map("documents")
 }
 
@@ -152,6 +158,8 @@ model Payment {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([status])
   @@map("payments")
 }
 
@@ -253,5 +261,7 @@ model ChatMessage {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([createdAt])
   @@map("chat_messages")
 }

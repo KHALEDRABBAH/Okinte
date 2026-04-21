@@ -22,9 +22,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifyPassword, createToken, setAuthCookie } from '@/lib/auth';
 import { loginSchema } from '@/lib/validations';
+import { rateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 7 login attempts per 15 minutes per IP
+    const ip = getClientIp(request);
+    const rl = rateLimit(`login:${ip}`, RATE_LIMITS.login);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Please wait 15 minutes before trying again.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+
     // Step 1: Parse and validate
     const body = await request.json();
     const validation = loginSchema.safeParse(body);

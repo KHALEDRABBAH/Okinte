@@ -19,9 +19,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { hashPassword, createToken, setAuthCookie } from '@/lib/auth';
 import { registerSchema } from '@/lib/validations';
+import { rateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 3 registrations per 30 minutes per IP
+    const ip = getClientIp(request);
+    const rl = rateLimit(`register:${ip}`, RATE_LIMITS.register);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many registration attempts. Please wait before trying again.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+
     // Step 1: Parse and validate the request body
     const body = await request.json();
     const validation = registerSchema.safeParse(body);

@@ -81,8 +81,26 @@ export async function POST(request: NextRequest) {
           }
           finalPrice = Math.max(0, finalPrice - discount);
           promoCodeId = promo.id;
-          // Increment usage
-          await db.promoCode.update({ where: { id: promo.id }, data: { currentUses: { increment: 1 } } });
+          
+          // Atomic increment with race-condition guard:
+          // Only increment if currentUses is still below maxUses.
+          // If two users race, the second one gets count=0 and we reject.
+          const updateResult = await db.promoCode.updateMany({
+            where: {
+              id: promo.id,
+              isActive: true,
+              ...(promo.maxUses ? { currentUses: { lt: promo.maxUses } } : {}),
+            },
+            data: { currentUses: { increment: 1 } },
+          });
+          
+          if (updateResult.count === 0) {
+            // Race condition: another user consumed the last use
+            return NextResponse.json(
+              { error: 'Promo code has reached its usage limit. Please try without a promo code.' },
+              { status: 400 }
+            );
+          }
         }
       }
     }

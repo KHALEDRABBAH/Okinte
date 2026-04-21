@@ -44,33 +44,38 @@ export async function GET(request: NextRequest) {
       orderBy: { _max: { createdAt: 'desc' } },
     });
 
-    // Get user details and unread counts for each conversation
-    const conversationsWithDetails = await Promise.all(
-      conversations.map(async (conv) => {
-        const user = await db.user.findUnique({
-          where: { id: conv.userId },
-          select: { id: true, firstName: true, lastName: true, email: true },
-        });
+    // Batch-fetch all user details in ONE query (eliminates N+1)
+    const userIds = conversations.map(c => c.userId);
+    const [users, unreadCounts, lastMessages] = await Promise.all([
+      db.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, firstName: true, lastName: true, email: true },
+      }),
+      db.chatMessage.groupBy({
+        by: ['userId'],
+        where: { userId: { in: userIds }, isAdmin: false, isRead: false },
+        _count: { id: true },
+      }),
+      db.chatMessage.findMany({
+        where: { userId: { in: userIds } },
+        orderBy: { createdAt: 'desc' },
+        distinct: ['userId'],
+        select: { userId: true, content: true, isAdmin: true, createdAt: true },
+      }),
+    ]);
 
-        const unreadCount = await db.chatMessage.count({
-          where: { userId: conv.userId, isAdmin: false, isRead: false },
-        });
+    // Build lookup maps for O(1) access
+    const userMap = new Map(users.map(u => [u.id, u]));
+    const unreadMap = new Map(unreadCounts.map(u => [u.userId, u._count.id]));
+    const lastMsgMap = new Map(lastMessages.map(m => [m.userId, { content: m.content, isAdmin: m.isAdmin, createdAt: m.createdAt }]));
 
-        const lastMessage = await db.chatMessage.findFirst({
-          where: { userId: conv.userId },
-          orderBy: { createdAt: 'desc' },
-          select: { content: true, isAdmin: true, createdAt: true },
-        });
-
-        return {
-          userId: conv.userId,
-          user,
-          messageCount: conv._count.id,
-          unreadCount,
-          lastMessage,
-        };
-      })
-    );
+    const conversationsWithDetails = conversations.map(conv => ({
+      userId: conv.userId,
+      user: userMap.get(conv.userId) || null,
+      messageCount: conv._count.id,
+      unreadCount: unreadMap.get(conv.userId) || 0,
+      lastMessage: lastMsgMap.get(conv.userId) || null,
+    }));
 
     return NextResponse.json({ conversations: conversationsWithDetails });
   } catch (error) {

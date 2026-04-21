@@ -3,20 +3,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { MessageCircle, X, Facebook, Instagram, Mail } from 'lucide-react';
+import { MessageCircle, X, Facebook, Mail } from 'lucide-react';
 
-const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61570781992726';
-const INSTAGRAM_URL = 'https://www.instagram.com/okintenous';
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
 
 export default function FloatingContact() {
   const t = useTranslations('floating');
   const [isOpen, setIsOpen] = useState(false);
 
   const links = [
-    { icon: Instagram, label: t('instagram'), href: INSTAGRAM_URL, color: 'bg-gradient-to-br from-purple-500 to-pink-500' },
     { icon: Facebook, label: t('facebook'), href: FACEBOOK_URL, color: 'bg-blue-600' },
-    { icon: Mail, label: t('email'), href: 'mailto:contact@okinte.com', color: 'bg-red-500' },
-    { icon: MessageCircle, label: t('whatsapp'), href: '#', color: 'bg-green-500' },
+    { icon: Mail, label: t('email'), href: 'mailto:Okinte.placement@gmail.com', color: 'bg-red-500' },
+    { icon: MessageCircle, label: t('whatsapp'), href: 'https://wa.me/201280109982', color: 'bg-green-500' },
   ];
 
   return (

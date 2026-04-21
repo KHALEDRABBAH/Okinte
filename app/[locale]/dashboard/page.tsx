@@ -457,7 +457,7 @@ export default function Dashboard() {
                               <p className="text-sm text-red-700">{app.notes}</p>
                             </div>
                           )}
-                          <Link href={`/${locale}/apply?service=${app.service.key}`} className="btn-primary text-sm py-2 px-4 shadow-sm">
+                          <Link href={`/apply?service=${app.service.key}` as any} className="btn-primary text-sm py-2 px-4 shadow-sm">
                             <Plus className="w-4 h-4 me-2" /> {td('reapply')}
                           </Link>
                         </div>
@@ -474,7 +474,7 @@ export default function Dashboard() {
                               <p className="text-sm text-orange-700">{app.notes}</p>
                             </div>
                           )}
-                          <Link href={`/${locale}/apply?draftId=${app.id}`} className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm py-2 px-4 rounded-lg shadow-sm transition-colors font-medium">
+                          <Link href={`/apply?draftId=${app.id}` as any} className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm py-2 px-4 rounded-lg shadow-sm transition-colors font-medium">
                             <RotateCcw className="w-4 h-4" /> Complete Application
                           </Link>
                         </div>
@@ -483,7 +483,7 @@ export default function Dashboard() {
                       {/* Draft Action */}
                       {app.status === 'DRAFT' && (
                         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
-                          <Link href={`/${locale}/apply?draftId=${app.id}`} className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB]/5 hover:bg-[#2563EB]/10 rounded-lg">
+                          <Link href={`/apply?draftId=${app.id}` as any} className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB]/5 hover:bg-[#2563EB]/10 rounded-lg">
                             <Plus className="w-4 h-4" /> Continue Application
                           </Link>
                           <button onClick={() => handleDeleteDraft(app.id)} className="text-sm text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5">

@@ -2,10 +2,9 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Facebook, Instagram, Mail } from 'lucide-react';
+import { Facebook, Mail } from 'lucide-react';
 
-const FACEBOOK_URL = 'https://www.facebook.com/okinte';
-const INSTAGRAM_URL = 'https://www.instagram.com/okinte';
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -35,10 +34,7 @@ export default function Footer() {
               <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                 <Facebook className="w-4.5 h-4.5" />
               </a>
-              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
-                <Instagram className="w-4.5 h-4.5" />
-              </a>
-              <a href="mailto:contact@okinte.com" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+              <a href="mailto:Okinte.placement@gmail.com" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                 <Mail className="w-4.5 h-4.5" />
               </a>
             </div>
@@ -70,18 +66,30 @@ export default function Footer() {
           {/* Contact */}
           <div className="col-span-2 md:col-span-1">
             <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('contactTitle')}</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-white/60 text-sm">
-                <span className="w-4.5 h-4.5 mt-0.5 text-[#2563EB] flex-shrink-0">📱</span>
-                <span>{tContact('phoneText')}</span>
+            <ul className="space-y-2.5">
+              <li>
+                <a href="https://wa.me/201280109982" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
+                  <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">📱</span>
+                  </div>
+                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">+20 12 80109982</span>
+                </a>
               </li>
-              <li className="flex items-start gap-3 text-white/60 text-sm">
-                <span className="w-4.5 h-4.5 mt-0.5 text-[#2563EB] flex-shrink-0">✉️</span>
-                <span>{tContact('emailText')}</span>
+              <li>
+                <a href="mailto:Okinte.placement@gmail.com" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
+                  <div className="w-8 h-8 bg-[#2563EB]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">✉️</span>
+                  </div>
+                  <span className="text-white/70 text-xs group-hover:text-white transition-colors truncate">Okinte.placement@gmail.com</span>
+                </a>
               </li>
-              <li className="flex items-start gap-3 text-white/60 text-sm">
-                <span className="w-4.5 h-4.5 mt-0.5 text-[#2563EB] flex-shrink-0">📍</span>
-                <span>{tContact('addressText')}</span>
+              <li>
+                <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
+                  <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">📍</span>
+                  </div>
+                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">Mongo, Chad</span>
+                </a>
               </li>
             </ul>
           </div>

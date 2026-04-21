@@ -55,7 +55,7 @@ export default function JsonLd() {
       {
         '@type': 'ContactPoint',
         contactType: 'customer service',
-        email: 'contact@okinte.com',
+        email: 'Okinte.placement@gmail.com',
         availableLanguage: [
           { '@type': 'Language', name: 'French', alternateName: 'fr' },
           { '@type': 'Language', name: 'English', alternateName: 'en' },
@@ -68,8 +68,7 @@ export default function JsonLd() {
       },
     ],
     sameAs: [
-      'https://www.facebook.com/profile.php?id=61570781992726',
-      'https://www.instagram.com/okintenous',
+      'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v',
     ],
     hasCredential: {
       '@type': 'EducationalOccupationalCredential',

@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { GraduationCap, Briefcase, Award, Palmtree, Building2, Upload, FileText, CreditCard, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock } from 'lucide-react';
+import { GraduationCap, Briefcase, Award, Palmtree, Building2, Upload, FileText, CreditCard, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock, CheckCircle2 } from 'lucide-react';
 import { rtlLocales } from '@/i18n/routing';
 
 const ALL_COUNTRIES = [
@@ -29,6 +29,97 @@ const ALL_COUNTRIES = [
   "Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
 ];
 
+// ============================================================
+// EXTRACTED COMPONENTS (outside main function to prevent re-render lag)
+// ============================================================
+
+interface InputFieldProps {
+  name: string;
+  label: string;
+  type?: string;
+  icon: any;
+  hint?: string;
+  value: string;
+  error?: string;
+  onChange: (name: string, value: string) => void;
+  disabled?: boolean;
+}
+
+function InputField({ name, label, type = 'text', icon: Icon, hint, value, error, onChange, disabled }: InputFieldProps) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{label} <span className="text-red-500">*</span></label>
+      <div className="relative">
+        <Icon className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <input
+          type={type}
+          name={name}
+          required
+          value={value}
+          disabled={disabled}
+          onChange={(e) => onChange(name, e.target.value)}
+          className={`input-field ps-12 ${disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
+        />
+      </div>
+      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+      {error && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
+    </div>
+  );
+}
+
+interface FileUploadProps {
+  type: string;
+  label: string;
+  icon: any;
+  file: File | null;
+  onFileChange: (type: string, file: File | null) => void;
+  uploadedLabel: string;
+  formatsLabel: string;
+  existingFileName?: string;
+}
+
+function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel, formatsLabel, existingFileName }: FileUploadProps) {
+  const hasFile = file || existingFileName;
+  return (
+    <div className={`relative overflow-hidden border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 group ${hasFile ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-200 hover:border-[#2563EB]/50 hover:bg-[#2563EB]/5'}`}>
+      <input type="file" id={type} onChange={(e) => onFileChange(type, e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.jpg,.jpeg,.png" />
+      <div className="space-y-3 relative z-0 pointer-events-none">
+        {file ? (
+          <>
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Check className="w-6 h-6 text-emerald-600" />
+            </motion.div>
+            <p className="text-emerald-600 font-semibold text-sm">{uploadedLabel}</p>
+            <p className="text-xs text-gray-400 truncate max-w-[180px] mx-auto bg-gray-100 px-2 py-1 rounded">{file.name}</p>
+          </>
+        ) : existingFileName ? (
+          <>
+            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Check className="w-6 h-6 text-emerald-600" />
+            </div>
+            <p className="text-emerald-600 font-semibold text-sm">✓ Already uploaded</p>
+            <p className="text-xs text-gray-400 truncate max-w-[180px] mx-auto bg-gray-100 px-2 py-1 rounded">{existingFileName}</p>
+            <p className="text-[10px] text-gray-400 mt-1">Click to replace</p>
+          </>
+        ) : (
+          <>
+            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform duration-200">
+              <Icon className="w-6 h-6 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
+            </div>
+            <p className="font-semibold text-sm text-[#1a1a2e]">{label}</p>
+            <p className="text-xs text-gray-500">Drag & drop or <span className="text-[#2563EB]">browse</span></p>
+            <p className="text-[10px] text-gray-400 mt-2">{formatsLabel}</p>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MAIN COMPONENT
+// ============================================================
+
 export default function Apply() {
   const t = useTranslations('apply');
   const tServices = useTranslations('services');
@@ -49,6 +140,10 @@ export default function Apply() {
   const [promoResult, setPromoResult] = useState<{ valid: boolean; discount: number; finalPrice: number; code: string; type: string; value: number } | null>(null);
   const [promoError, setPromoError] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState<{ firstName: string; lastName: string; email: string; phone: string; country: string; city: string } | null>(null);
+  const [draftSaved, setDraftSaved] = useState(false);
+  const [existingDocs, setExistingDocs] = useState<Record<string, string>>({}); // type -> fileName
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -71,6 +166,32 @@ export default function Apply() {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setIsLoggedIn(true);
+            setLoggedInUser(data.user);
+            setFormData(prev => ({
+              ...prev,
+              firstName: data.user.firstName || '',
+              lastName: data.user.lastName || '',
+              email: data.user.email || '',
+              phone: data.user.phone || '',
+              country: data.user.country || '',
+              city: data.user.city || '',
+            }));
+          }
+        }
+      } catch {}
+    };
+    checkAuth();
+  }, []);
+
   useEffect(() => {
     const successParam = searchParams.get('success');
     const canceledParam = searchParams.get('canceled');
@@ -85,14 +206,12 @@ export default function Apply() {
     }
 
     if (canceledParam === 'true') {
-      setSubmitError('Payment was canceled. Please try again.');
-      // if there's an appId, restore it
+      setSubmitError('Payment was canceled. Your application is saved as a draft. You can try again from your dashboard.');
       if (appIdParam) setApplicationId(appIdParam);
       return;
     }
 
     if (draftIdParam && !successParam) {
-      // Fetch draft application and directly jump to Document step (Step 2)
       fetch(`/api/applications/${draftIdParam}`)
         .then(res => res.json())
         .then(data => {
@@ -101,7 +220,23 @@ export default function Apply() {
             setReferenceCode(data.application.referenceCode);
             setFormData(prev => ({ ...prev, service: data.application.service.key }));
             
-            // If they reach Step 2, they'll see the service is locked in!
+            // Load existing documents so user doesn't re-upload
+            if (data.application.documents && data.application.documents.length > 0) {
+              const docs: Record<string, string> = {};
+              data.application.documents.forEach((doc: { type: string; fileName: string }) => {
+                const typeMap: Record<string, string> = { PASSPORT: 'passport', CV: 'cv', DIPLOMA: 'diploma', PAYMENT_RECEIPT: 'paymentReceipt' };
+                const key = typeMap[doc.type];
+                if (key) docs[key] = doc.fileName;
+              });
+              setExistingDocs(docs);
+            }
+            
+            // If has all 4 documents, jump to payment step; otherwise documents
+            if (data.application.documents?.length >= 4) {
+              setCurrentStep(3);
+            } else {
+              setCurrentStep(2);
+            }
           }
         }).catch(err => console.error('Failed to load draft:', err));
     }
@@ -166,7 +301,7 @@ export default function Apply() {
           return;
         }
         if (data.application.payment?.status === 'FAILED') {
-          setSubmitError('Payment failed. Please try again from your dashboard.');
+          setSubmitError('Payment failed. Your application is saved as a draft. You can try again from your dashboard.');
           setIsProcessingPayment(false);
           return;
         }
@@ -193,18 +328,69 @@ export default function Apply() {
     { number: 4, title: t('steps.confirmation'), icon: Check },
   ];
 
+  // Stable callback for input changes (prevents re-render)
+  const handleInputChange = useCallback((name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  }, []);
+
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.firstName.trim()) newErrors.firstName = 'Required';
+    if (formData.firstName.trim() && formData.firstName.trim().length < 2) newErrors.firstName = 'At least 2 characters';
     if (!formData.lastName.trim()) newErrors.lastName = 'Required';
+    if (formData.lastName.trim() && formData.lastName.trim().length < 2) newErrors.lastName = 'At least 2 characters';
     if (!formData.phone.trim()) newErrors.phone = 'Required';
     if (!formData.email.trim()) newErrors.email = 'Required';
-    if (!formData.password || formData.password.length < 8) newErrors.password = 'Min 8 characters';
+    if (!isLoggedIn) {
+      if (!formData.password) {
+        newErrors.password = 'Required';
+      } else if (formData.password.length < 8) {
+        newErrors.password = 'Min 8 characters';
+      } else if (!/[A-Z]/.test(formData.password)) {
+        newErrors.password = 'Must contain at least one uppercase letter (A-Z)';
+      } else if (!/[0-9]/.test(formData.password)) {
+        newErrors.password = 'Must contain at least one number (0-9)';
+      }
+    }
     if (!formData.country) newErrors.country = 'Required';
     if (!formData.city.trim()) newErrors.city = 'Required';
+    if (formData.city.trim() && formData.city.trim().length < 2) newErrors.city = 'At least 2 characters';
     if (!formData.service) newErrors.service = 'Required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Check duplicate email/phone before proceeding
+  const checkAvailability = async (): Promise<boolean> => {
+    if (isLoggedIn) return true; // Skip check for logged-in users
+    
+    try {
+      const res = await fetch('/api/auth/check-availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email.trim().toLowerCase(), phone: formData.phone.trim() }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) return true; // If API fails, don't block the user
+      
+      const newErrors: Record<string, string> = {};
+      if (data.emailTaken) {
+        newErrors.email = 'This email is already registered. Please login or use a different email.';
+      }
+      if (data.phoneTaken) {
+        newErrors.phone = 'This phone number is already registered. Please use a different number.';
+      }
+      
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(prev => ({ ...prev, ...newErrors }));
+        return false;
+      }
+      return true;
+    } catch {
+      return true; // Don't block on network errors
+    }
   };
 
   const handleNext = async () => {
@@ -212,12 +398,23 @@ export default function Apply() {
 
     if (currentStep === 1) {
       if (!validateStep1()) return;
+      
+      // Check duplicate email/phone
+      setIsSubmitting(true);
+      const available = await checkAvailability();
+      setIsSubmitting(false);
+      if (!available) return;
+      
       setCurrentStep(2);
       return;
     }
 
     if (currentStep === 2) {
-      if (!files.passport || !files.cv || !files.diploma || !files.paymentReceipt) {
+      const hasPassport = files.passport || existingDocs.passport;
+      const hasCv = files.cv || existingDocs.cv;
+      const hasDiploma = files.diploma || existingDocs.diploma;
+      const hasReceipt = files.paymentReceipt || existingDocs.paymentReceipt;
+      if (!hasPassport || !hasCv || !hasDiploma || !hasReceipt) {
         setSubmitError('Please upload all required documents.');
         return;
       }
@@ -231,24 +428,49 @@ export default function Apply() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitError('');
+    setDraftSaved(false);
 
     try {
-      const meRes = await fetch('/api/auth/me');
-      let isLoggedIn = meRes.ok;
-
+      // Step A: Register or verify login
       if (!isLoggedIn) {
-        const regRes = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password }),
-        });
-        if (!regRes.ok) {
-          const regData = await regRes.json();
-          if (regRes.status === 409) throw new Error('An account with this email already exists. Please login first.');
-          throw new Error(regData.error || 'Registration failed');
+        const meRes = await fetch('/api/auth/me');
+        let loggedIn = meRes.ok;
+
+        if (!loggedIn) {
+          const regRes = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password }),
+          });
+          if (!regRes.ok) {
+            const regData = await regRes.json();
+            if (regRes.status === 409) {
+              const field = regData.field || 'email';
+              if (field === 'phone') {
+                throw new Error('This phone number is already registered. Please login or use a different number.');
+              }
+              throw new Error('An account with this email already exists. Please login first.');
+            }
+            // Show specific validation errors
+            if (regData.details) {
+              const fieldErrors = regData.details;
+              const messages: string[] = [];
+              for (const [field, errs] of Object.entries(fieldErrors)) {
+                if (Array.isArray(errs) && errs.length > 0) {
+                  messages.push(`${field}: ${errs[0]}`);
+                }
+              }
+              if (messages.length > 0) {
+                throw new Error(messages.join(' | '));
+              }
+            }
+            throw new Error(regData.error || 'Registration failed');
+          }
+          setIsLoggedIn(true);
         }
       }
 
+      // Step B: Create application
       let newAppId = applicationId;
 
       if (!newAppId) {
@@ -265,9 +487,12 @@ export default function Apply() {
         setReferenceCode(appData.application.referenceCode);
       }
 
+      // Step C: Upload documents (only new files — skip already-uploaded ones)
+      const typeMap: Record<string, string> = { PASSPORT: 'passport', CV: 'cv', DIPLOMA: 'diploma', PAYMENT_RECEIPT: 'paymentReceipt' };
       const fileEntries: [string, File | null][] = [['PASSPORT', files.passport], ['CV', files.cv], ['DIPLOMA', files.diploma], ['PAYMENT_RECEIPT', files.paymentReceipt]];
       for (const [type, file] of fileEntries) {
         if (file) {
+          // Upload new file (replaces existing if any)
           const fd = new FormData();
           fd.append('file', file);
           fd.append('applicationId', newAppId);
@@ -275,35 +500,54 @@ export default function Apply() {
 
           const uploadRes = await fetch('/api/documents/upload', { method: 'POST', body: fd });
           if (!uploadRes.ok) {
-            await fetch(`/api/applications/${newAppId}`, { method: 'DELETE' });
-            throw new Error(`Failed to upload ${type}. The application was canceled. Please try again.`);
+            // Don't delete the application! Save as draft instead
+            throw new Error(`Failed to upload ${type}. Your application has been saved as a draft. You can try again from your dashboard.`);
           }
           setUploadProgress(prev => ({ ...prev, [type]: true }));
         }
+        // If no new file but existing doc exists, skip (already uploaded)
       }
 
-      const checkoutRes = await fetch('/api/payments/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId: newAppId, promoCode: promoResult?.code || undefined }),
-      });
-      
-      const checkoutData = await checkoutRes.json();
-      if (!checkoutRes.ok) {
-        if (checkoutData.code === 'SESSION_EXPIRED') {
-          throw new Error(checkoutData.error || 'Payment session expired. Please try again.');
+      // Step D: Try payment — if it fails, save as draft (NEVER delete the application)
+      try {
+        const checkoutRes = await fetch('/api/payments/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ applicationId: newAppId, promoCode: promoResult?.code || undefined }),
+        });
+        
+        const checkoutData = await checkoutRes.json();
+        
+        // Handle free payment ($0 after promo code)
+        if (checkoutRes.ok && checkoutData.free) {
+          setReferenceCode(checkoutData.referenceCode || referenceCode);
+          setCurrentStep(4);
+          setIsSubmitting(false);
+          return;
         }
-        await fetch(`/api/applications/${newAppId}`, { method: 'DELETE' });
-        throw new Error(checkoutData.error || 'Failed to initialize payment');
-      }
+        
+        if (!checkoutRes.ok) {
+          // Payment failed — but DON'T delete the application!
+          // Save as draft and let user continue later
+          setDraftSaved(true);
+          setSubmitError(`Payment service is currently unavailable. Your application has been saved as a draft (Ref: ${referenceCode || 'see dashboard'}). You can complete the payment later from your dashboard.`);
+          setIsSubmitting(false);
+          return;
+        }
 
-      if (checkoutData.url) {
-        window.location.href = checkoutData.url;
-        return;
-      }
+        if (checkoutData.url) {
+          window.location.href = checkoutData.url;
+          return;
+        }
 
-      await fetch(`/api/applications/${newAppId}`, { method: 'DELETE' }).catch(() => {});
-      throw new Error('Payment service unavailable. Please try again later.');
+        // No URL returned — payment service issue, save as draft
+        setDraftSaved(true);
+        setSubmitError(`Payment service is temporarily unavailable. Your application has been saved as a draft. You can complete the payment later from your dashboard.`);
+      } catch (paymentErr) {
+        // Network error or other — save as draft
+        setDraftSaved(true);
+        setSubmitError(`Payment service is temporarily unavailable. Your application has been saved as a draft. You can complete the payment later from your dashboard.`);
+      }
     } catch (err: any) {
       setSubmitError(err.message);
     } finally {
@@ -315,59 +559,14 @@ export default function Apply() {
 
   const [fileError, setFileError] = useState('');
 
-  const handleFileChange = (type: keyof typeof files, file: File | null) => {
+  const handleFileChange = useCallback((type: string, file: File | null) => {
     setFileError('');
     if (file && file.size > 5 * 1024 * 1024) {
       setFileError(`${file.name}: File size must be less than 5MB`);
       return;
     }
     setFiles(prev => ({ ...prev, [type]: file }));
-  };
-
-  const FileUpload = ({ type, label, icon: Icon }: { type: keyof typeof files; label: string; icon: any }) => (
-    <div className="relative overflow-hidden border-2 border-dashed border-gray-200 rounded-xl p-5 text-center hover:border-[#2563EB]/50 hover:bg-[#2563EB]/5 transition-all duration-200 group">
-      <input type="file" id={type} onChange={(e) => handleFileChange(type, e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.jpg,.jpeg,.png" />
-      <div className="space-y-3 relative z-0 pointer-events-none">
-        {files[type] ? (
-          <>
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Check className="w-6 h-6 text-emerald-600" />
-            </motion.div>
-            <p className="text-emerald-600 font-semibold text-sm">{t('documents.uploaded')}</p>
-            <p className="text-xs text-gray-400 truncate max-w-[180px] mx-auto bg-gray-100 px-2 py-1 rounded">{files[type]!.name}</p>
-          </>
-        ) : (
-          <>
-            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform duration-200">
-              <Icon className="w-6 h-6 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
-            </div>
-            <p className="font-semibold text-sm text-[#1a1a2e]">{label}</p>
-            <p className="text-xs text-gray-500">Drag & drop or <span className="text-[#2563EB]">browse</span></p>
-            <p className="text-[10px] text-gray-400 mt-2">{t('documents.formats')}</p>
-          </>
-        )}
-      </div>
-    </div>
-  );
-
-  const InputField = ({ name, label, type = 'text', icon: Icon, hint }: { name: string; label: string; type?: string; icon: any; hint?: string }) => (
-    <div>
-      <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{label} <span className="text-red-500">*</span></label>
-      <div className="relative">
-        <Icon className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <input
-          type={type}
-          name={name}
-          required
-          value={formData[name as keyof typeof formData]}
-          onChange={(e) => { setFormData(prev => ({ ...prev, [name]: e.target.value })); setErrors(prev => ({ ...prev, [name]: '' })); }}
-          className={`input-field ps-12 ${errors[name] ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
-        />
-      </div>
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
-      {errors[name] && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors[name]}</p>}
-    </div>
-  );
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -379,6 +578,19 @@ export default function Apply() {
             <h1 className="text-3xl md:text-4xl font-bold text-[#1a1a2e] mb-2">{t('title')}</h1>
             <p className="text-gray-500">{t('subtitle')}</p>
           </motion.div>
+
+          {/* Logged-in indicator */}
+          {isLoggedIn && loggedInUser && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-emerald-800">
+                  Logged in as <strong>{loggedInUser.firstName} {loggedInUser.lastName}</strong> ({loggedInUser.email})
+                </p>
+                <p className="text-xs text-emerald-600 mt-0.5">Your information has been pre-filled. Just pick a service, upload documents, and pay.</p>
+              </div>
+            </motion.div>
+          )}
 
           {/* Step Indicator */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8 md:mb-10">
@@ -407,7 +619,17 @@ export default function Apply() {
             </div>
           </motion.div>
 
+          {/* Payment Processing Overlay */}
+          {isProcessingPayment && (
+            <div className="bg-white rounded-2xl shadow-sm p-10 border border-gray-100 text-center">
+              <Loader2 className="w-12 h-12 animate-spin text-[#2563EB] mx-auto mb-4" />
+              <h2 className="font-bold text-xl text-[#1a1a2e] mb-2">Processing Payment...</h2>
+              <p className="text-gray-500">Please wait while we confirm your payment.</p>
+            </div>
+          )}
+
           {/* Step Content */}
+          {!isProcessingPayment && (
           <motion.div 
             key={currentStep} 
             initial={{ opacity: 0, x: isRTL ? -20 : 20 }} 
@@ -420,12 +642,17 @@ export default function Apply() {
                 <h2 className="font-bold text-xl md:text-2xl text-[#1a1a2e] mb-6">{t('steps.personalInfo')}</h2>
                 <div className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
-                    <InputField name="firstName" label={t('form.firstName')} icon={User} />
-                    <InputField name="lastName" label={t('form.lastName')} icon={User} />
+                    <InputField name="firstName" label={t('form.firstName')} icon={User} value={formData.firstName} error={errors.firstName} onChange={handleInputChange} disabled={isLoggedIn} />
+                    <InputField name="lastName" label={t('form.lastName')} icon={User} value={formData.lastName} error={errors.lastName} onChange={handleInputChange} disabled={isLoggedIn} />
                   </div>
-                  <InputField name="phone" label={t('form.phone')} type="tel" icon={Phone} hint={t('form.phoneHint')} />
-                  <InputField name="email" label={t('form.email')} type="email" icon={Mail} />
-                  <InputField name="password" label={t('form.password')} type="password" icon={Lock} hint={t('form.passwordHint')} />
+                  <InputField name="phone" label={t('form.phone')} type="tel" icon={Phone} hint={t('form.phoneHint')} value={formData.phone} error={errors.phone} onChange={handleInputChange} disabled={isLoggedIn} />
+                  <InputField name="email" label={t('form.email')} type="email" icon={Mail} value={formData.email} error={errors.email} onChange={handleInputChange} disabled={isLoggedIn} />
+                  
+                  {/* Only show password field for new users */}
+                  {!isLoggedIn && (
+                    <InputField name="password" label={t('form.password')} type="password" icon={Lock} hint={t('form.passwordHint')} value={formData.password} error={errors.password} onChange={handleInputChange} />
+                  )}
+                  
                   <div className="grid md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('form.country')} <span className="text-red-500">*</span></label>
@@ -435,8 +662,9 @@ export default function Apply() {
                           name="country"
                           required
                           value={formData.country}
-                          onChange={(e) => { setFormData(prev => ({ ...prev, country: e.target.value })); setErrors(prev => ({ ...prev, country: '' })); }}
-                          className={`input-field ps-12 appearance-none ${errors.country ? 'border-red-400' : ''}`}
+                          disabled={isLoggedIn}
+                          onChange={(e) => handleInputChange('country', e.target.value)}
+                          className={`input-field ps-12 appearance-none ${isLoggedIn ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${errors.country ? 'border-red-400' : ''}`}
                         >
                           <option value="">{t('form.selectCountry')}</option>
                           {ALL_COUNTRIES.map((c) => (<option key={c} value={c}>{c}</option>))}
@@ -444,7 +672,7 @@ export default function Apply() {
                       </div>
                       {errors.country && <p className="text-xs text-red-500 mt-1">{errors.country}</p>}
                     </div>
-                    <InputField name="city" label={t('form.city')} icon={MapPin} />
+                    <InputField name="city" label={t('form.city')} icon={MapPin} value={formData.city} error={errors.city} onChange={handleInputChange} disabled={isLoggedIn} />
                   </div>
 
                   {/* Service selection */}
@@ -455,7 +683,7 @@ export default function Apply() {
                         <button
                           key={service.id}
                           type="button"
-                          onClick={() => { setFormData(prev => ({ ...prev, service: service.id })); setErrors(prev => ({ ...prev, service: '' })); }}
+                          onClick={() => handleInputChange('service', service.id)}
                           className={`p-4 rounded-xl border-2 text-start transition-all duration-200 ${
                             formData.service === service.id 
                               ? 'border-[#0f172a] bg-slate-50 shadow-sm' 
@@ -489,10 +717,10 @@ export default function Apply() {
                 <h2 className="font-bold text-xl md:text-2xl text-[#1a1a2e] mb-2">{t('documents.title')}</h2>
                 <p className="text-gray-500 text-sm mb-6">{t('documents.subtitle')}</p>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <FileUpload type="passport" label={t('documents.passport')} icon={FileText} />
-                  <FileUpload type="cv" label={t('documents.cv')} icon={FileText} />
-                  <FileUpload type="diploma" label={t('documents.diploma')} icon={FileText} />
-                  <FileUpload type="paymentReceipt" label={t('documents.paymentReceipt')} icon={FileText} />
+                  <FileUpload type="passport" label={t('documents.passport')} icon={FileText} file={files.passport} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.passport} />
+                  <FileUpload type="cv" label={t('documents.cv')} icon={FileText} file={files.cv} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.cv} />
+                  <FileUpload type="diploma" label={t('documents.diploma')} icon={FileText} file={files.diploma} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.diploma} />
+                  <FileUpload type="paymentReceipt" label={t('documents.paymentReceipt')} icon={FileText} file={files.paymentReceipt} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.paymentReceipt} />
                 </div>
                 {fileError && (
                   <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl text-sm mt-5 flex items-center gap-2">
@@ -506,7 +734,12 @@ export default function Apply() {
                 )}
                 <div className="mt-8 flex justify-between">
                   <button onClick={handleBack} className="btn-secondary"><ArrowLeft className="w-5 h-5 me-2 rtl:rotate-180" />{t('form.back')}</button>
-                  <button onClick={handleNext} disabled={isSubmitting || !files.passport || !files.cv || !files.diploma || !files.paymentReceipt} className="btn-primary disabled:opacity-50">
+                  <button onClick={handleNext} disabled={isSubmitting || !(
+                    (files.passport || existingDocs.passport) &&
+                    (files.cv || existingDocs.cv) &&
+                    (files.diploma || existingDocs.diploma) &&
+                    (files.paymentReceipt || existingDocs.paymentReceipt)
+                  )} className="btn-primary disabled:opacity-50">
                     {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('form.next')} <ArrowRight className="w-5 h-5 ms-2 rtl:rotate-180" /></>}
                   </button>
                 </div>
@@ -603,11 +836,83 @@ export default function Apply() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-8 flex justify-between">
+                
+                {submitError && (
+                  <div className={`px-4 py-3 rounded-xl text-sm mt-5 ${draftSaved ? 'bg-amber-50 border border-amber-200 text-amber-700' : 'bg-red-50 border border-red-200 text-red-700'}`}>
+                    {draftSaved && <p className="font-semibold mb-1">✓ Application Saved as Draft</p>}
+                    {submitError}
+                    {draftSaved && (
+                      <Link href="/dashboard" className="inline-block mt-3 text-sm font-medium text-[#2563EB] underline">
+                        Go to Dashboard →
+                      </Link>
+                    )}
+                  </div>
+                )}
+                
+                <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
                   <button onClick={handleBack} className="btn-secondary"><ArrowLeft className="w-5 h-5 me-2 rtl:rotate-180" />{t('form.back')}</button>
-                  <button onClick={handleSubmit} disabled={isSubmitting} className="btn-primary min-w-[160px]">
-                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('payment.payNow')} <ArrowRight className="w-5 h-5 ms-2 rtl:rotate-180" /></>}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={async () => {
+                        // Save as draft — register + create app + upload docs, but skip payment
+                        setIsSubmitting(true);
+                        setSubmitError('');
+                        try {
+                          if (!isLoggedIn) {
+                            const meRes = await fetch('/api/auth/me');
+                            if (!meRes.ok) {
+                              const regRes = await fetch('/api/auth/register', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password }),
+                              });
+                              if (!regRes.ok) {
+                                const regData = await regRes.json();
+                                throw new Error(regData.error || 'Registration failed');
+                              }
+                              setIsLoggedIn(true);
+                            }
+                          }
+                          let newAppId = applicationId;
+                          if (!newAppId) {
+                            const appRes = await fetch('/api/applications', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ serviceKey: formData.service }),
+                            });
+                            const appData = await appRes.json();
+                            if (!appRes.ok) throw new Error(appData.error || 'Failed to create application');
+                            newAppId = appData.application.id;
+                            setApplicationId(newAppId);
+                          }
+                          // Upload docs
+                          const fileEntries: [string, File | null][] = [['PASSPORT', files.passport], ['CV', files.cv], ['DIPLOMA', files.diploma], ['PAYMENT_RECEIPT', files.paymentReceipt]];
+                          for (const [type, file] of fileEntries) {
+                            if (file) {
+                              const fd = new FormData();
+                              fd.append('file', file);
+                              fd.append('applicationId', newAppId);
+                              fd.append('type', type);
+                              await fetch('/api/documents/upload', { method: 'POST', body: fd });
+                            }
+                          }
+                          setDraftSaved(true);
+                          setSubmitError('Your application has been saved as a draft. You can complete the payment later from your dashboard.');
+                        } catch (err: any) {
+                          setSubmitError(err.message);
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }} 
+                      disabled={isSubmitting}
+                      className="btn-secondary text-sm whitespace-nowrap"
+                    >
+                      Save as Draft
+                    </button>
+                    <button onClick={handleSubmit} disabled={isSubmitting} className="btn-primary min-w-[160px]">
+                      {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('payment.payNow')} <ArrowRight className="w-5 h-5 ms-2 rtl:rotate-180" /></>}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -629,6 +934,7 @@ export default function Apply() {
               </div>
             )}
           </motion.div>
+          )}
         </div>
       </div>
       <Footer />

@@ -26,8 +26,8 @@
   "about": {
     "label": "About Us",
     "title": "About Okinte",
-    "subtitle": "Professional International Placement Services",
-    "description": "Okinte provides professional placement and connection services for international mobility. We connect individuals with opportunities in education, internships, scholarships, employment, and sabbatical programs across the globe.",
+    "subtitle": "Placement Services affiliated with IBLT",
+    "description": "Okinte is a professional placement and connection service affiliated with IBLT (Authorization N° 11-2015N-MESR/DES). We professionally connect individuals with international opportunities in education, internships, scholarships, employment, and sabbatical programs, strictly following our guidelines and standards.",
     "features": {
       "secure": {
         "title": "Legal & Professional",
@@ -117,9 +117,9 @@
     "addressLabel": "Address",
     "addressText": "Contact us via email",
     "phoneLabel": "Phone / WhatsApp",
-    "phoneText": "Contact us via WhatsApp",
+    "phoneText": "+20 12 80109982",
     "emailLabel": "Email",
-    "emailText": "Contact us via email",
+    "emailText": "Okinte.placement@gmail.com",
     "social": "Connect With Us"
   },
   "faq": {

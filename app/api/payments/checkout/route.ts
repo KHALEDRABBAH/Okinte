@@ -87,6 +87,59 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Handle $0 payments (promo covers full amount) — skip Stripe entirely
+    if (finalPrice <= 0) {
+      // Create or update payment as SUCCEEDED
+      if (application.payment) {
+        await db.payment.update({
+          where: { id: application.payment.id },
+          data: {
+            amount: 0,
+            discount: discount > 0 ? discount : null,
+            promoCodeId,
+            status: 'SUCCEEDED',
+            paidAt: new Date(),
+          },
+        });
+      } else {
+        await db.payment.create({
+          data: {
+            userId: currentUser.userId,
+            applicationId: application.id,
+            amount: 0,
+            discount: discount > 0 ? discount : null,
+            promoCodeId,
+            currency: 'usd',
+            status: 'SUCCEEDED',
+            paidAt: new Date(),
+          },
+        });
+      }
+
+      // Update application status to SUBMITTED
+      await db.application.update({
+        where: { id: application.id },
+        data: { status: 'SUBMITTED', submittedAt: new Date() },
+      });
+
+      // Send receipt email (non-blocking)
+      try {
+        const user = await db.user.findUnique({ where: { id: currentUser.userId } });
+        if (user) {
+          const { sendApplicationReceiptEmail } = await import('@/lib/email');
+          await sendApplicationReceiptEmail(user.email, user.firstName, application.referenceCode, application.service.key);
+        }
+      } catch (emailErr) {
+        console.error('Failed to send receipt email:', emailErr);
+      }
+
+      return NextResponse.json({
+        free: true,
+        message: 'Application submitted successfully (no payment required)',
+        referenceCode: application.referenceCode,
+      });
+    }
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

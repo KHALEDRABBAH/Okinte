@@ -28,6 +28,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isMobileLangOpen, setIsMobileLangOpen] = useState(false);
   const { user, isAuthenticated, isAdmin, loading: authLoading, logout } = useAuth();
 
   useEffect(() => {
@@ -39,6 +40,8 @@ export default function Header() {
   const switchLanguage = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale as any });
     setIsLangMenuOpen(false);
+    setIsMobileLangOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   const navLinks = [
@@ -157,13 +160,55 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-            className="lg:hidden p-2.5 rounded-xl text-white"
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile Language + Menu */}
+          <div className="lg:hidden flex items-center gap-2">
+            {/* Mobile Language Selector */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsMobileLangOpen(!isMobileLangOpen)} 
+                className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-white/80 hover:bg-white/10 transition-colors"
+              >
+                <Globe className="w-4.5 h-4.5" />
+                <span className="text-xs font-medium uppercase">{locale}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMobileLangOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              <AnimatePresence>
+                {isMobileLangOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }} 
+                    animate={{ opacity: 1, y: 0, scale: 1 }} 
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute end-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[60]"
+                  >
+                    {locales.map((loc) => (
+                      <button 
+                        key={loc} 
+                        onClick={() => switchLanguage(loc)} 
+                        className={`w-full px-4 py-2.5 flex items-center justify-between text-start transition-colors duration-150 ${
+                          loc === locale 
+                            ? 'bg-[#2563EB]/10 text-[#2563EB] font-semibold' 
+                            : 'text-[#1a1a2e] hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className="text-sm">{languageNames[loc]}</span>
+                        {loc === locale && <div className="w-2 h-2 rounded-full bg-[#2563EB]" />}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+              className="p-2.5 rounded-xl text-white"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </nav>
 

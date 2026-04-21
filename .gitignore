@@ -29,3 +29,5 @@ prisma/migrations/migration_lock.toml
 
 # backup directories (development artifacts)
 _*_backup/
+
+.vercel

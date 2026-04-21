@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Mail, Phone, MapPin, Facebook, Instagram, Send, CheckCircle, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Send, CheckCircle, MessageCircle, ExternalLink } from 'lucide-react';
 
-const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61570781992726';
-const INSTAGRAM_URL = 'https://www.instagram.com/okintenous';
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
 
 export default function Contact() {
   const t = useTranslations('contact');
@@ -69,33 +68,61 @@ export default function Contact() {
             <div className="bg-[#0f172a] rounded-3xl p-8 md:p-12 h-full text-white">
               <h3 className="font-heading font-bold text-2xl mb-8">{t('title')}</h3>
               
-              <div className="space-y-6 mb-12">
-                <div className="flex items-start gap-4">
-                  <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-[#2563EB]" />
-                  </div>
-                  <div>
-                    <p className="font-semibold mb-1">{t('addressLabel')}</p>
-                    <p className="text-white/70 text-sm leading-relaxed">{t('addressText')}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
+              <div className="space-y-6 mb-8">
+                <a href="https://wa.me/201280109982" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group">
                   <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MessageCircle className="w-5 h-5 text-[#2563EB]" />
                   </div>
-<div>
+                  <div>
                     <p className="font-semibold mb-1">{t('phoneLabel')}</p>
-                    <p className="text-white/70 text-sm">{t('phoneText')}</p>
+                    <p className="text-white/70 text-sm group-hover:text-white transition-colors">+20 12 80109982</p>
                   </div>
-                </div>
-                <div className="flex items-start gap-4">
+                </a>
+                <a href="mailto:Okinte.placement@gmail.com" className="flex items-start gap-4 group">
                   <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Mail className="w-5 h-5 text-[#2563EB]" />
                   </div>
                   <div>
                     <p className="font-semibold mb-1">{t('emailLabel')}</p>
-                    <p className="text-white/70 text-sm">{t('emailText')}</p>
+                    <p className="text-white/70 text-sm group-hover:text-white transition-colors">Okinte.placement@gmail.com</p>
                   </div>
+                </a>
+              </div>
+
+              {/* Locations */}
+              <div className="mb-8">
+                <p className="font-semibold mb-4">{t('addressLabel')}</p>
+                <div className="space-y-3">
+                  <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                    <div className="w-9 h-9 bg-[#2563EB]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4.5 h-4.5 text-[#2563EB]" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-sm">Mongo, Chad</p>
+                        <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-[#2563EB]/20 text-[#3b82f6] rounded">Main</span>
+                      </div>
+                      <p className="text-white/50 text-xs mt-0.5 flex items-center gap-1">View on map <ExternalLink className="w-3 h-3" /></p>
+                    </div>
+                  </a>
+                  <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                    <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4.5 h-4.5 text-white/60" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">Togo</p>
+                      <p className="text-white/50 text-xs mt-0.5 flex items-center gap-1">View on map <ExternalLink className="w-3 h-3" /></p>
+                    </div>
+                  </a>
+                  <a href="https://www.google.com/maps/place/pyramids+land+hotel/data=!4m2!3m1!1s0x1458417e9f78f3ff:0x8b7966cc1ddc37a8?sa=X&ved=1t:242&ictx=111" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                    <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4.5 h-4.5 text-white/60" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">Giza, Egypt</p>
+                      <p className="text-white/50 text-xs mt-0.5 flex items-center gap-1">View on map <ExternalLink className="w-3 h-3" /></p>
+                    </div>
+                  </a>
                 </div>
               </div>
               
@@ -106,10 +133,7 @@ export default function Contact() {
                   <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                     <Facebook className="w-5 h-5" />
                   </a>
-                  <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  <a href="mailto:contact@okinte.com" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+                  <a href="mailto:Okinte.placement@gmail.com" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                     <Mail className="w-5 h-5" />
                   </a>
                 </div>

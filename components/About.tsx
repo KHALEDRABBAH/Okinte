@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Globe, ShieldCheck, Users } from 'lucide-react';
+import { Globe } from 'lucide-react';
 
 export default function About() {
   const t = useTranslations('about');
@@ -47,36 +47,6 @@ export default function About() {
                   </div>
                   <h4 className="font-heading font-semibold text-lg text-white mb-2">{t('features.secure.title')}</h4>
                   <p className="text-sm text-white/60 leading-relaxed">{t('features.secure.description')}</p>
-                </motion.div>
-                
-                {/* Value 2 */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 15 }} 
-                  whileInView={{ opacity: 1, y: 0 }} 
-                  viewport={{ once: true }} 
-                  transition={{ delay: 0.2 }}
-                  className="p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 bg-[#2563EB]/20 rounded-xl flex items-center justify-center mb-4">
-                    <ShieldCheck className="w-6 h-6 text-[#3b82f6]" />
-                  </div>
-                  <h4 className="font-heading font-semibold text-lg text-white mb-2">{t('features.quality.title')}</h4>
-                  <p className="text-sm text-white/60 leading-relaxed">{t('features.quality.description')}</p>
-                </motion.div>
-                
-                {/* Value 3 */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 15 }} 
-                  whileInView={{ opacity: 1, y: 0 }} 
-                  viewport={{ once: true }} 
-                  transition={{ delay: 0.3 }}
-                  className="p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 bg-[#2563EB]/20 rounded-xl flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6 text-[#3b82f6]" />
-                  </div>
-                  <h4 className="font-heading font-semibold text-lg text-white mb-2">{t('features.support.title')}</h4>
-                  <p className="text-sm text-white/60 leading-relaxed">{t('features.support.description')}</p>
                 </motion.div>
               </div>
             </div>

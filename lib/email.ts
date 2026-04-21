@@ -126,3 +126,37 @@ export async function sendPasswordResetEmail(to: string, name: string, token: st
     return { data: null, error };
   }
 }
+
+export async function sendChatNotificationEmail(to: string, name: string, messagePreview: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-platform.vercel.app';
+  const dashboardUrl = `${appUrl}/en/dashboard`;
+
+  try {
+    const data = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'New Message from Okinte Support',
+      html: `
+        <div style="font-family: sans-serif; color: #1a1a1a;">
+          <h2>You have a new message</h2>
+          <p>Hi ${name},</p>
+          <p>The Okinte Support team has sent you a message:</p>
+          <div style="background-color: #f3f4f6; padding: 16px; border-radius: 8px; border-left: 4px solid #2563EB; margin: 16px 0;">
+            <p style="margin: 0; color: #374151;">${messagePreview.length > 200 ? messagePreview.substring(0, 200) + '...' : messagePreview}</p>
+          </div>
+          <div style="text-align: center; margin: 24px 0;">
+            <a href="${dashboardUrl}" style="background-color: #2563EB; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">View in Dashboard</a>
+          </div>
+          <p style="color: #666; font-size: 14px;">You can reply to this message from your Okinte Dashboard.</p>
+          <br>
+          <p>Best regards,<br>The Okinte Team</p>
+        </div>
+      `,
+    });
+    return { data, error: null };
+  } catch (error) {
+    console.error('[Email] Chat notification failed:', (error as Error).message);
+    return { data: null, error };
+  }
+}
+

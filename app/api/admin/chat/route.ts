@@ -108,6 +108,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Send email notification to user (non-blocking)
+    try {
+      const { sendChatNotificationEmail } = await import('@/lib/email');
+      await sendChatNotificationEmail(user.email, user.firstName, content.trim());
+    } catch (emailErr) {
+      console.error('Failed to send chat notification email:', emailErr);
+    }
+
     return NextResponse.json({ message }, { status: 201 });
   } catch (error) {
     console.error('Admin chat POST error:', error);

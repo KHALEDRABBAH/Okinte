@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -17,6 +17,8 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -116,13 +118,20 @@ export default function ResetPassword() {
                     <div className="relative">
                       <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         required
                         value={password}
                         onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                        className={`input-field ps-12 ${error ? 'border-red-400 focus:border-red-400' : ''}`}
+                        className={`input-field ps-12 pe-12 ${error ? 'border-red-400 focus:border-red-400' : ''}`}
                         placeholder="••••••••"
                       />
+                      <button 
+                        type="button" 
+                        className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
                     </div>
                   </div>
 
@@ -131,13 +140,20 @@ export default function ResetPassword() {
                     <div className="relative">
                       <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         required
                         value={confirmPassword}
                         onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
-                        className={`input-field ps-12 ${error ? 'border-red-400 focus:border-red-400' : ''}`}
+                        className={`input-field ps-12 pe-12 ${error ? 'border-red-400 focus:border-red-400' : ''}`}
                         placeholder="••••••••"
                       />
+                      <button 
+                        type="button" 
+                        className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
                     </div>
                   </div>
 

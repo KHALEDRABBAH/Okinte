@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
+import { rateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -33,6 +34,15 @@ export async function POST(request: NextRequest) {
     const currentUser = await getUserFromRequest(request);
     if (!currentUser) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    // Rate limiting: 10 checkout attempts per 15 minutes per user
+    const rl = rateLimit(`checkout:${currentUser.userId}`, { maxRequests: 10, windowMs: 15 * 60 * 1000 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many checkout attempts. Please wait before trying again.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      );
     }
 
     const body = await request.json();
@@ -81,33 +91,23 @@ export async function POST(request: NextRequest) {
           }
           finalPrice = Math.max(0, finalPrice - discount);
           promoCodeId = promo.id;
-          
-          // Atomic increment with race-condition guard:
-          // Only increment if currentUses is still below maxUses.
-          // If two users race, the second one gets count=0 and we reject.
-          const updateResult = await db.promoCode.updateMany({
-            where: {
-              id: promo.id,
-              isActive: true,
-              ...(promo.maxUses ? { currentUses: { lt: promo.maxUses } } : {}),
-            },
-            data: { currentUses: { increment: 1 } },
-          });
-          
-          if (updateResult.count === 0) {
-            // Race condition: another user consumed the last use
-            return NextResponse.json(
-              { error: 'Promo code has reached its usage limit. Please try without a promo code.' },
-              { status: 400 }
-            );
-          }
+          // NOTE: Promo code usage is incremented in the webhook handler
+          // on successful payment, NOT here. This prevents wasted uses
+          // when checkout sessions are abandoned.
         }
       }
     }
 
-    // Handle $0 payments (promo covers full amount) — skip Stripe entirely
+    // Handle free orders (e.g., 100% promo code discount) without calling Stripe
+    // Stripe rejects unit_amount: 0 in payment mode
     if (finalPrice <= 0) {
-      // Create or update payment as SUCCEEDED
+      // Mark application as payment succeeded directly
+      await db.application.update({
+        where: { id: applicationId },
+        data: { status: 'SUBMITTED' },
+      });
+
+      // Create or update payment record as succeeded
       if (application.payment) {
         await db.payment.update({
           where: { id: application.payment.id },
@@ -134,29 +134,10 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Update application status to SUBMITTED
-      await db.application.update({
-        where: { id: application.id },
-        data: { status: 'SUBMITTED', submittedAt: new Date() },
-      });
-
-      // Send receipt email (non-blocking)
-      try {
-        const user = await db.user.findUnique({ where: { id: currentUser.userId } });
-        if (user) {
-          const { sendApplicationReceiptEmail } = await import('@/lib/email');
-          await sendApplicationReceiptEmail(user.email, user.firstName, application.referenceCode, application.service.key);
-        }
-      } catch (emailErr) {
-        console.error('Failed to send receipt email:', emailErr);
-      }
-
-      return NextResponse.json({
-        free: true,
-        message: 'Application submitted successfully (no payment required)',
-        referenceCode: application.referenceCode,
-      });
+      return NextResponse.json({ free: true });
     }
+
+    const unitAmount = Math.round(finalPrice * 100); // Stripe expects cents
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -169,7 +150,7 @@ export async function POST(request: NextRequest) {
               name: `Okinte Application: ${application.service.key.toUpperCase()}`,
               description: `Application Reference: ${application.referenceCode}${discount > 0 ? ` (Discount: $${discount})` : ''}`,
             },
-            unit_amount: Math.round(finalPrice * 100), // Stripe expects cents
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },

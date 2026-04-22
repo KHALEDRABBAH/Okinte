@@ -8,9 +8,26 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getUserFromRequest } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Authentication required to prevent promo code enumeration
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting: 10 promo validations per minute per user
+    const rl = rateLimit(`promo:${user.userId}`, { maxRequests: 10, windowMs: 60 * 1000 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many attempts. Please wait.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { code, originalPrice } = body;
 

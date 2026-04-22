@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       email: user.email,
       role: user.role,
+      tokenVersion: 0, // Default for new users
     });
 
     // Step 6: Set the token as an httpOnly cookie

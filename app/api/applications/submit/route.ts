@@ -21,6 +21,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest, hashPassword } from '@/lib/auth';
 import { uploadFile, deleteFile } from '@/lib/storage';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import Stripe from 'stripe';
 import bcrypt from 'bcryptjs';
 
@@ -48,6 +49,16 @@ export async function POST(request: NextRequest) {
   let applicationCreated = false;
 
   try {
+    // Rate limiting: 5 submissions per 30 minutes per IP
+    const ip = getClientIp(request);
+    const rl = rateLimit(`submit:${ip}`, { maxRequests: 5, windowMs: 30 * 60 * 1000 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many submission attempts. Please wait before trying again.' },
+        { status: 429 }
+      );
+    }
+
     // Parse multipart form data
     const formData = await request.formData();
     
@@ -179,7 +190,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create everything in a single transaction
-    const result = await db.$transaction(async (tx) => {
+    const result = await db.$transaction(async (tx: any) => {
       // Create application
       const application = await tx.application.create({
         data: {

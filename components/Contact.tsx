@@ -92,35 +92,35 @@ export default function Contact() {
               {/* Locations */}
               <div className="mb-8">
                 <p className="font-semibold mb-4">{t('addressLabel')}</p>
-                <div className="space-y-3">
-                  <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
-                    <div className="w-9 h-9 bg-[#2563EB]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4.5 h-4.5 text-[#2563EB]" />
+                <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
+                  <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2.5 px-3.5 group hover:bg-white/10 transition-colors border-b border-white/5">
+                    <div className="w-8 h-8 bg-[#2563EB]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-[#2563EB]" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-sm">Mongo, Chad</p>
+                        <p className="font-medium text-sm">Mongo, Chad</p>
                         <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-[#2563EB]/20 text-[#3b82f6] rounded">Main</span>
                       </div>
-                      <p className="text-white/50 text-xs mt-0.5 flex items-center gap-1">View on map <ExternalLink className="w-3 h-3" /></p>
+                      <ExternalLink className="w-3 h-3 text-white/30 group-hover:text-white/60 transition-colors opacity-0 group-hover:opacity-100" />
                     </div>
                   </a>
-                  <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
-                    <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4.5 h-4.5 text-white/60" />
+                  <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2.5 px-3.5 group hover:bg-white/10 transition-colors border-b border-white/5">
+                    <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-white/60" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm">Togo</p>
-                      <p className="text-white/50 text-xs mt-0.5 flex items-center gap-1">View on map <ExternalLink className="w-3 h-3" /></p>
+                    <div className="flex-1 flex items-center justify-between">
+                      <p className="font-medium text-sm">Togo</p>
+                      <ExternalLink className="w-3 h-3 text-white/30 group-hover:text-white/60 transition-colors opacity-0 group-hover:opacity-100" />
                     </div>
                   </a>
-                  <a href="https://www.google.com/maps/place/pyramids+land+hotel/data=!4m2!3m1!1s0x1458417e9f78f3ff:0x8b7966cc1ddc37a8?sa=X&ved=1t:242&ictx=111" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
-                    <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4.5 h-4.5 text-white/60" />
+                  <a href="https://www.google.com/maps/place/pyramids+land+hotel/data=!4m2!3m1!1s0x1458417e9f78f3ff:0x8b7966cc1ddc37a8?sa=X&ved=1t:242&ictx=111" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2.5 px-3.5 group hover:bg-white/10 transition-colors">
+                    <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-white/60" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm">Giza, Egypt</p>
-                      <p className="text-white/50 text-xs mt-0.5 flex items-center gap-1">View on map <ExternalLink className="w-3 h-3" /></p>
+                    <div className="flex-1 flex items-center justify-between">
+                      <p className="font-medium text-sm">Giza, Egypt</p>
+                      <ExternalLink className="w-3 h-3 text-white/30 group-hover:text-white/60 transition-colors opacity-0 group-hover:opacity-100" />
                     </div>
                   </a>
                 </div>

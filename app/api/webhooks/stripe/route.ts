@@ -106,8 +106,19 @@ export async function POST(req: NextRequest) {
               status: 'SUBMITTED',
               submittedAt: new Date(),
             },
-            include: { user: true, service: true },
+            include: { user: true, service: true, payment: true },
           });
+
+          // Increment promo code usage now that payment is confirmed
+          if (updatedApp.payment?.promoCodeId) {
+            await db.promoCode.updateMany({
+              where: {
+                id: updatedApp.payment.promoCodeId,
+                isActive: true,
+              },
+              data: { currentUses: { increment: 1 } },
+            }).catch((err: unknown) => console.error('Failed to increment promo code usage:', err));
+          }
 
           // Send receipt email (non-blocking - failure should not break webhook)
           const { sendApplicationReceiptEmail } = await import('@/lib/email');

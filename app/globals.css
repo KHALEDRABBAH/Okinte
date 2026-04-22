@@ -37,8 +37,9 @@
   .btn-primary {
     @apply inline-flex items-center justify-center px-6 py-3
            bg-[#2563EB] text-white font-medium rounded-xl border border-transparent
-           transition-all duration-200 ease-out shadow-sm
+           transition-all duration-300 ease-out shadow-sm
            hover:bg-[#1D4ED8] hover:shadow-md hover:-translate-y-0.5
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2
            active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
   }
   
@@ -46,8 +47,9 @@
   .btn-secondary {
     @apply inline-flex items-center justify-center px-6 py-3
            bg-white border border-gray-200 text-[#1a1a2e] font-medium rounded-xl shadow-sm
-           transition-all duration-200 ease-out
-           hover:bg-gray-50 hover:border-gray-300 hover:-translate-y-0.5
+           transition-all duration-300 ease-out
+           hover:bg-gray-50 hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2
            active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
   }
   
@@ -55,8 +57,9 @@
   .btn-outline {
     @apply inline-flex items-center justify-center px-6 py-3
            border border-white/20 text-white font-medium rounded-xl hover:bg-white/10
-           backdrop-blur-sm transition-all duration-200 ease-out
+           backdrop-blur-sm transition-all duration-300 ease-out
            hover:-translate-y-0.5
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]
            active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
   }
 
@@ -85,10 +88,11 @@
   .input-field {
     @apply w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm
            bg-white text-[#1a1a2e] text-base placeholder:text-gray-400
-           transition-all duration-150 ease-out
-           focus:border-[#1a1a2e] focus:ring-1 focus:ring-[#1a1a2e] focus:bg-gray-50/30
+           transition-all duration-200 ease-out
+           focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/10 focus:bg-white
            hover:border-gray-400
-           focus:outline-none disabled:bg-gray-50 disabled:text-gray-500;
+           focus:outline-none focus-visible:outline-none
+           disabled:bg-gray-50 disabled:text-gray-500 disabled:border-gray-200;
   }
   
   /* Glass Panel Variants */

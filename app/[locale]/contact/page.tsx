@@ -1,8 +1,17 @@
 import { useTranslations } from 'next-intl';
-import { unstable_setRequestLocale } from 'next-intl/server';
-import { Mail, MapPin, Phone, Facebook, ExternalLink } from 'lucide-react';
+import { unstable_setRequestLocale, getTranslations } from 'next-intl/server';
+import { Metadata } from 'next';
+import { Mail, MapPin, Phone, Facebook, ExternalLink, MessageCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: 'contact' });
+  return {
+    title: `${t('title')} — Okinte`,
+    description: 'Get in touch with Okinte. Visit our offices in Chad, Togo, or Egypt. Contact us via WhatsApp, email, or Facebook.',
+  };
+}
 
 const WHATSAPP_NUMBER = '+201280109982';
 const EMAIL = 'Okinte.placement@gmail.com';
@@ -33,25 +42,6 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
   unstable_setRequestLocale(locale);
   const t = useTranslations('contact');
 
-  const contactMethods = [
-    {
-      icon: Phone,
-      title: 'WhatsApp / Phone',
-      value: '+20 12 80109982',
-      href: `https://wa.me/${WHATSAPP_NUMBER}`,
-      color: 'text-green-500',
-      bg: 'bg-green-500/10'
-    },
-    {
-      icon: Mail,
-      title: 'Email',
-      value: EMAIL,
-      href: `mailto:${EMAIL}`,
-      color: 'text-[#2563EB]',
-      bg: 'bg-[#2563EB]/10'
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
       <Header />
@@ -68,29 +58,41 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
 
           <div className="max-w-5xl mx-auto">
             {/* Contact Methods */}
-            <div className="grid md:grid-cols-2 gap-6 mb-12">
-              {contactMethods.map((method, index) => (
-                <a 
-                  key={index} 
-                  href={method.href}
-                  target={method.href.startsWith('http') ? '_blank' : undefined}
-                  rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm hover:shadow-premium hover:-translate-y-1 transition-all duration-300 group"
-                >
-                  <div className={`w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 ${method.bg}`}>
-                    <method.icon className={`w-7 h-7 ${method.color}`} />
-                  </div>
-                  <h3 className="font-heading font-bold text-[#1a1a2e] mb-2">{method.title}</h3>
-                  <p className="text-sm font-medium text-gray-600 group-hover:text-[#2563EB] transition-colors">{method.value}</p>
-                </a>
-              ))}
+            <div className="grid md:grid-cols-2 gap-6 mb-16">
+              <a 
+                href={`https://wa.me/${WHATSAPP_NUMBER}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="bg-white rounded-2xl p-6 flex items-center gap-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group"
+              >
+                <div className="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110">
+                  <MessageCircle className="w-7 h-7 text-green-500" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">WhatsApp / Phone</h3>
+                  <p className="text-gray-500 mt-1 group-hover:text-green-600 transition-colors">+20 12 80109982</p>
+                </div>
+              </a>
+
+              <a 
+                href={`mailto:${EMAIL}`} 
+                className="bg-white rounded-2xl p-6 flex items-center gap-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group"
+              >
+                <div className="w-14 h-14 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110">
+                  <Mail className="w-7 h-7 text-[#2563EB]" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">Email</h3>
+                  <p className="text-gray-500 mt-1 group-hover:text-[#2563EB] transition-colors">{EMAIL}</p>
+                </div>
+              </a>
             </div>
 
             {/* Locations Section */}
-            <div className="mb-12">
-              <div className="flex items-center justify-center gap-4 mb-8 opacity-50">
+            <div className="mb-16">
+              <div className="flex items-center justify-center gap-4 mb-10 opacity-60">
                 <div className="h-px bg-gray-300 w-16" />
-                <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">Our Locations</span>
+                <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest">{t('addressLabel')}</span>
                 <div className="h-px bg-gray-300 w-16" />
               </div>
 
@@ -101,24 +103,24 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                     href={location.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`bg-white rounded-2xl p-6 text-center border shadow-sm hover:shadow-premium hover:-translate-y-1 transition-all duration-300 group ${
-                      location.isMain ? 'border-[#2563EB]/30 ring-1 ring-[#2563EB]/10' : 'border-gray-100'
+                    className={`bg-white rounded-2xl p-6 text-center border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group ${
+                      location.isMain ? 'border-[#2563EB]/30 ring-1 ring-[#2563EB]/5' : 'border-gray-100'
                     }`}
                   >
-                    <div className={`w-12 h-12 mx-auto rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${
+                    <div className={`w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${
                       location.isMain ? 'bg-[#2563EB]/10' : 'bg-red-500/10'
                     }`}>
                       <MapPin className={`w-6 h-6 ${location.isMain ? 'text-[#2563EB]' : 'text-red-500'}`} />
                     </div>
                     {location.isMain && (
-                      <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-[#2563EB]/10 text-[#2563EB] rounded-full mb-2">
+                      <span className="inline-block px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest bg-[#2563EB]/10 text-[#2563EB] rounded-full mb-3">
                         Main
                       </span>
                     )}
-                    <h3 className="font-heading font-bold text-[#1a1a2e] mb-1">{location.name}</h3>
-                    <p className="text-xs text-gray-500 mb-3">{location.description}</p>
-                    <span className="inline-flex items-center gap-1 text-xs text-[#2563EB] font-medium group-hover:underline">
-                      View on Map <ExternalLink className="w-3 h-3" />
+                    <h3 className="font-heading font-bold text-[#1a1a2e] text-lg mb-2">{location.name}</h3>
+                    <p className="text-sm text-gray-500 mb-4">{location.description}</p>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-[#2563EB] font-medium group-hover:underline">
+                      View on Map <ExternalLink className="w-3.5 h-3.5" />
                     </span>
                   </a>
                 ))}
@@ -126,27 +128,29 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center justify-center gap-4 mb-8 opacity-50">
-              <div className="h-px bg-gray-300 w-16" />
-              <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">{t('social')}</span>
-              <div className="h-px bg-gray-300 w-16" />
-            </div>
+            <div>
+              <div className="flex items-center justify-center gap-4 mb-10 opacity-60">
+                <div className="h-px bg-gray-300 w-16" />
+                <span className="text-sm font-semibold text-gray-500 uppercase tracking-widest">{t('social')}</span>
+                <div className="h-px bg-gray-300 w-16" />
+              </div>
 
-            <div className="max-w-sm mx-auto">
-              <a 
-                href={FACEBOOK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white rounded-2xl p-6 flex items-center gap-5 border border-gray-100 shadow-sm hover:shadow-premium hover:-translate-y-1 transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 bg-blue-600/10">
-                  <Facebook className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-heading font-bold text-[#1a1a2e]">Facebook</h3>
-                  <p className="text-sm text-gray-500 group-hover:text-[#2563EB] transition-colors">Follow us on Facebook</p>
-                </div>
-              </a>
+              <div className="max-w-sm mx-auto">
+                <a 
+                  href={FACEBOOK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white rounded-2xl p-6 flex items-center gap-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group"
+                >
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 bg-[#2563EB]/10">
+                    <Facebook className="w-7 h-7 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">Facebook</h3>
+                    <p className="text-sm text-gray-500 group-hover:text-[#2563EB] transition-colors">Follow us on Facebook</p>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </div>

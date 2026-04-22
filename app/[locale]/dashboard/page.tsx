@@ -11,8 +11,8 @@ import ChatPanel from '@/components/ChatPanel';
 import TestimonialForm from '@/components/TestimonialForm';
 import PhoneInput from '@/components/PhoneInput';
 import { 
-  FileText, Clock, CheckCircle, XCircle, Eye, 
-  Plus, LogOut, User, AlertCircle, Loader2, MessageSquare, Trash2, RotateCcw 
+  FileText, Clock, CheckCircle, XCircle, Eye, Upload,
+  Plus, LogOut, User, AlertCircle, Loader2, MessageSquare, Trash2, RotateCcw, MessageCircle, Check
 } from 'lucide-react';
 
 interface Application {
@@ -21,6 +21,7 @@ interface Application {
   status: string;
   createdAt: string;
   notes?: string;
+  userResponse?: string;
   service: { key: string };
   documents: { id: string; type: string; fileName: string }[];
   payment: { status: string; amount: number } | null;
@@ -53,6 +54,50 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'profile' | 'applications' | 'support'>('applications');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // State for inline response to RETURNED applications
+  const [respondingAppId, setRespondingAppId] = useState<string | null>(null);
+  const [responseComment, setResponseComment] = useState('');
+  const [responseFiles, setResponseFiles] = useState<Record<string, File | null>>({});
+  const [isResponding, setIsResponding] = useState(false);
+  const [responseSuccess, setResponseSuccess] = useState<string | null>(null);
+
+  const handleRespondToReturn = async (appId: string) => {
+    setIsResponding(true);
+    setResponseSuccess(null);
+    try {
+      const formData = new FormData();
+      formData.append('comment', responseComment);
+      
+      // Append any uploaded files
+      for (const [type, file] of Object.entries(responseFiles)) {
+        if (file) formData.append(type, file);
+      }
+
+      const res = await fetch(`/api/applications/${appId}/respond`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Failed to submit response');
+
+      // Update application in local state
+      setApplications(prev => prev.map(app => 
+        app.id === appId ? { ...app, status: 'SUBMITTED', userResponse: responseComment } : app
+      ));
+      
+      setResponseSuccess('Your response has been submitted successfully!');
+      setRespondingAppId(null);
+      setResponseComment('');
+      setResponseFiles({});
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to submit';
+      alert(message);
+    } finally {
+      setIsResponding(false);
+    }
+  };
 
   const handleDeleteDraft = async (id: string) => {
     if (!confirm('Are you sure you want to delete this draft application?')) return;
@@ -383,14 +428,23 @@ export default function Dashboard() {
                 </h2>
               </div>
 
+            {/* Success notification */}
+            {responseSuccess && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-5 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                <p className="text-sm font-medium text-emerald-800 flex-1">{responseSuccess}</p>
+                <button onClick={() => setResponseSuccess(null)} className="text-emerald-500 hover:text-emerald-700 text-sm font-medium">Dismiss</button>
+              </motion.div>
+            )}
+
             {applications.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center border border-gray-100">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gray-100 flex items-center justify-center">
-                  <FileText className="w-10 h-10 text-gray-300" />
+              <div className="bg-white rounded-3xl p-10 md:p-14 text-center border border-gray-100 shadow-sm">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-[#2563EB]/5 flex items-center justify-center transition-transform hover:scale-105 hover:-rotate-3 duration-300 group">
+                  <FileText className="w-10 h-10 text-[#2563EB] group-hover:text-[#1D4ED8] transition-colors" />
                 </div>
-                <h3 className="font-bold text-lg text-[#1a1a2e] mb-2">{td('noApplications')}</h3>
-                <p className="text-gray-500 mb-6 max-w-md mx-auto">{td('noApplicationsText')}</p>
-                <Link href="/apply" className="btn-primary">
+                <h3 className="font-heading font-bold text-xl text-[#1a1a2e] mb-2">{td('noApplications')}</h3>
+                <p className="text-gray-500 mb-8 max-w-md mx-auto leading-relaxed">{td('noApplicationsText')}</p>
+                <Link href="/apply" className="btn-primary px-8 py-3.5">
                   <Plus className="w-4 h-4 me-2" /> {td('applyNow')}
                 </Link>
               </div>
@@ -402,7 +456,7 @@ export default function Dashboard() {
                   return (
                     <motion.div 
                       key={app.id} 
-                      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 group hover:shadow-md transition-all"
+                      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm group hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05, duration: 0.3 }}
@@ -448,13 +502,31 @@ export default function Dashboard() {
                         </div>
                       </div>
                       
+                      {/* Admin Feedback — show for all statuses when notes exist */}
+                      {app.notes && app.status !== 'REJECTED' && app.status !== 'RETURNED' && (
+                        <div className="mt-4 pt-4 border-t border-blue-100 bg-blue-50/30 -mx-5 md:-mx-6 px-5 md:px-6 pb-4">
+                          <div className="flex items-start gap-2">
+                            <MessageCircle className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                            <div>
+                              <h4 className="text-sm font-semibold text-blue-800 mb-1">Admin Feedback</h4>
+                              <p className="text-sm text-blue-700">{app.notes}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Rejection Details & Actions */}
                       {app.status === 'REJECTED' && (
                         <div className="mt-4 pt-4 border-t border-red-100 bg-red-50/50 -mx-5 md:-mx-6 -mb-5 md:-mb-6 p-5 md:p-6 rounded-b-2xl">
                           {app.notes && (
                             <div className="mb-4">
-                              <h4 className="text-sm font-semibold text-red-800 mb-1">{td('rejectionReason')}</h4>
-                              <p className="text-sm text-red-700">{app.notes}</p>
+                              <div className="flex items-start gap-2">
+                                <MessageCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
+                                <div>
+                                  <h4 className="text-sm font-semibold text-red-800 mb-1">{td('rejectionReason')}</h4>
+                                  <p className="text-sm text-red-700">{app.notes}</p>
+                                </div>
+                              </div>
                             </div>
                           )}
                           <Link href={`/apply?service=${app.service.key}` as any} className="btn-primary text-sm py-2 px-4 shadow-sm">
@@ -463,32 +535,120 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      {/* Returned — needs completion */}
+                      {/* Returned — inline response panel */}
                       {app.status === 'RETURNED' && (
                         <div className="mt-4 pt-4 border-t border-orange-200 bg-orange-50/50 -mx-5 md:-mx-6 -mb-5 md:-mb-6 p-5 md:p-6 rounded-b-2xl">
                           {app.notes && (
                             <div className="mb-4">
-                              <h4 className="text-sm font-semibold text-orange-800 mb-1 flex items-center gap-2">
-                                <AlertCircle className="w-4 h-4" /> Action Required
-                              </h4>
-                              <p className="text-sm text-orange-700">{app.notes}</p>
+                              <div className="flex items-start gap-2">
+                                <AlertCircle className="w-4 h-4 text-orange-600 mt-0.5 shrink-0" />
+                                <div>
+                                  <h4 className="text-sm font-semibold text-orange-800 mb-1">Action Required</h4>
+                                  <p className="text-sm text-orange-700">{app.notes}</p>
+                                </div>
+                              </div>
                             </div>
                           )}
-                          <Link href={`/apply?draftId=${app.id}` as any} className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm py-2 px-4 rounded-lg shadow-sm transition-colors font-medium">
-                            <RotateCcw className="w-4 h-4" /> Complete Application
-                          </Link>
+                          
+                          {respondingAppId !== app.id ? (
+                            <button 
+                              onClick={() => { setRespondingAppId(app.id); setResponseComment(''); setResponseFiles({}); setResponseSuccess(null); }}
+                              className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm py-2 px-4 rounded-lg shadow-sm transition-colors font-medium"
+                            >
+                              <RotateCcw className="w-4 h-4" /> Respond & Resubmit
+                            </button>
+                          ) : (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 mt-2">
+                              {/* Response comment */}
+                              <div>
+                                <label className="block text-sm font-medium text-orange-800 mb-2">Your Response</label>
+                                <textarea
+                                  rows={3}
+                                  value={responseComment}
+                                  onChange={(e) => setResponseComment(e.target.value)}
+                                  placeholder="Describe the corrections you've made or provide additional details..."
+                                  className="w-full px-4 py-3 rounded-xl border border-orange-200 bg-white text-[#1a1a2e] text-sm placeholder:text-gray-400 focus:border-orange-400 focus:ring-1 focus:ring-orange-300 focus:outline-none resize-none"
+                                />
+                              </div>
+
+                              {/* Document upload slots */}
+                              <div>
+                                <label className="block text-sm font-medium text-orange-800 mb-2">Upload Replacement Documents (optional)</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                  {[
+                                    { type: 'PASSPORT', label: 'Passport' },
+                                    { type: 'CV', label: 'CV' },
+                                    { type: 'DIPLOMA', label: 'Diploma' },
+                                    { type: 'PAYMENT_RECEIPT', label: 'Payment Receipt' },
+                                  ].map(doc => {
+                                    const existingDoc = app.documents.find(d => d.type === doc.type);
+                                    const newFile = responseFiles[doc.type];
+                                    return (
+                                      <label key={doc.type} className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-dashed cursor-pointer transition-all text-center ${
+                                        newFile ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200 hover:border-orange-300 bg-white/70'
+                                      }`}>
+                                        <input
+                                          type="file"
+                                          className="hidden"
+                                          accept=".pdf,.jpg,.jpeg,.png"
+                                          onChange={(e) => {
+                                            const f = e.target.files?.[0] || null;
+                                            if (f && f.size > 5 * 1024 * 1024) { alert('File must be less than 5MB'); return; }
+                                            setResponseFiles(prev => ({ ...prev, [doc.type]: f }));
+                                          }}
+                                        />
+                                        {newFile ? (
+                                          <>
+                                            <Check className="w-5 h-5 text-emerald-600" />
+                                            <span className="text-xs text-emerald-700 font-medium truncate max-w-full">{newFile.name}</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Upload className="w-5 h-5 text-gray-400" />
+                                            <span className="text-xs font-medium text-gray-600">{doc.label}</span>
+                                            {existingDoc && <span className="text-[10px] text-gray-400">✓ Already uploaded</span>}
+                                          </>
+                                        )}
+                                      </label>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              {/* Action buttons */}
+                              <div className="flex items-center gap-3 pt-1">
+                                <button
+                                  onClick={() => handleRespondToReturn(app.id)}
+                                  disabled={isResponding || !responseComment.trim()}
+                                  className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm py-2.5 px-5 rounded-lg shadow-sm transition-colors font-medium disabled:opacity-50"
+                                >
+                                  {isResponding ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                                  {isResponding ? 'Submitting...' : 'Submit Response'}
+                                </button>
+                                <button
+                                  onClick={() => { setRespondingAppId(null); setResponseComment(''); setResponseFiles({}); }}
+                                  disabled={isResponding}
+                                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-2.5"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
                         </div>
                       )}
                       
-                      {/* Draft Action */}
-                      {app.status === 'DRAFT' && (
-                        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
+                      {/* Continue Application — always show unless APPROVED, REJECTED, or RETURNED */}
+                      {app.status !== 'APPROVED' && app.status !== 'REJECTED' && app.status !== 'RETURNED' && (
+                        <div className={`mt-4 pt-4 border-t border-gray-100 flex items-center justify-end gap-3 ${(app.notes && app.status !== 'RETURNED') ? '-mx-5 md:-mx-6 -mb-5 md:-mb-6 px-5 md:px-6 pb-5 md:pb-6' : ''}`}>
                           <Link href={`/apply?draftId=${app.id}` as any} className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB]/5 hover:bg-[#2563EB]/10 rounded-lg">
                             <Plus className="w-4 h-4" /> Continue Application
                           </Link>
-                          <button onClick={() => handleDeleteDraft(app.id)} className="text-sm text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5">
-                            <Trash2 className="w-4 h-4" /> Delete Draft
-                          </button>
+                          {app.status === 'DRAFT' && (
+                            <button onClick={() => handleDeleteDraft(app.id)} className="text-sm text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5">
+                              <Trash2 className="w-4 h-4" /> Delete Draft
+                            </button>
+                          )}
                         </div>
                       )}
                     </motion.div>

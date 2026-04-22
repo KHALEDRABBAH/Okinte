@@ -236,7 +236,8 @@
     "passwordResetSuccess": "Password reimpostata",
     "passwordResetSuccessDescription": "Sarai reindirizzato al login.",
     "goToLogin": "Vai al login",
-    "resetPasswordBtn": "Reimposta"
+    "resetPasswordBtn": "Reimposta",
+    "backToHome": "Torna alla Home"
   },
   "testimonials": {
     "label": "Testimonianze",

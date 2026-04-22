@@ -236,7 +236,8 @@
     "passwordResetSuccess": "パスワードリセット完了",
     "passwordResetSuccessDescription": "ログインページにリダイレクトされます。",
     "goToLogin": "ログインへ",
-    "resetPasswordBtn": "リセット"
+    "resetPasswordBtn": "リセット",
+    "backToHome": "ホームに戻る"
   },
   "testimonials": {
     "label": "お客様の声",

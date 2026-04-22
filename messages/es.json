@@ -236,7 +236,8 @@
     "passwordResetSuccess": "Contraseña restablecida",
     "passwordResetSuccessDescription": "Será redirigido al inicio de sesión.",
     "goToLogin": "Ir al login",
-    "resetPasswordBtn": "Restablecer"
+    "resetPasswordBtn": "Restablecer",
+    "backToHome": "Volver al Inicio"
   },
   "testimonials": {
     "label": "Testimonios",

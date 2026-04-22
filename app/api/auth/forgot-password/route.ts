@@ -56,9 +56,14 @@ export async function POST(request: NextRequest) {
         data: { resetToken, resetTokenExpiry },
       });
 
+      // Detect locale from request (referer path or accept-language)
+      const referer = request.headers.get('referer') || '';
+      const localeMatch = referer.match(/\/(fr|en|ar|tr|ja|es|it)\//);
+      const locale = localeMatch ? localeMatch[1] : 'en';
+
       // Send password reset email (non-blocking)
       const { sendPasswordResetEmail } = await import('@/lib/email');
-      await sendPasswordResetEmail(normalizedEmail, user.firstName, resetToken)
+      await sendPasswordResetEmail(normalizedEmail, user.firstName, resetToken, locale)
         .catch(err => console.error('Failed to send password reset email:', err));
     }
 

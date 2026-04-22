@@ -18,7 +18,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { getUserFromRequest } from '@/lib/auth';
 import { messageSchema } from '@/lib/validations';
 import { rateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 2: Check if logged in (optional — message works without auth)
-    const currentUser = await getCurrentUser();
+    const currentUser = await getUserFromRequest(request);
 
     // Step 3: Save message to database
     const message = await db.message.create({

@@ -236,7 +236,8 @@
     "passwordResetSuccess": "Şifre Sıfırlandı",
     "passwordResetSuccessDescription": "Giriş sayfasına yönlendirileceksiniz.",
     "goToLogin": "Girişe Git",
-    "resetPasswordBtn": "Sıfırla"
+    "resetPasswordBtn": "Sıfırla",
+    "backToHome": "Ana Sayfaya Dön"
   },
   "testimonials": {
     "label": "Referanslar",

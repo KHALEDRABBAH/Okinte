@@ -238,7 +238,8 @@
     "passwordResetSuccess": "Password Reset Successfully",
     "passwordResetSuccessDescription": "Your password has been changed. You will be redirected to the login page.",
     "goToLogin": "Go to Login",
-    "resetPasswordBtn": "Reset Password"
+    "resetPasswordBtn": "Reset Password",
+    "backToHome": "Back to Home"
   },
   "dashboard": {
     "title": "Dashboard",

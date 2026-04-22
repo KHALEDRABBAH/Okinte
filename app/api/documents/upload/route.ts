@@ -26,6 +26,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
 import { uploadFile, deleteFile } from '@/lib/storage';
+import { rateLimit } from '@/lib/rate-limit';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
@@ -37,6 +38,15 @@ export async function POST(request: NextRequest) {
     const currentUser = await getUserFromRequest(request);
     if (!currentUser) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    // Rate limiting: 30 uploads per 15 minutes per user
+    const rl = rateLimit(`upload:${currentUser.userId}`, { maxRequests: 30, windowMs: 15 * 60 * 1000 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many upload attempts. Please wait before trying again.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      );
     }
 
     // Step 2: Parse FormData

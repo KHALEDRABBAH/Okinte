@@ -236,7 +236,8 @@
     "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
     "passwordResetSuccessDescription": "Votre mot de passe a été modifié. Vous serez redirigé vers la page de connexion.",
     "goToLogin": "Aller à la connexion",
-    "resetPasswordBtn": "Réinitialiser le mot de passe"
+    "resetPasswordBtn": "Réinitialiser le mot de passe",
+    "backToHome": "Retour à l'accueil"
   },
   "dashboard": {
     "title": "Tableau de bord",

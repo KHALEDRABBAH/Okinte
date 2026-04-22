@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
+import { rateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,8 +20,12 @@ export async function GET(request: NextRequest) {
 
     const messages = await db.chatMessage.findMany({
       where: { userId: currentUser.userId },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
     });
+
+    // Reverse to get chronological order for display
+    messages.reverse();
 
     // Mark admin messages as read
     await db.chatMessage.updateMany({
@@ -42,11 +47,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
+    // Rate limiting: 20 messages per minute per user
+    const rl = rateLimit(`chat:${currentUser.userId}`, RATE_LIMITS.chat);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many messages. Please wait before sending another.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+
     const body = await request.json();
     const { content } = body;
 
     if (!content || !content.trim()) {
       return NextResponse.json({ error: 'Message content is required' }, { status: 400 });
+    }
+
+    if (content.trim().length > 2000) {
+      return NextResponse.json(
+        { error: 'Message too long. Maximum 2000 characters.' },
+        { status: 400 }
+      );
     }
 
     const message = await db.chatMessage.create({

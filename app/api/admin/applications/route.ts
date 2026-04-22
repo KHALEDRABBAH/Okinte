@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest, verifyAdminRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,13 +24,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
+    // Re-validate admin role against DB (prevents revoked admins from accessing)
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const search = searchParams.get('search')?.trim();
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const skip = (page - 1) * limit;
+    const safeLimit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
+    const skip = (page - 1) * safeLimit;
 
     // Build filter
     const where: any = {};
@@ -83,7 +89,7 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: safeLimit,
       }),
       db.application.count({ where }),
     ]);
@@ -92,9 +98,9 @@ export async function GET(request: NextRequest) {
       applications,
       pagination: {
         page,
-        limit,
+        limit: safeLimit,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / safeLimit),
       },
     });
 
@@ -109,6 +115,12 @@ export async function PATCH(request: NextRequest) {
     const currentUser = await getUserFromRequest(request);
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
+
+    // Re-validate admin role against DB (prevents revoked admins from accessing)
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -163,6 +175,7 @@ export async function PATCH(request: NextRequest) {
     const allowedTransitions: Record<string, string[]> = {
       SUBMITTED: ['UNDER_REVIEW', 'RETURNED'],
       UNDER_REVIEW: ['APPROVED', 'REJECTED', 'RETURNED'],
+      RETURNED: ['SUBMITTED', 'UNDER_REVIEW'],
     };
 
     const allowed = allowedTransitions[application.status];

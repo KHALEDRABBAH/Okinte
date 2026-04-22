@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest, verifyAdminRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,12 +17,14 @@ export async function GET(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const safeLimit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
     const role = searchParams.get('role');
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * safeLimit;
 
     const where: any = {};
     if (role) where.role = role;
@@ -47,14 +49,14 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: safeLimit,
       }),
       db.user.count({ where }),
     ]);
 
     return NextResponse.json({
       users,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      pagination: { page, limit: safeLimit, total, totalPages: Math.ceil(total / safeLimit) },
     });
 
   } catch (error) {

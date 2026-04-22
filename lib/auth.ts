@@ -70,6 +70,7 @@ interface TokenPayload {
   userId: string;
   email: string;
   role: 'USER' | 'ADMIN';
+  tokenVersion?: number;
 }
 
 /**
@@ -148,7 +149,22 @@ export async function getUserFromRequest(
 
   if (!token) return null;
 
-  return verifyToken(token);
+  const payload = await verifyToken(token);
+  if (!payload) return null;
+
+  // If tokenVersion is in the JWT, verify it matches the DB
+  if (payload.tokenVersion !== undefined) {
+    const { db } = await import('@/lib/db');
+    const user = await db.user.findUnique({
+      where: { id: payload.userId },
+      select: { tokenVersion: true },
+    });
+    if (!user || user.tokenVersion !== payload.tokenVersion) {
+      return null; // Token was invalidated (e.g., password changed)
+    }
+  }
+
+  return payload;
 }
 
 /**
@@ -172,3 +188,19 @@ export async function requireAdmin(): Promise<TokenPayload> {
   }
   return user;
 }
+
+/**
+ * Verify admin role against database (not just JWT).
+ * Use this in admin API routes to prevent revoked admins from retaining access.
+ * Returns null if the user is not an admin in the database.
+ */
+export async function verifyAdminRole(userId: string): Promise<boolean> {
+  // Dynamic import to avoid circular dependencies
+  const { db } = await import('@/lib/db');
+  const freshUser = await db.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  return freshUser?.role === 'ADMIN';
+}
+

@@ -112,6 +112,14 @@ export async function DELETE(
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
+    // Only draft applications can be deleted (protect paid/submitted applications)
+    if (application.status !== 'DRAFT') {
+      return NextResponse.json(
+        { error: 'Only draft applications can be deleted.' },
+        { status: 422 }
+      );
+    }
+
     // 1. Delete all associated documents from Supabase storage first
     for (const doc of application.documents) {
       if (doc.storagePath) {

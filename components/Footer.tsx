@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Facebook, Mail } from 'lucide-react';
+import { Facebook, Mail, Phone, MapPin } from 'lucide-react';
 
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
 
@@ -70,7 +70,7 @@ export default function Footer() {
               <li>
                 <a href="https://wa.me/201280109982" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
                   <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">📱</span>
+                    <Phone className="w-4 h-4 text-green-400" />
                   </div>
                   <span className="text-white/70 text-sm group-hover:text-white transition-colors">+20 12 80109982</span>
                 </a>
@@ -78,17 +78,29 @@ export default function Footer() {
               <li>
                 <a href="mailto:Okinte.placement@gmail.com" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
                   <div className="w-8 h-8 bg-[#2563EB]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">✉️</span>
+                    <Mail className="w-4 h-4 text-[#3b82f6]" />
                   </div>
-                  <span className="text-white/70 text-xs group-hover:text-white transition-colors truncate">Okinte.placement@gmail.com</span>
+                  <span className="text-white/70 text-xs sm:text-sm group-hover:text-white transition-colors truncate">Okinte.placement@gmail.com</span>
                 </a>
               </li>
-              <li>
-                <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
+              <li className="bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
+                <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-white/10 transition-all duration-200 group border-b border-white/5">
                   <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">📍</span>
+                    <MapPin className="w-4 h-4 text-red-400" />
                   </div>
                   <span className="text-white/70 text-sm group-hover:text-white transition-colors">Mongo, Chad</span>
+                </a>
+                <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-white/10 transition-all duration-200 group border-b border-white/5">
+                  <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-4 h-4 text-red-400" />
+                  </div>
+                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">Togo</span>
+                </a>
+                <a href="https://www.google.com/maps/place/pyramids+land+hotel/data=!4m2!3m1!1s0x1458417e9f78f3ff:0x8b7966cc1ddc37a8?sa=X&ved=1t:242&ictx=111" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-white/10 transition-all duration-200 group">
+                  <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-4 h-4 text-red-400" />
+                  </div>
+                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">Giza, Egypt</span>
                 </a>
               </li>
             </ul>

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Globe } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, Globe, Home } from 'lucide-react';
 import { rtlLocales } from '@/i18n/routing';
 
 export default function Login() {
@@ -59,6 +59,17 @@ export default function Login() {
   return (
     <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center py-12 md:py-16">
       <div className="container mx-auto px-6 lg:px-8">
+        {/* Back to Home */}
+        <div className="max-w-6xl mx-auto mb-6">
+          <Link 
+            href="/" 
+            className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-[#2563EB] transition-colors group"
+          >
+            <ArrowLeft className={`w-4 h-4 transition-transform group-hover:-translate-x-1 ${isRTL ? 'rotate-180 group-hover:translate-x-1' : ''}`} />
+            <Home className="w-4 h-4" />
+            {t('backToHome')}
+          </Link>
+        </div>
         <div className="grid lg:grid-cols-2 gap-12 xl:gap-16 items-center max-w-6xl mx-auto">
           
           {/* Left - Branding Panel */}

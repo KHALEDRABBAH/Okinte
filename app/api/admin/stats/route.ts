@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest, verifyAdminRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,6 +21,12 @@ export async function GET(request: NextRequest) {
     const currentUser = await getUserFromRequest(request);
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
+
+    // Re-validate admin role against DB (prevents revoked admins from accessing)
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Run all queries in parallel for speed
@@ -96,34 +102,41 @@ export async function GET(request: NextRequest) {
 }
 
 async function getMonthlyData() {
-  const months = [];
   const now = new Date();
 
-  for (let i = 5; i >= 0; i--) {
+  // Build all 6 month ranges
+  const monthRanges = Array.from({ length: 6 }, (_, idx) => {
+    const i = 5 - idx;
     const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
     const label = start.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    return { start, end, label };
+  });
 
-    const [apps, revenue, users] = await Promise.all([
-      db.application.count({
-        where: { createdAt: { gte: start, lte: end } },
-      }),
-      db.payment.aggregate({
-        where: { status: 'SUCCEEDED', paidAt: { gte: start, lte: end } },
-        _sum: { amount: true },
-      }),
-      db.user.count({
-        where: { role: 'USER', createdAt: { gte: start, lte: end } },
-      }),
-    ]);
+  // Run all 6 months in parallel (3 queries each = 18 queries, but all concurrent)
+  const results = await Promise.all(
+    monthRanges.map(async ({ start, end, label }) => {
+      const [apps, revenue, users] = await Promise.all([
+        db.application.count({
+          where: { createdAt: { gte: start, lte: end } },
+        }),
+        db.payment.aggregate({
+          where: { status: 'SUCCEEDED', paidAt: { gte: start, lte: end } },
+          _sum: { amount: true },
+        }),
+        db.user.count({
+          where: { role: 'USER', createdAt: { gte: start, lte: end } },
+        }),
+      ]);
 
-    months.push({
-      label,
-      applications: apps,
-      revenue: Number(revenue._sum.amount || 0),
-      users,
-    });
-  }
+      return {
+        label,
+        applications: apps,
+        revenue: Number(revenue._sum.amount || 0),
+        users,
+      };
+    })
+  );
 
-  return months;
+  return results;
 }

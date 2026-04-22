@@ -568,9 +568,9 @@ export default function AdminDashboard() {
                         const config = statusConfig(app.status);
                         const isExpanded = expandedApp === app.id;
                         return (
-                          <div key={app.id} className="bg-gray-50 rounded-xl overflow-hidden hover:bg-gray-100 transition-colors">
+                          <div key={app.id} className="bg-white border border-gray-100 shadow-sm rounded-xl overflow-hidden hover:shadow-md hover:-translate-y-[2px] transition-all duration-300">
                             <div
-                              className="flex items-center gap-4 px-5 py-4 cursor-pointer"
+                              className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
                               onClick={() => setExpandedApp(isExpanded ? null : app.id)}
                             >
                               <div className="flex-1 min-w-0">
@@ -770,7 +770,7 @@ export default function AdminDashboard() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className={`bg-white rounded-2xl p-6 border transition-all ${msg.isRead ? 'border-gray-200' : 'border-[#2563EB]/30 shadow-lg'}`}
+                      className={`bg-white rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 ${msg.isRead ? 'border-gray-100 shadow-sm hover:shadow-md' : 'border-[#2563EB]/30 shadow-lg'}`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">

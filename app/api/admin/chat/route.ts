@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest, verifyAdminRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,6 +16,8 @@ export async function GET(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
@@ -45,7 +47,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Batch-fetch all user details in ONE query (eliminates N+1)
-    const userIds = conversations.map(c => c.userId);
+    const userIds = conversations.map((c: { userId: string }) => c.userId);
     const [users, unreadCounts, lastMessages] = await Promise.all([
       db.user.findMany({
         where: { id: { in: userIds } },
@@ -65,11 +67,11 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Build lookup maps for O(1) access
-    const userMap = new Map(users.map(u => [u.id, u]));
-    const unreadMap = new Map(unreadCounts.map(u => [u.userId, u._count.id]));
-    const lastMsgMap = new Map(lastMessages.map(m => [m.userId, { content: m.content, isAdmin: m.isAdmin, createdAt: m.createdAt }]));
+    const userMap = new Map(users.map((u: { id: string; firstName: string; lastName: string; email: string }) => [u.id, u]));
+    const unreadMap = new Map(unreadCounts.map((u: { userId: string; _count: { id: number } }) => [u.userId, u._count.id]));
+    const lastMsgMap = new Map(lastMessages.map((m: { userId: string; content: string; isAdmin: boolean; createdAt: Date }) => [m.userId, { content: m.content, isAdmin: m.isAdmin, createdAt: m.createdAt }]));
 
-    const conversationsWithDetails = conversations.map(conv => ({
+    const conversationsWithDetails = conversations.map((conv: { userId: string; _count: { id: number } }) => ({
       userId: conv.userId,
       user: userMap.get(conv.userId) || null,
       messageCount: conv._count.id,

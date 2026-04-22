@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest, verifyAdminRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const services = await db.service.findMany({
       include: {

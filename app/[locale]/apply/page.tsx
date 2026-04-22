@@ -81,34 +81,34 @@ interface FileUploadProps {
 function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel, formatsLabel, existingFileName }: FileUploadProps) {
   const hasFile = file || existingFileName;
   return (
-    <div className={`relative overflow-hidden border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 group ${hasFile ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-200 hover:border-[#2563EB]/50 hover:bg-[#2563EB]/5'}`}>
+    <div className={`relative overflow-hidden border-2 border-dashed rounded-2xl p-6 text-center transition-all duration-300 group ${hasFile ? 'border-emerald-400 bg-emerald-50/50 shadow-sm' : 'border-gray-300 hover:border-[#2563EB]/60 hover:bg-[#2563EB]/5 hover:shadow-sm hover:-translate-y-0.5'}`}>
       <input type="file" id={type} onChange={(e) => onFileChange(type, e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.jpg,.jpeg,.png" />
       <div className="space-y-3 relative z-0 pointer-events-none">
         {file ? (
           <>
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Check className="w-6 h-6 text-emerald-600" />
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-emerald-200">
+              <Check className="w-7 h-7 text-emerald-600" />
             </motion.div>
-            <p className="text-emerald-600 font-semibold text-sm">{uploadedLabel}</p>
-            <p className="text-xs text-gray-400 truncate max-w-[180px] mx-auto bg-gray-100 px-2 py-1 rounded">{file.name}</p>
+            <p className="text-emerald-700 font-semibold text-sm">{uploadedLabel}</p>
+            <p className="text-xs text-emerald-600/80 truncate max-w-[200px] mx-auto bg-emerald-100/50 px-3 py-1.5 rounded-lg border border-emerald-100">{file.name}</p>
           </>
         ) : existingFileName ? (
           <>
-            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Check className="w-6 h-6 text-emerald-600" />
+            <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-emerald-200">
+              <Check className="w-7 h-7 text-emerald-600" />
             </div>
-            <p className="text-emerald-600 font-semibold text-sm">✓ Already uploaded</p>
-            <p className="text-xs text-gray-400 truncate max-w-[180px] mx-auto bg-gray-100 px-2 py-1 rounded">{existingFileName}</p>
-            <p className="text-[10px] text-gray-400 mt-1">Click to replace</p>
+            <p className="text-emerald-700 font-semibold text-sm">✓ Already uploaded</p>
+            <p className="text-xs text-emerald-600/80 truncate max-w-[200px] mx-auto bg-emerald-100/50 px-3 py-1.5 rounded-lg border border-emerald-100">{existingFileName}</p>
+            <p className="text-[11px] text-emerald-600/60 mt-1 font-medium">Click to replace</p>
           </>
         ) : (
           <>
-            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform duration-200">
-              <Icon className="w-6 h-6 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
+            <div className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-white group-hover:scale-110 group-hover:shadow-sm transition-all duration-300">
+              <Icon className="w-7 h-7 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
             </div>
-            <p className="font-semibold text-sm text-[#1a1a2e]">{label}</p>
-            <p className="text-xs text-gray-500">Drag & drop or <span className="text-[#2563EB]">browse</span></p>
-            <p className="text-[10px] text-gray-400 mt-2">{formatsLabel}</p>
+            <p className="font-semibold text-[15px] text-[#1a1a2e] group-hover:text-[#2563EB] transition-colors">{label}</p>
+            <p className="text-xs text-gray-500">Drag & drop or <span className="text-[#2563EB] font-medium underline decoration-[#2563EB]/30 underline-offset-2">browse</span></p>
+            <p className="text-[11px] text-gray-400 mt-2">{formatsLabel}</p>
           </>
         )}
       </div>
@@ -206,13 +206,13 @@ export default function Apply() {
     }
 
     if (canceledParam === 'true') {
-      setSubmitError('Payment was canceled. Your application is saved as a draft. You can try again from your dashboard.');
-      if (appIdParam) setApplicationId(appIdParam);
-      return;
+      setSubmitError('Payment was canceled. Your application is saved as a draft. You can try again below or from your dashboard.');
     }
 
-    if (draftIdParam && !successParam) {
-      fetch(`/api/applications/${draftIdParam}`)
+    const draftToLoad = draftIdParam || (canceledParam === 'true' ? appIdParam : null);
+
+    if (draftToLoad && !successParam) {
+      fetch(`/api/applications/${draftToLoad}`)
         .then(res => res.json())
         .then(data => {
           if (data.application) {
@@ -231,8 +231,12 @@ export default function Apply() {
               setExistingDocs(docs);
             }
             
+            // If returning from canceled payment, always jump to payment step
+            if (canceledParam === 'true') {
+              setCurrentStep(3);
+            } 
             // If has all 4 documents, jump to payment step; otherwise documents
-            if (data.application.documents?.length >= 4) {
+            else if (data.application.documents?.length >= 4) {
               setCurrentStep(3);
             } else {
               setCurrentStep(2);
@@ -518,20 +522,19 @@ export default function Apply() {
         
         const checkoutData = await checkoutRes.json();
         
-        // Handle free payment ($0 after promo code)
-        if (checkoutRes.ok && checkoutData.free) {
-          setReferenceCode(checkoutData.referenceCode || referenceCode);
-          setCurrentStep(4);
-          setIsSubmitting(false);
-          return;
-        }
-        
         if (!checkoutRes.ok) {
           // Payment failed — but DON'T delete the application!
           // Save as draft and let user continue later
           setDraftSaved(true);
-          setSubmitError(`Payment service is currently unavailable. Your application has been saved as a draft (Ref: ${referenceCode || 'see dashboard'}). You can complete the payment later from your dashboard.`);
+          setSubmitError(checkoutData.error || `Payment service is currently unavailable. Your application has been saved as a draft (Ref: ${referenceCode || 'see dashboard'}). You can complete the payment later from your dashboard.`);
           setIsSubmitting(false);
+          return;
+        }
+
+        if (checkoutData.free) {
+          setIsProcessingPayment(true);
+          // Wait briefly for DB to be consistent before polling or jumping
+          setTimeout(() => pollForConfirmation(newAppId), 500);
           return;
         }
 
@@ -599,14 +602,16 @@ export default function Apply() {
                 <div key={step.number} className="flex items-center">
                   <div className="flex flex-col items-center">
                     <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      currentStep >= step.number 
-                        ? 'bg-[#0f172a] text-white shadow-lg shadow-[#0f172a]/20' 
-                        : 'bg-gray-200 text-gray-400'
+                      currentStep === step.number
+                        ? 'bg-[#2563EB] text-white shadow-lg shadow-[#2563EB]/25 ring-4 ring-[#2563EB]/10 scale-110'
+                        : currentStep > step.number 
+                        ? 'bg-[#0f172a] text-white shadow-md' 
+                        : 'bg-white text-gray-400 border-2 border-gray-100'
                     }`}>
                       {currentStep > step.number ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <step.icon className="w-5 h-5 md:w-6 md:h-6" />}
                     </div>
-                    <span className={`text-[10px] sm:text-xs mt-2 text-center max-w-[4rem] sm:max-w-none leading-tight ${
-                      currentStep >= step.number ? 'text-[#1a1a2e] font-medium' : 'text-gray-400'
+                    <span className={`text-[10px] sm:text-xs mt-3 text-center max-w-[4rem] sm:max-w-none leading-tight transition-colors duration-300 ${
+                      currentStep === step.number ? 'text-[#2563EB] font-bold' : currentStep > step.number ? 'text-[#1a1a2e] font-semibold' : 'text-gray-400 font-medium'
                     }`}>{step.title}</span>
                   </div>
                   {index < steps.length - 1 && (

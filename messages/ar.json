@@ -236,7 +236,8 @@
     "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
     "passwordResetSuccessDescription": "تم تغيير كلمة المرور الخاصة بك. سيتم توجيهك إلى صفحة تسجيل الدخول.",
     "goToLogin": "الذهاب لتسجيل الدخول",
-    "resetPasswordBtn": "إعادة تعيين كلمة المرور"
+    "resetPasswordBtn": "إعادة تعيين كلمة المرور",
+    "backToHome": "العودة للرئيسية"
   },
   "testimonials": {
     "label": "شهادات",

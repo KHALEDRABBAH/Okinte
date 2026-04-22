@@ -19,7 +19,7 @@ model User {
   firstName     String
   lastName      String
   email         String   @unique
-  phone         String
+  phone         String   @unique
   country       String
   city          String
   passwordHash  String
@@ -28,6 +28,7 @@ model User {
   resetToken       String?   @unique
   resetTokenExpiry DateTime?
   avatarUrl        String?   // User profile picture URL
+  tokenVersion     Int       @default(0)  // Incremented on password change to invalidate sessions
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -75,6 +76,7 @@ model Application {
   referenceCode String            @unique // e.g., "BOL-2026-A3F8K2"
   status        ApplicationStatus @default(DRAFT)
   notes         String?           // Admin review notes
+  userResponse  String?           // User's response when resubmitting a RETURNED application
   submittedAt   DateTime?
   reviewedAt    DateTime?
   createdAt     DateTime          @default(now())
@@ -156,7 +158,7 @@ model Payment {
 
   // Relations
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Restrict)
 
   @@index([userId])
   @@index([status])
@@ -206,6 +208,8 @@ model Message {
   // Relations
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([isRead])
+  @@index([createdAt])
   @@map("messages")
 }
 

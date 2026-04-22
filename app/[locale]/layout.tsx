@@ -8,7 +8,7 @@ import '../globals.css';
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte.com';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
   return {
     title: t('siteTitle'),
     description: t('siteDescription'),
@@ -21,11 +21,13 @@ export async function generateMetadata({ params: { locale } }: { params: { local
       siteName: 'Okinte',
       locale: locale,
       type: 'website',
+      images: [{ url: '/og-image.png', width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: t('siteTitle'),
       description: t('siteDescription'),
+      images: ['/og-image.png'],
     },
     robots: {
       index: true,

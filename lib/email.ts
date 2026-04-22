@@ -113,16 +113,34 @@ export async function sendPasswordResetEmail(to: string, name: string, token: st
       to,
       subject: 'Reset Your Okinte Password',
       html: `
-        <div style="font-family: sans-serif; color: #1a1a1a;">
-          <h2>Password Reset Request</h2>
-          <p>Hi ${escapeHtml(name)},</p>
-          <p>We received a request to reset your Okinte account password. Click the button below to create a new password:</p>
-          <div style="text-align: center; margin: 24px 0;">
-            <a href="${resetUrl}" style="background-color: #2563EB; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Reset Password</a>
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-w-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: #1e293b; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Password Reset Request</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Hi ${escapeHtml(name)},<br><br>
+              We received a request to reset your Okinte account password. Click the button below to securely create a new password for your account.
+            </p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${resetUrl}" style="background-color: #0f172a; color: #ffffff; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Reset Password</a>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+              This link is valid for 1 hour. If you didn't request a password reset, you can safely ignore this email—your password will remain unchanged.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
           </div>
-          <p style="color: #666; font-size: 14px;">This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
-          <br>
-          <p>Best regards,<br>The Okinte Team</p>
         </div>
       `,
     });

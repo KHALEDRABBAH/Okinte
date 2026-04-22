@@ -115,7 +115,7 @@ export async function sendPasswordResetEmail(to: string, name: string, token: st
       html: `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
           <div style="max-w-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
-            <div style="text-align: center; margin-bottom: 30px;">
+            <div style="text-align: left; margin-bottom: 30px;">
               <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
             </div>
             

@@ -21,11 +21,12 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-3 mb-5 group">
-              <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-105">
-                <span className="font-heading font-extrabold text-[#0f172a] text-xl tracking-tighter">Ok</span>
-              </div>
-              <span className="font-heading font-bold text-2xl tracking-tight text-white group-hover:text-white/90 transition-colors">Okinte</span>
+            <Link href="/" className="inline-flex items-center mb-5 group">
+              <img 
+                src="/logo.png" 
+                alt="Okinte Logo" 
+                className="h-11 w-auto transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
             <p className="text-white/60 text-sm mb-1 leading-relaxed">{t('tagline')}</p>
             

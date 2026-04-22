@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
 const locales = ['fr', 'en', 'ar', 'tr', 'ja', 'es', 'it'];
 
 export default function sitemap(): MetadataRoute.Sitemap {

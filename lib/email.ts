@@ -104,7 +104,7 @@ export async function sendStatusUpdateEmail(to: string, name: string, referenceC
 }
 
 export async function sendPasswordResetEmail(to: string, name: string, token: string, locale: string = 'en') {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
   const resetUrl = `${appUrl}/${locale}/reset-password?token=${token}`;
 
   try {
@@ -141,7 +141,7 @@ export async function sendPasswordResetEmail(to: string, name: string, token: st
 }
 
 export async function sendChatNotificationEmail(to: string, name: string, messagePreview: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
   const dashboardUrl = `${appUrl}/en/dashboard`;
 
   try {

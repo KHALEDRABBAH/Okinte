@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
   
   return {
     rules: [

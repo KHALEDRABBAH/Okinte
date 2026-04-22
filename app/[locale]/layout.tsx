@@ -8,7 +8,7 @@ import '../globals.css';
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
   return {
     title: t('siteTitle'),
     description: t('siteDescription'),

@@ -9,7 +9,7 @@ export default function JsonLd() {
   const tFaq = useTranslations('faq');
   const tContact = useTranslations('contact');
   const tAbout = useTranslations('about');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://okinte-website.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
 
   // ─────────────────────────────────────────────
   // 1. Organization Schema (Google Knowledge Panel)

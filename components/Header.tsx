@@ -65,12 +65,11 @@ export default function Header() {
       <nav className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            <img 
-              src="/logo.png" 
-              alt="Okinte Logo" 
-              className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
-            />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-transform duration-300 group-hover:scale-105">
+              <span className="font-heading font-extrabold text-[#0f172a] text-lg tracking-tighter">Ok</span>
+            </div>
+            <span className="font-heading font-bold text-xl md:text-2xl tracking-tight text-white">Okinte</span>
           </Link>
 
           {/* Desktop Navigation */}

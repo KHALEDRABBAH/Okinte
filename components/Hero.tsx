@@ -5,10 +5,12 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { ArrowRight, Globe } from 'lucide-react';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 export default function Hero() {
   const t = useTranslations('hero');
   const locale = useLocale();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section className="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-[#0f172a]">
@@ -34,8 +36,8 @@ export default function Hero() {
           
           {/* Badge */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }} 
+            animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
             transition={{ duration: 0.6, delay: 0.1 }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full mb-6 border border-white/10"
           >
@@ -45,8 +47,8 @@ export default function Hero() {
 
           {/* Title */}
           <motion.h1 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+            animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-5"
           >
@@ -55,8 +57,8 @@ export default function Hero() {
 
           {/* Subtitle */}
           <motion.p 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+            animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.35 }}
             className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed"
           >
@@ -65,8 +67,8 @@ export default function Hero() {
 
           {/* CTA Buttons */}
           <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+            animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mt-2"
           >

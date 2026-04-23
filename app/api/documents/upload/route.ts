@@ -26,7 +26,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
 import { uploadFile, deleteFile } from '@/lib/storage';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
+import { validateFileWithMagicBytes } from '@/lib/file-validation';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limiting: 30 uploads per 15 minutes per user
-    const rl = rateLimit(`upload:${currentUser.userId}`, { maxRequests: 30, windowMs: 15 * 60 * 1000 });
+    const rl = await rateLimitAsync(`upload:${currentUser.userId}`, { maxRequests: 30, windowMs: 15 * 60 * 1000 });
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many upload attempts. Please wait before trying again.' },
@@ -72,18 +73,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 5: Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    // Step 5: Validate file size before any heavy operations
+    if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'File must be PDF, JPG, or PNG' },
+        { error: 'File size must be less than 5MB' },
         { status: 400 }
       );
     }
 
-    // Step 6: Validate file size
-    if (file.size > MAX_FILE_SIZE) {
+    // Step 6: Validate file type with magic byte verification
+    // Convert file to Buffer for magic byte checking
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const fileValidation = await validateFileWithMagicBytes(buffer, file.type);
+    if (!fileValidation.valid) {
       return NextResponse.json(
-        { error: 'File size must be less than 5MB' },
+        { error: fileValidation.error || 'File validation failed' },
         { status: 400 }
       );
     }
@@ -101,7 +107,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    // Step 8: Check for existing document (before upload to know if we need cleanup)
+    // Step 8: Check application status — only allow uploads for DRAFT or RETURNED applications
+    if (application.status !== 'DRAFT' && application.status !== 'RETURNED') {
+      return NextResponse.json(
+        { error: `Cannot upload documents to application in ${application.status} status. Only DRAFT or RETURNED applications can receive document uploads.` },
+        { status: 422 }
+      );
+    }
+
+    // Step 9: Check for existing document (before upload to know if we need cleanup)
     const existingDoc = await db.document.findFirst({
       where: {
         applicationId,
@@ -109,16 +123,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Step 9: Convert file to Buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Step 10: Build storage path
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
-    const storagePath = `users/${currentUser.userId}/${applicationId}/${upperDocType}_${Date.now()}.${ext}`;
+    // Step 10: Build storage path using verified extension
+    const storagePath = `users/${currentUser.userId}/${applicationId}/${upperDocType}_${Date.now()}.${fileValidation.extension}`;
 
     // Step 11: Upload to storage FIRST
-    const { path, error: uploadError } = await uploadFile(buffer, storagePath, file.type);
+    const { path, error: uploadError } = await uploadFile(buffer, storagePath, fileValidation.mimeType!);
 
     if (uploadError || !path) {
       return NextResponse.json(
@@ -144,7 +153,7 @@ export async function POST(request: NextRequest) {
         update: {
           fileName: file.name,
           storagePath: path,
-          mimeType: file.type,
+          mimeType: fileValidation.mimeType!,
           fileSize: file.size,
           uploadedAt: new Date(),
         },
@@ -154,7 +163,7 @@ export async function POST(request: NextRequest) {
           type: upperDocType as any,
           fileName: file.name,
           storagePath: path,
-          mimeType: file.type,
+          mimeType: fileValidation.mimeType!,
           fileSize: file.size,
         },
       });

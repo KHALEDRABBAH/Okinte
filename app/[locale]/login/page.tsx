@@ -130,17 +130,19 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Field */}
               <div>
-                <label className="block text-sm font-medium text-[#1a1a2e] mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[#1a1a2e] mb-2">
                   {t('email')}
                 </label>
                 <div className="relative">
                   <Mail className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input 
+                    id="email"
                     type="email" 
                     name="email" 
                     required 
                     value={formData.email} 
                     onChange={handleChange}
+                    autoComplete="email"
                     className="input-field ps-12" 
                     placeholder="john@example.com" 
                   />
@@ -149,23 +151,26 @@ export default function Login() {
 
               {/* Password Field */}
               <div>
-                <label className="block text-sm font-medium text-[#1a1a2e] mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-[#1a1a2e] mb-2">
                   {t('password')}
                 </label>
                 <div className="relative">
                   <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input 
+                    id="password"
                     type={showPassword ? 'text' : 'password'} 
                     name="password" 
                     required 
                     value={formData.password} 
                     onChange={handleChange} 
+                    autoComplete="current-password"
                     className="input-field ps-12 pe-12" 
                     placeholder="••••••••" 
                   />
                   <button 
                     type="button" 
-                    onClick={() => setShowPassword(!showPassword)} 
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                     className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

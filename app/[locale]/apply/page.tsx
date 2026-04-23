@@ -48,16 +48,18 @@ interface InputFieldProps {
 function InputField({ name, label, type = 'text', icon: Icon, hint, value, error, onChange, disabled }: InputFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{label} <span className="text-red-500">*</span></label>
+      <label htmlFor={name} className="block text-sm font-medium text-[#1a1a2e] mb-2">{label} <span className="text-red-500">*</span></label>
       <div className="relative">
         <Icon className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
+          id={name}
           type={type}
           name={name}
           required
           value={value}
           disabled={disabled}
           onChange={(e) => onChange(name, e.target.value)}
+          autoComplete={type === 'email' ? 'email' : type === 'tel' ? 'tel' : type === 'password' ? 'new-password' : 'given-name'}
           className={`input-field ps-12 ${disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
         />
       </div>

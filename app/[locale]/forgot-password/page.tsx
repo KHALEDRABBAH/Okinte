@@ -84,6 +84,7 @@ export default function ForgotPassword() {
                         required
                         value={email}
                         onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                        autoComplete="email"
                         className={`input-field ps-12 ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
                         placeholder="you@example.com"
                       />

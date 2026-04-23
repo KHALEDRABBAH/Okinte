@@ -114,20 +114,23 @@ export default function ResetPassword() {
               ) : (
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div>
-                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('newPassword')}</label>
+                    <label htmlFor="newPassword" className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('newPassword')}</label>
                     <div className="relative">
                       <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
+                        id="newPassword"
                         type={showPassword ? "text" : "password"}
                         required
                         value={password}
                         onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                        autoComplete="new-password"
                         className={`input-field ps-12 pe-12 ${error ? 'border-red-400 focus:border-red-400' : ''}`}
                         placeholder="••••••••"
                       />
                       <button 
                         type="button" 
                         className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -136,20 +139,23 @@ export default function ResetPassword() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('confirmNewPassword')}</label>
+                    <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('confirmNewPassword')}</label>
                     <div className="relative">
                       <Lock className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
+                        id="confirmNewPassword"
                         type={showConfirmPassword ? "text" : "password"}
                         required
                         value={confirmPassword}
                         onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
+                        autoComplete="new-password"
                         className={`input-field ps-12 pe-12 ${error ? 'border-red-400 focus:border-red-400' : ''}`}
                         placeholder="••••••••"
                       />
                       <button 
                         type="button" 
                         className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
                         {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

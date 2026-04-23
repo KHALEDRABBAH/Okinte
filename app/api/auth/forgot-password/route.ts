@@ -15,13 +15,13 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { randomUUID } from 'crypto';
-import { rateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting: 3 reset requests per 15 minutes per IP
     const ip = getClientIp(request);
-    const rl = rateLimit(`reset:${ip}`, RATE_LIMITS.passwordReset);
+    const rl = await rateLimitAsync(`reset:${ip}`, RATE_LIMITS.passwordReset);
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many reset requests. Please wait before trying again.' },

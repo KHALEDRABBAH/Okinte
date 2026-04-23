@@ -9,8 +9,9 @@ function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     if (process.env.NODE_ENV === 'production') {
-      return new TextEncoder().encode('MISSING_SECRET');
+      throw new Error('FATAL: JWT_SECRET environment variable is not set. Refusing to start in production without it.');
     }
+    console.warn('⚠️  JWT_SECRET not set — using development-only fallback. Do NOT deploy this to production.');
     return new TextEncoder().encode('dev-only-fallback-do-not-deploy');
   }
   return new TextEncoder().encode(secret);

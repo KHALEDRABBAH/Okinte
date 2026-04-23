@@ -20,13 +20,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
 import { messageSchema } from '@/lib/validations';
-import { rateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting: 5 messages per 10 minutes per IP
     const ip = getClientIp(request);
-    const rl = rateLimit(`contact:${ip}`, RATE_LIMITS.contact);
+    const rl = await rateLimitAsync(`contact:${ip}`, RATE_LIMITS.contact);
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many messages sent. Please wait before trying again.' },

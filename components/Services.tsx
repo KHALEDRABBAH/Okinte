@@ -5,9 +5,11 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { GraduationCap, Briefcase, Award, Palmtree, Building2, ArrowRight } from 'lucide-react';
 import ExpandableText from '@/components/ExpandableText';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 export default function Services() {
   const t = useTranslations('services');
+  const prefersReducedMotion = useReducedMotion();
 
   const services = [
     { id: 'study', icon: GraduationCap },
@@ -22,8 +24,8 @@ export default function Services() {
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }} 
+          whileInView={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
           viewport={{ once: true }} 
           className="text-center max-w-2xl mx-auto mb-14 md:mb-20"
         >
@@ -37,8 +39,8 @@ export default function Services() {
           {services.map((service, index) => (
             <motion.div 
               key={service.id} 
-              initial={{ opacity: 0, y: 30 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+              whileInView={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
               viewport={{ once: true }} 
               transition={{ delay: index * 0.08 }}
             >

@@ -28,10 +28,36 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-12-18.acacia' as any,
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+/**
+ * Validate Stripe webhook secret at module load time.
+ * This ensures we catch configuration errors immediately,
+ * not on first webhook request.
+ */
+function getWebhookSecret(): string {
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!secret || secret.trim() === '') {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('FATAL: STRIPE_WEBHOOK_SECRET environment variable is not set. Refusing to start in production without it.');
+    }
+    console.warn('⚠️  STRIPE_WEBHOOK_SECRET not set — webhook signatures will NOT be verified. Do NOT deploy this to production.');
+    return '';
+  }
+  return secret;
+}
+
+const webhookSecret = getWebhookSecret();
 
 export async function POST(req: NextRequest) {
   try {
+    // Guard: Ensure webhook secret is configured before processing
+    if (!webhookSecret || webhookSecret.trim() === '') {
+      console.error('CRITICAL: Stripe webhook secret is not configured. Rejecting unsigned webhook.');
+      return NextResponse.json(
+        { error: 'Webhook secret not configured. Webhook cannot be processed.' },
+        { status: 500 }
+      );
+    }
+
     const body = await req.text();
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');

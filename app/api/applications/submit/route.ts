@@ -21,7 +21,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest, hashPassword } from '@/lib/auth';
 import { uploadFile, deleteFile } from '@/lib/storage';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { validateFileWithMagicBytes } from '@/lib/file-validation';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import Stripe from 'stripe';
 import bcrypt from 'bcryptjs';
 
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting: 5 submissions per 30 minutes per IP
     const ip = getClientIp(request);
-    const rl = rateLimit(`submit:${ip}`, { maxRequests: 5, windowMs: 30 * 60 * 1000 });
+    const rl = await rateLimitAsync(`submit:${ip}`, { maxRequests: 5, windowMs: 30 * 60 * 1000 });
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many submission attempts. Please wait before trying again.' },
@@ -159,34 +160,41 @@ export async function POST(request: NextRequest) {
     const uploadedDocs: { type: string; path: string; fileName: string; mimeType: string; fileSize: number }[] = [];
 
     for (const { type, file } of files) {
-      // Validate file type and size
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        throw new Error(`${type}: Invalid file type. Only PDF, JPG, PNG allowed.`);
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        throw new Error(`${type}: File size must be less than 5MB`);
-      }
+      try {
+        // Validate file size first (fast fail)
+        if (file.size > MAX_FILE_SIZE) {
+          throw new Error(`${type}: File size must be less than 5MB`);
+        }
 
-      // Upload to storage
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
-      const storagePath = `users/${userId}/temp/${type}_${Date.now()}.${ext}`;
-      
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      
-      const { path, error } = await uploadFile(buffer, storagePath, file.type);
-      if (error || !path) {
-        throw new Error(`${type}: Upload failed`);
-      }
+        // Validate file with magic byte verification
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
 
-      uploadedFiles.push({ path });
-      uploadedDocs.push({
-        type,
-        path,
-        fileName: file.name,
-        mimeType: file.type,
-        fileSize: file.size,
-      });
+        const fileValidation = await validateFileWithMagicBytes(buffer, file.type);
+        if (!fileValidation.valid) {
+          throw new Error(`${type}: ${fileValidation.error || 'Invalid file format'}`);
+        }
+
+        // Upload to storage with verified MIME type
+        const storagePath = `users/${userId}/temp/${type}_${Date.now()}.${fileValidation.extension}`;
+        const { path, error } = await uploadFile(buffer, storagePath, fileValidation.mimeType!);
+        
+        if (error || !path) {
+          throw new Error(`${type}: Upload failed`);
+        }
+
+        uploadedFiles.push({ path });
+        uploadedDocs.push({
+          type,
+          path,
+          fileName: file.name,
+          mimeType: fileValidation.mimeType!,
+          fileSize: file.size,
+        });
+      } catch (fileError) {
+        // Catch and rethrow with the error message for consistent error handling
+        throw fileError;
+      }
     }
 
     // Create everything in a single transaction
@@ -296,6 +304,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ error: message }, { status: 500 });
+    // Return 400 for file validation errors, 500 for others
+    const statusCode = message.includes('Invalid file') || message.includes('File size') ? 400 : 500;
+    return NextResponse.json({ error: message }, { status: statusCode });
   }
 }

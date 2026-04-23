@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
 import { rateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { chatMessageSchema } from '@/lib/validations';
 
 export async function GET(request: NextRequest) {
   try {
@@ -56,19 +57,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse and validate request body
     const body = await request.json();
-    const { content } = body;
+    const validation = chatMessageSchema.safeParse(body);
 
-    if (!content || !content.trim()) {
-      return NextResponse.json({ error: 'Message content is required' }, { status: 400 });
-    }
-
-    if (content.trim().length > 2000) {
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Message too long. Maximum 2000 characters.' },
+        { error: 'Validation failed', details: validation.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+
+    const { content } = validation.data;
 
     const message = await db.chatMessage.create({
       data: {

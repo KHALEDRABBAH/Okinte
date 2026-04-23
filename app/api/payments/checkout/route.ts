@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
-import { rateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { rateLimitAsync, RATE_LIMITS } from '@/lib/rate-limit';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limiting: 10 checkout attempts per 15 minutes per user
-    const rl = rateLimit(`checkout:${currentUser.userId}`, { maxRequests: 10, windowMs: 15 * 60 * 1000 });
+    const rl = await rateLimitAsync(`checkout:${currentUser.userId}`, { maxRequests: 10, windowMs: 15 * 60 * 1000 });
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many checkout attempts. Please wait before trying again.' },
@@ -101,6 +101,27 @@ export async function POST(request: NextRequest) {
     // Handle free orders (e.g., 100% promo code discount) without calling Stripe
     // Stripe rejects unit_amount: 0 in payment mode
     if (finalPrice <= 0) {
+      // ATOMIC: Increment promo code usage with race condition guard
+      // Only increment if currentUses < maxUses (if maxUses is set)
+      if (promoCodeId) {
+        const promoUpdateResult = await db.promoCode.updateMany({
+          where: {
+            id: promoCodeId,
+            // Ensure we only update if maxUses not reached (if it exists)
+            ...(promo?.maxUses ? { currentUses: { lt: promo.maxUses } } : {}),
+          },
+          data: { currentUses: { increment: 1 } },
+        });
+
+        // If promo code update failed, it means max uses already reached
+        if (promoUpdateResult.count === 0 && promo?.maxUses && promo.currentUses >= promo.maxUses) {
+          return NextResponse.json(
+            { error: 'Promo code has reached its maximum usage limit' },
+            { status: 400 }
+          );
+        }
+      }
+
       // Mark application as payment succeeded directly
       await db.application.update({
         where: { id: applicationId },

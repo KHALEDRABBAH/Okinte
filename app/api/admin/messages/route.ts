@@ -62,6 +62,9 @@ export async function PATCH(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
+    // Verify admin role from database
+    const isAdmin = await verifyAdminRole(currentUser.userId);
+    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const body = await request.json();
     const { messageId, isRead, repliedBy } = body;

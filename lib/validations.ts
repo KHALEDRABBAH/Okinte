@@ -76,6 +76,29 @@ export const messageSchema = z.object({
 });
 
 // ============================================================
+// TESTIMONIAL SCHEMA
+// ============================================================
+
+export const testimonialSchema = z.object({
+  rating: z.number().int('Rating must be a whole number').min(1, 'Rating must be at least 1 star').max(5, 'Rating cannot exceed 5 stars'),
+  content: z.string()
+    .trim()
+    .min(10, 'Testimonial must be at least 10 characters')
+    .max(500, 'Testimonial cannot exceed 500 characters'),
+});
+
+// ============================================================
+// CHAT MESSAGE SCHEMA
+// ============================================================
+
+export const chatMessageSchema = z.object({
+  content: z.string()
+    .trim()
+    .min(1, 'Message cannot be empty')
+    .max(2000, 'Message cannot exceed 2000 characters'),
+});
+
+// ============================================================
 // FILE UPLOAD VALIDATION
 // ============================================================
 

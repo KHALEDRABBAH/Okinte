@@ -95,15 +95,47 @@ export async function GET(request: NextRequest) {
 
     if (format === 'xlsx') {
       try {
-        const XLSX = await import('xlsx');
+        const ExcelJS = await import('exceljs');
+        const Workbook = ExcelJS.default.Workbook;
+        
+        // Parse CSV data into rows
         const rows = csvContent.split('\n').filter(r => r.trim()).map(r => {
           // Simple CSV parse for our controlled output
           return r.split(',').map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
         });
-        const ws = XLSX.utils.aoa_to_sheet(rows);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Data');
-        const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+        // Create workbook and worksheet
+        const workbook = new Workbook();
+        const worksheet = workbook.addWorksheet('Data');
+
+        // Add rows to worksheet
+        for (const row of rows) {
+          worksheet.addRow(row);
+        }
+
+        // Format header row (first row)
+        const headerRow = worksheet.getRow(1);
+        headerRow.font = { bold: true };
+        headerRow.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFD3D3D3' },
+        };
+
+        // Auto-fit column widths
+        worksheet.columns.forEach((col: any) => {
+          let maxLength = 0;
+          col.eachCell?.({ includeEmpty: true }, (cell: any) => {
+            const cellLength = cell.value ? String(cell.value).length : 0;
+            if (cellLength > maxLength) {
+              maxLength = cellLength;
+            }
+          });
+          col.width = Math.min(maxLength + 2, 50);
+        });
+
+        // Generate buffer
+        const buffer = await workbook.xlsx.writeBuffer();
 
         return new NextResponse(buffer, {
           headers: {
@@ -111,8 +143,9 @@ export async function GET(request: NextRequest) {
             'Content-Disposition': `attachment; filename="${filename}.xlsx"`,
           },
         });
-      } catch {
-        return NextResponse.json({ error: 'xlsx package not installed. Run: npm install xlsx' }, { status: 500 });
+      } catch (error) {
+        console.error('Excel export error:', error);
+        return NextResponse.json({ error: 'Failed to generate Excel file' }, { status: 500 });
       }
     }
 

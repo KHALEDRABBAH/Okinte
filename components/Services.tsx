@@ -25,7 +25,7 @@ export default function Services() {
         {/* Section Header */}
         <motion.div 
           initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }} 
-          whileInView={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }} 
           viewport={{ once: true }} 
           className="text-center max-w-2xl mx-auto mb-14 md:mb-20"
         >
@@ -40,9 +40,9 @@ export default function Services() {
             <motion.div 
               key={service.id} 
               initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
-              whileInView={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
+              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }} 
               viewport={{ once: true }} 
-              transition={{ delay: index * 0.08 }}
+              transition={prefersReducedMotion ? undefined : { delay: index * 0.08 }}
             >
               <Link 
                 href={`/apply?service=${service.id}`}

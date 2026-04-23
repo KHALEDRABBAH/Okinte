@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
     let finalPrice = Number(application.service.price);
     let discount = 0;
     let promoCodeId: string | null = null;
+    let promoMaxUses: number | null = null;
 
     if (promoCode) {
       const promo = await db.promoCode.findUnique({ where: { code: promoCode.toUpperCase() } });
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
           }
           finalPrice = Math.max(0, finalPrice - discount);
           promoCodeId = promo.id;
+          promoMaxUses = promo.maxUses ?? null;
           // NOTE: Promo code usage is incremented in the webhook handler
           // on successful payment, NOT here. This prevents wasted uses
           // when checkout sessions are abandoned.
@@ -108,13 +110,13 @@ export async function POST(request: NextRequest) {
           where: {
             id: promoCodeId,
             // Ensure we only update if maxUses not reached (if it exists)
-            ...(promo?.maxUses ? { currentUses: { lt: promo.maxUses } } : {}),
+            ...(promoMaxUses !== null ? { currentUses: { lt: promoMaxUses } } : {}),
           },
           data: { currentUses: { increment: 1 } },
         });
 
         // If promo code update failed, it means max uses already reached
-        if (promoUpdateResult.count === 0 && promo?.maxUses && promo.currentUses >= promo.maxUses) {
+        if (promoUpdateResult.count === 0 && promoMaxUses !== null) {
           return NextResponse.json(
             { error: 'Promo code has reached its maximum usage limit' },
             { status: 400 }

@@ -17,5 +17,6 @@ declare module '@prisma/client' {
     webhookEvent: any;
     promoCode: any;
     chatMessage: any;
+    testimonial: any;
   }
 }

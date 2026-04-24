@@ -189,6 +189,7 @@ export default function Header() {
             <div className="relative">
               <button 
                 onClick={() => setIsMobileLangOpen(!isMobileLangOpen)} 
+                aria-label="Change language"
                 className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-white/80 hover:bg-white/10 transition-colors"
               >
                 <Globe className="w-4.5 h-4.5" />
@@ -227,6 +228,7 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               className="p-2.5 rounded-xl text-white"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -316,7 +318,7 @@ export default function Header() {
               
               {/* Language Selection */}
               <div className="pt-4 border-t border-white/10">
-                <p className="text-xs text-white/40 mb-3">{t('selectLanguage')}:</p>
+                <p className="text-xs text-white/60 mb-3">{t('selectLanguage')}:</p>
                 <div className="flex flex-wrap gap-2">
                   {locales.map((loc) => (
                     <button 

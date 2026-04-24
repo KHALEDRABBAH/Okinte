@@ -52,6 +52,7 @@ export default function FloatingContact() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Close contact options' : 'Open contact options'}
         className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${isOpen ? 'bg-gray-700 rotate-0' : 'bg-[#2563EB] hover:shadow-premium hover:bg-blue-700 hover:scale-105'}`}
       >
         {isOpen ? <X className="w-6 h-6 text-white" /> : <MessageCircle className="w-6 h-6 text-white" />}

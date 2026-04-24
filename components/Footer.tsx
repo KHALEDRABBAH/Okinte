@@ -31,10 +31,10 @@ export default function Footer() {
             
             {/* Social Links */}
             <div className="flex gap-3 mt-6">
-              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                 <Facebook className="w-4.5 h-4.5" />
               </a>
-              <a href="mailto:Okinte.placement@gmail.com" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
+              <a href="mailto:Okinte.placement@gmail.com" aria-label="Email us" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                 <Mail className="w-4.5 h-4.5" />
               </a>
             </div>
@@ -112,10 +112,10 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container mx-auto px-6 lg:px-12 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/40 text-sm">{t('copyright', { year: String(currentYear) })}</p>
+            <p className="text-white/60 text-sm">{t('copyright', { year: String(currentYear) })}</p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="text-white/40 text-sm hover:text-[#2563EB] transition-colors">{t('privacy')}</Link>
-              <Link href="/terms" className="text-white/40 text-sm hover:text-[#2563EB] transition-colors">{t('terms')}</Link>
+              <Link href="/privacy" className="text-white/60 text-sm hover:text-[#2563EB] transition-colors">{t('privacy')}</Link>
+              <Link href="/terms" className="text-white/60 text-sm hover:text-[#2563EB] transition-colors">{t('terms')}</Link>
             </div>
           </div>
         </div>

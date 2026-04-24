@@ -931,7 +931,7 @@ export default function Dashboard() {
                               <div className="flex items-center gap-3 pt-1">
                                 <button
                                   onClick={() => handleRespondToReturn(app.id)}
-                                  disabled={isResponding || !responseComment.trim()}
+                                  disabled={isResponding || (!responseComment.trim() && Object.values(responseFiles).every(f => !f))}
                                   className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm py-2.5 px-5 rounded-lg shadow-sm transition-colors font-medium disabled:opacity-50"
                                 >
                                   {isResponding ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}

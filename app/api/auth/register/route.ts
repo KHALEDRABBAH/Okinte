@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { hashPassword } from '@/lib/auth';
+import { hashPassword, createToken, setAuthCookie } from '@/lib/auth';
 import { registerSchema } from '@/lib/validations';
 import { rateLimitAsync, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 import crypto from 'crypto';
@@ -97,6 +97,7 @@ export async function POST(request: NextRequest) {
         country: true,
         city: true,
         role: true,
+        tokenVersion: true,
         createdAt: true,
       },
     });
@@ -107,13 +108,21 @@ export async function POST(request: NextRequest) {
     await sendVerificationEmail(user.email, user.firstName, verificationToken, locale)
       .catch(err => console.error('Failed to send verification email:', err));
 
-    // Step 7: Return success — user must verify email before logging in
-    // Do NOT set auth cookie here — user must verify first
+    // Step 7: Set temporary auth cookie so frontend can create draft app + upload docs
+    const jwtToken = await createToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      tokenVersion: user.tokenVersion,
+    });
+    await setAuthCookie(jwtToken);
+
+    // Step 8: Return success
     return NextResponse.json(
       { 
         message: 'Account created! Please check your email to verify your account.',
         requiresVerification: true,
-        user: { email: user.email, firstName: user.firstName },
+        user: { id: user.id, email: user.email, firstName: user.firstName },
       }, 
       { status: 201 }
     );
@@ -126,3 +135,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

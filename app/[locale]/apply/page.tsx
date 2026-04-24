@@ -251,7 +251,7 @@ export default function Apply() {
     setSubmitError('');
 
     try {
-      // Step A: Register user
+      // Step A: Register user (this also sets a temporary auth cookie)
       const regRes = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -288,9 +288,48 @@ export default function Apply() {
         throw new Error(regData.error || 'Registration failed');
       }
 
-      // Step B: Upload documents (we need to do this after registration)
-      // Note: Documents will be uploaded when user continues from dashboard after verifying email
-      // For now, we store them temporarily and the user will re-upload from the dashboard
+      // Step B: Create a draft application (using default service, user will select real service from dashboard)
+      let appId = '';
+      try {
+        const appRes = await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serviceKey: 'study' }), // Default service, will be changed from dashboard
+        });
+        const appData = await appRes.json();
+        if (appRes.ok && appData.application) {
+          appId = appData.application.id;
+        }
+      } catch {
+        console.error('Failed to create draft application');
+      }
+
+      // Step C: Upload documents to the draft application
+      if (appId) {
+        const fileEntries: [string, File | null][] = [
+          ['PASSPORT', files.passport],
+          ['CV', files.cv],
+          ['DIPLOMA', files.diploma],
+        ];
+        for (const [type, file] of fileEntries) {
+          if (file) {
+            try {
+              const fd = new FormData();
+              fd.append('file', file);
+              fd.append('applicationId', appId);
+              fd.append('type', type);
+              await fetch('/api/documents/upload', { method: 'POST', body: fd });
+            } catch {
+              console.error(`Failed to upload ${type}`);
+            }
+          }
+        }
+      }
+
+      // Step D: Logout (clear temporary cookie — user must verify email before accessing dashboard)
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch {}
 
       setRegisteredEmail(formData.email);
       setCurrentStep(3);

@@ -29,8 +29,8 @@ export async function GET() {
 
     if (!tokenPayload) {
       return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
+        { user: null },
+        { status: 200 }
       );
     }
 
@@ -54,10 +54,10 @@ export async function GET() {
     });
 
     if (!user) {
-      // User was deleted but JWT still valid — force logout
+      // User was deleted but JWT still valid — force logout by returning null
       return NextResponse.json(
-        { error: 'User not found' },
-        { status: 401 }
+        { user: null },
+        { status: 200 }
       );
     }
 

@@ -7,7 +7,7 @@ import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { GraduationCap, Briefcase, Award, Palmtree, Building2, Upload, FileText, CreditCard, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock, CheckCircle2 } from 'lucide-react';
+import { GraduationCap, Briefcase, Award, Palmtree, Building2, Upload, FileText, CreditCard, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { rtlLocales } from '@/i18n/routing';
 
 const ALL_COUNTRIES = [
@@ -46,6 +46,8 @@ interface InputFieldProps {
 }
 
 function InputField({ name, label, type = 'text', icon: Icon, hint, value, error, onChange, disabled }: InputFieldProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === 'password';
   return (
     <div>
       <label htmlFor={name} className="block text-sm font-medium text-[#1a1a2e] mb-2">{label} <span className="text-red-500">*</span></label>
@@ -53,15 +55,25 @@ function InputField({ name, label, type = 'text', icon: Icon, hint, value, error
         <Icon className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
           id={name}
-          type={type}
+          type={isPassword ? (showPassword ? 'text' : 'password') : type}
           name={name}
           required
           value={value}
           disabled={disabled}
           onChange={(e) => onChange(name, e.target.value)}
-          autoComplete={type === 'email' ? 'email' : type === 'tel' ? 'tel' : type === 'password' ? 'new-password' : 'given-name'}
-          className={`input-field ps-12 ${disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
+          autoComplete={type === 'email' ? 'email' : type === 'tel' ? 'tel' : isPassword ? 'new-password' : 'given-name'}
+          className={`input-field ps-12 ${isPassword ? 'pe-12' : ''} ${disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
         />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        )}
       </div>
       {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
       {error && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
@@ -153,6 +165,7 @@ export default function Apply() {
     phone: '',
     email: '',
     password: '',
+    confirmPassword: '',
     country: '',
     city: '',
     service: '',
@@ -357,6 +370,11 @@ export default function Apply() {
         newErrors.password = 'Must contain at least one uppercase letter (A-Z)';
       } else if (!/[0-9]/.test(formData.password)) {
         newErrors.password = 'Must contain at least one number (0-9)';
+      }
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Please confirm your password';
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
       }
     }
     if (!formData.country) newErrors.country = 'Required';
@@ -654,9 +672,12 @@ export default function Apply() {
                   <InputField name="phone" label={t('form.phone')} type="tel" icon={Phone} hint={t('form.phoneHint')} value={formData.phone} error={errors.phone} onChange={handleInputChange} disabled={isLoggedIn} />
                   <InputField name="email" label={t('form.email')} type="email" icon={Mail} value={formData.email} error={errors.email} onChange={handleInputChange} disabled={isLoggedIn} />
                   
-                  {/* Only show password field for new users */}
+                  {/* Only show password fields for new users */}
                   {!isLoggedIn && (
-                    <InputField name="password" label={t('form.password')} type="password" icon={Lock} hint={t('form.passwordHint')} value={formData.password} error={errors.password} onChange={handleInputChange} />
+                    <div className="grid md:grid-cols-2 gap-5">
+                      <InputField name="password" label={t('form.password')} type="password" icon={Lock} hint={t('form.passwordHint')} value={formData.password} error={errors.password} onChange={handleInputChange} />
+                      <InputField name="confirmPassword" label="Confirm Password" type="password" icon={Lock} value={formData.confirmPassword} error={errors.confirmPassword} onChange={handleInputChange} />
+                    </div>
                   )}
                   
                   <div className="grid md:grid-cols-2 gap-5">

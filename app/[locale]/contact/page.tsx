@@ -53,7 +53,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-[#1a1a2e] mt-3 mb-4 tracking-tight">
               {t('title')}
             </h1>
-            <p className="text-lg text-gray-400">{t('subtitle')}</p>
+            <p className="text-lg text-gray-600">{t('subtitle')}</p>
           </div>
 
           <div className="max-w-5xl mx-auto">
@@ -69,8 +69,8 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                   <MessageCircle className="w-7 h-7 text-green-500" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">WhatsApp / Phone</h3>
-                  <p className="text-gray-400 mt-1 group-hover:text-green-600 transition-colors">+20 12 80109982</p>
+                  <h2 className="font-heading font-bold text-[#1a1a2e] text-lg">WhatsApp / Phone</h2>
+                  <p className="text-gray-600 mt-1 group-hover:text-green-600 transition-colors">+20 12 80109982</p>
                 </div>
               </a>
 
@@ -82,8 +82,8 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                   <Mail className="w-7 h-7 text-[#2563EB]" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">Email</h3>
-                  <p className="text-gray-400 mt-1 group-hover:text-[#2563EB] transition-colors">{EMAIL}</p>
+                  <h2 className="font-heading font-bold text-[#1a1a2e] text-lg">Email</h2>
+                  <p className="text-gray-600 mt-1 group-hover:text-[#2563EB] transition-colors">{EMAIL}</p>
                 </div>
               </a>
             </div>
@@ -92,7 +92,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
             <div className="mb-16">
               <div className="flex items-center justify-center gap-4 mb-10 opacity-60">
                 <div className="h-px bg-gray-300 w-16" />
-                <span className="text-sm font-semibold text-gray-400 uppercase tracking-widest">{t('addressLabel')}</span>
+                <span className="text-sm font-semibold text-gray-600 uppercase tracking-widest">{t('addressLabel')}</span>
                 <div className="h-px bg-gray-300 w-16" />
               </div>
 
@@ -118,7 +118,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                       </span>
                     )}
                     <h3 className="font-heading font-bold text-[#1a1a2e] text-lg mb-2">{location.name}</h3>
-                    <p className="text-sm text-gray-400 mb-4">{location.description}</p>
+                    <p className="text-sm text-gray-600 mb-4">{location.description}</p>
                     <span className="inline-flex items-center gap-1.5 text-xs text-[#2563EB] font-medium group-hover:underline">
                       View on Map <ExternalLink className="w-3.5 h-3.5" />
                     </span>
@@ -131,7 +131,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
             <div>
               <div className="flex items-center justify-center gap-4 mb-10 opacity-60">
                 <div className="h-px bg-gray-300 w-16" />
-                <span className="text-sm font-semibold text-gray-400 uppercase tracking-widest">{t('social')}</span>
+                <span className="text-sm font-semibold text-gray-600 uppercase tracking-widest">{t('social')}</span>
                 <div className="h-px bg-gray-300 w-16" />
               </div>
 
@@ -147,7 +147,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">Facebook</h3>
-                    <p className="text-sm text-gray-400 group-hover:text-[#2563EB] transition-colors">Follow us on Facebook</p>
+                    <p className="text-sm text-gray-600 group-hover:text-[#2563EB] transition-colors">Follow us on Facebook</p>
                   </div>
                 </a>
               </div>

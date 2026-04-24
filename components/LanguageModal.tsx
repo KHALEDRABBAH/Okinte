@@ -74,7 +74,7 @@ export default function LanguageModal() {
               <h2 className="text-2xl font-heading font-bold text-primary">
                 Choose Your Language
               </h2>
-              <p className="text-gray-400 text-sm mt-2">
+              <p className="text-gray-500 text-sm mt-2">
                 Choisissez votre langue · اختر لغتك
               </p>
             </div>
@@ -104,7 +104,7 @@ export default function LanguageModal() {
                 localStorage.setItem('okinte-lang-chosen', 'true');
                 setShow(false);
               }}
-              className="w-full text-center text-gray-400 hover:text-gray-600 text-sm mt-6 transition-colors"
+              className="w-full text-center text-gray-500 hover:text-gray-600 text-sm mt-6 transition-colors"
             >
               Continue with current language
             </button>

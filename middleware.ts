@@ -27,18 +27,18 @@ async function verifyTokenInMiddleware(token: string): Promise<{ userId: string;
 
 export default async function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://js.stripe.com 'unsafe-inline' 'unsafe-eval';
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https:;
-    font-src 'self' data:;
-    connect-src 'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io;
-    frame-src https://js.stripe.com;
-    base-uri 'self';
-    form-action 'self';
-    upgrade-insecure-requests;
-  `.replace(/\s{2,}/g, ' ').trim();
+  const cspHeader = [
+    `default-src 'self'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://js.stripe.com`,
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+    `img-src 'self' blob: data: https:`,
+    `font-src 'self' data: https://fonts.gstatic.com`,
+    `connect-src 'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com`,
+    `frame-src https://js.stripe.com`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+    `upgrade-insecure-requests`,
+  ].join('; ');
 
   // Clone headers so Next.js can read the nonce
   const requestHeaders = new Headers(request.headers);
@@ -98,13 +98,14 @@ export default async function middleware(request: NextRequest) {
   const response = intlMiddleware(request);
 
   // Add Security & SEO Headers
-  // Add Security & SEO Headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   response.headers.set('Content-Security-Policy', cspHeader);
+  // Thread nonce to the response so layout.tsx can read it via headers()
+  response.headers.set('x-nonce', nonce);
 
   // Cache control for public pages
   if (!isProtected && !isAdminPath && !request.nextUrl.pathname.startsWith('/api')) {

@@ -214,7 +214,7 @@ export default function PhoneInput({ value, onChange, className = '', required =
 
   return (
     <div className={`relative flex items-center ${className}`}>
-      <Phone className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+      <Phone className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
 
       <div className="relative">
         <button
@@ -224,7 +224,7 @@ export default function PhoneInput({ value, onChange, className = '', required =
         >
           <span className="text-base">{selectedCountry?.flag}</span>
           <span className="text-gray-700 font-medium">{selectedCode}</span>
-          <ChevronDown className="w-4 h-4 text-gray-400" />
+          <ChevronDown className="w-4 h-4 text-gray-500" />
         </button>
 
         <AnimatePresence>
@@ -240,7 +240,7 @@ export default function PhoneInput({ value, onChange, className = '', required =
                 {/* Search */}
                 <div className="p-2 border-b border-gray-100">
                   <div className="relative">
-                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input
                       type="text"
                       value={search}
@@ -254,7 +254,7 @@ export default function PhoneInput({ value, onChange, className = '', required =
                 {/* List */}
                 <div className="max-h-60 overflow-y-auto">
                   {filteredCodes.length === 0 ? (
-                    <div className="px-4 py-6 text-center text-sm text-gray-400">No results</div>
+                    <div className="px-4 py-6 text-center text-sm text-gray-500">No results</div>
                   ) : (
                     filteredCodes.map((country, idx) => (
                       <button
@@ -267,7 +267,7 @@ export default function PhoneInput({ value, onChange, className = '', required =
                       >
                         <span className="text-lg">{country.flag}</span>
                         <span className="text-gray-800 font-medium flex-1">{country.name}</span>
-                        <span className="text-gray-400 text-xs">{country.code}</span>
+                        <span className="text-gray-500 text-xs">{country.code}</span>
                       </button>
                     ))
                   )}

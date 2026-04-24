@@ -75,7 +75,7 @@ export default function AdminCharts({ monthlyData, statusCounts }: AdminChartsPr
                   }}
                 />
               </div>
-              <span className="text-[10px] text-gray-400">{m.label}</span>
+              <span className="text-[10px] text-gray-500">{m.label}</span>
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ export default function AdminCharts({ monthlyData, statusCounts }: AdminChartsPr
                   }}
                 />
               </div>
-              <span className="text-[10px] text-gray-400">{m.label}</span>
+              <span className="text-[10px] text-gray-500">{m.label}</span>
             </div>
           ))}
         </div>
@@ -119,7 +119,7 @@ export default function AdminCharts({ monthlyData, statusCounts }: AdminChartsPr
                   }}
                 />
               </div>
-              <span className="text-[10px] text-gray-400">{m.label}</span>
+              <span className="text-[10px] text-gray-500">{m.label}</span>
             </div>
           ))}
         </div>

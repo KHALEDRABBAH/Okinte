@@ -191,7 +191,7 @@ export default function ChatPanel({ user, inline = false }: ChatPanelProps) {
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
                     {messages.length === 0 && hasLoaded && (
-                      <div className="text-center text-sm text-gray-400 py-8">
+                      <div className="text-center text-sm text-gray-500 py-8">
                         Send a message to start a conversation with our support team.
                       </div>
                     )}
@@ -203,7 +203,7 @@ export default function ChatPanel({ user, inline = false }: ChatPanelProps) {
                             : 'bg-[#2563EB] text-white rounded-tr-sm'
                         }`}>
                           <span>{msg.content}</span>
-                          <span className={`text-[10px] mt-1 text-end ${msg.isAdmin ? 'text-gray-400' : 'text-white/70'}`}>
+                          <span className={`text-[10px] mt-1 text-end ${msg.isAdmin ? 'text-gray-500' : 'text-white/70'}`}>
                             {formatTime(msg.createdAt)}
                           </span>
                         </div>

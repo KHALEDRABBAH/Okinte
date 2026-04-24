@@ -45,7 +45,7 @@ export default function About() {
                   <div className="w-12 h-12 bg-[#2563EB]/20 rounded-xl flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-[#3b82f6]" />
                   </div>
-                  <h4 className="font-heading font-semibold text-lg text-white mb-2">{t('features.secure.title')}</h4>
+                  <h3 className="font-heading font-semibold text-lg text-white mb-2">{t('features.secure.title')}</h3>
                   <p className="text-sm text-white/70 leading-relaxed">{t('features.secure.description')}</p>
                 </motion.div>
               </div>

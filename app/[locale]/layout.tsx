@@ -59,7 +59,7 @@ export default async function LocaleLayout({
   const isRTL = rtlLocales.includes(locale as any);
 
   return (
-    <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
+    <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider messages={messages}>
           {children}

@@ -95,9 +95,9 @@ export default function Dashboard() {
       
       if (!res.ok) throw new Error(data.error || 'Failed to submit response');
 
-      // Update application in local state
+      // Update application in local state with full API response (including updated documents)
       setApplications(prev => prev.map(app => 
-        app.id === appId ? { ...app, status: 'SUBMITTED', userResponse: responseComment } : app
+        app.id === appId ? { ...app, ...data.application, status: 'SUBMITTED', userResponse: responseComment } : app
       ));
       
       setResponseSuccess('Your response has been submitted successfully!');
@@ -885,8 +885,8 @@ export default function Dashboard() {
 
                               {/* Document upload slots */}
                               <div>
-                                <label className="block text-sm font-medium text-orange-800 mb-2">Upload Replacement Documents (optional)</label>
-                                <div className="grid grid-cols-2 gap-3">
+                                <label className="block text-sm font-medium text-orange-800 mb-2">Your Documents</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                   {[
                                     { type: 'PASSPORT', label: 'Passport' },
                                     { type: 'CV', label: 'CV' },
@@ -896,32 +896,79 @@ export default function Dashboard() {
                                     const existingDoc = app.documents.find(d => d.type === doc.type);
                                     const newFile = responseFiles[doc.type];
                                     return (
-                                      <label key={doc.type} className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-dashed cursor-pointer transition-all text-center ${
-                                        newFile ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200 hover:border-orange-300 bg-white/70'
+                                      <div key={doc.type} className={`relative rounded-xl border-2 transition-all overflow-hidden ${
+                                        newFile 
+                                          ? 'border-emerald-300 bg-emerald-50/50' 
+                                          : existingDoc 
+                                            ? 'border-gray-200 bg-white' 
+                                            : 'border-dashed border-gray-200 bg-white/70'
                                       }`}>
-                                        <input
-                                          type="file"
-                                          className="hidden"
-                                          accept=".pdf,.jpg,.jpeg,.png"
-                                          onChange={(e) => {
-                                            const f = e.target.files?.[0] || null;
-                                            if (f && f.size > 5 * 1024 * 1024) { alert('File must be less than 5MB'); return; }
-                                            setResponseFiles(prev => ({ ...prev, [doc.type]: f }));
-                                          }}
-                                        />
-                                        {newFile ? (
-                                          <>
-                                            <Check className="w-5 h-5 text-emerald-600" />
-                                            <span className="text-xs text-emerald-700 font-medium truncate max-w-full">{newFile.name}</span>
-                                          </>
+                                        {/* Existing document — show file info */}
+                                        {existingDoc && !newFile ? (
+                                          <div className="p-3 flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                                              <FileText className="w-4 h-4 text-blue-600" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-xs font-semibold text-gray-700">{doc.label}</p>
+                                              <p className="text-[11px] text-gray-400 truncate">{existingDoc.fileName}</p>
+                                            </div>
+                                            <label className="shrink-0 cursor-pointer inline-flex items-center gap-1.5 text-[11px] font-medium text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-2.5 py-1.5 rounded-lg transition-colors">
+                                              <Upload className="w-3 h-3" />
+                                              Replace
+                                              <input
+                                                type="file"
+                                                className="hidden"
+                                                accept=".pdf,.jpg,.jpeg,.png"
+                                                onChange={(e) => {
+                                                  const f = e.target.files?.[0] || null;
+                                                  if (f && f.size > 5 * 1024 * 1024) { alert('File must be less than 5MB'); return; }
+                                                  setResponseFiles(prev => ({ ...prev, [doc.type]: f }));
+                                                }}
+                                              />
+                                            </label>
+                                          </div>
+                                        ) : newFile ? (
+                                          /* New file selected — show new file info with remove option */
+                                          <div className="p-3 flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                                              <Check className="w-4 h-4 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-xs font-semibold text-emerald-700">{doc.label} <span className="text-emerald-500 font-normal">— new</span></p>
+                                              <p className="text-[11px] text-emerald-600 truncate">{newFile.name}</p>
+                                            </div>
+                                            <button
+                                              type="button"
+                                              onClick={() => setResponseFiles(prev => ({ ...prev, [doc.type]: null }))}
+                                              className="shrink-0 text-[11px] font-medium text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors"
+                                            >
+                                              Undo
+                                            </button>
+                                          </div>
                                         ) : (
-                                          <>
-                                            <Upload className="w-5 h-5 text-gray-400" />
-                                            <span className="text-xs font-medium text-gray-600">{doc.label}</span>
-                                            {existingDoc && <span className="text-[10px] text-gray-400">✓ Already uploaded</span>}
-                                          </>
+                                          /* No document at all — upload slot */
+                                          <label className="p-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors">
+                                            <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                                              <Upload className="w-4 h-4 text-gray-400" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-xs font-medium text-gray-500">{doc.label}</p>
+                                              <p className="text-[10px] text-gray-400">Click to upload</p>
+                                            </div>
+                                            <input
+                                              type="file"
+                                              className="hidden"
+                                              accept=".pdf,.jpg,.jpeg,.png"
+                                              onChange={(e) => {
+                                                const f = e.target.files?.[0] || null;
+                                                if (f && f.size > 5 * 1024 * 1024) { alert('File must be less than 5MB'); return; }
+                                                setResponseFiles(prev => ({ ...prev, [doc.type]: f }));
+                                              }}
+                                            />
+                                          </label>
                                         )}
-                                      </label>
+                                      </div>
                                     );
                                   })}
                                 </div>

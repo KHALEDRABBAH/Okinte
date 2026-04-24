@@ -51,13 +51,16 @@ export default function Header() {
     { href: '/contact' as any, label: t('contact') },
   ];
 
+  const isHome = pathname === '/';
+  const isSolid = isScrolled || !isHome;
+
   return (
     <motion.header 
       initial={{ y: -100 }} 
       animate={{ y: 0 }} 
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className={`fixed top-0 start-0 end-0 z-50 transition-all duration-300 ${
-        isScrolled 
+        isSolid 
           ? 'glass-panel shadow-md' 
           : 'bg-transparent'
       }`}
@@ -129,35 +132,55 @@ export default function Header() {
             {/* Auth Section */}
             {!authLoading && (
               isAuthenticated ? (
+                pathname.includes('/dashboard') || pathname.includes('/admin') ? (
+                  <>
+                    <Link 
+                      href="/" 
+                      className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                      {t('home')}
+                    </Link>
+                    <button 
+                      onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
+                      className="btn-primary bg-red-600 hover:bg-red-700 text-sm"
+                    >
+                      <LogOut className="w-4 h-4 me-1.5" />
+                      {t('logout')}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
+                      className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-red-400"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {t('logout')}
+                    </button>
+                    <Link 
+                      href={isAdmin ? '/admin' as any : '/dashboard' as any} 
+                      className="btn-primary text-sm"
+                    >
+                      <LayoutDashboard className="w-4 h-4 me-1.5" />
+                      {isAdmin ? t('admin') : t('dashboard')}
+                    </Link>
+                  </>
+                )
+              ) : (
                 <>
                   <Link 
-                    href={isAdmin ? '/admin' as any : '/dashboard' as any} 
-                    className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
+                    href="/login" 
+                    className="text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
                   >
-                    <LayoutDashboard className="w-4 h-4" />
-                    {isAdmin ? t('admin') : t('dashboard')}
+                    {t('login')}
                   </Link>
-                  <button 
-                    onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
-                    className="flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-red-400"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    {t('logout')}
-                  </button>
+                  <Link href="/apply" className="btn-primary text-sm">
+                    {t('apply')}
+                  </Link>
                 </>
-              ) : (
-                <Link 
-                  href="/login" 
-                  className="text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white"
-                >
-                  {t('login')}
-                </Link>
               )
             )}
-            
-            <Link href="/apply" className="btn-primary text-sm">
-              {t('apply')}
-            </Link>
           </div>
 
           {/* Mobile Language + Menu */}
@@ -238,37 +261,58 @@ export default function Header() {
               
               {!authLoading && (
                 isAuthenticated ? (
+                  pathname.includes('/dashboard') || pathname.includes('/admin') ? (
+                    <>
+                      <Link 
+                        href="/" 
+                        className="block py-2.5 text-white font-medium flex items-center gap-2" 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        {t('home')}
+                      </Link>
+                      <button 
+                        onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
+                        className="btn-primary bg-red-600 hover:bg-red-700 text-center block mt-4 w-full flex items-center justify-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" /> 
+                        {t('logout')}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button 
+                        onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
+                        className="block py-2.5 text-red-400 font-medium flex items-center gap-2 w-full text-start"
+                      >
+                        <LogOut className="w-4 h-4" /> 
+                        {t('logout')}
+                      </button>
+                      <Link 
+                        href={isAdmin ? '/admin' as any : '/dashboard' as any} 
+                        className="btn-primary text-center block mt-4 flex items-center justify-center gap-2"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        {isAdmin ? t('admin') : t('dashboard')}
+                      </Link>
+                    </>
+                  )
+                ) : (
                   <>
                     <Link 
-                      href={isAdmin ? '/admin' as any : '/dashboard' as any} 
-                      className="block py-2.5 text-white font-medium flex items-center gap-2" 
+                      href="/login" 
+                      className="block py-2.5 text-white font-medium" 
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <LayoutDashboard className="w-4 h-4" /> 
-                      {isAdmin ? t('admin') : t('dashboard')}
+                      {t('login')}
                     </Link>
-                    <button 
-                      onClick={async () => { await logout(); window.location.href = `/${locale}/login`; }} 
-                      className="block py-2.5 text-red-400 font-medium flex items-center gap-2 w-full text-start"
-                    >
-                      <LogOut className="w-4 h-4" /> 
-                      {t('logout')}
-                    </button>
+                    <Link href="/apply" className="btn-primary text-center block mt-4" onClick={() => setIsMobileMenuOpen(false)}>
+                      {t('apply')}
+                    </Link>
                   </>
-                ) : (
-                  <Link 
-                    href="/login" 
-                    className="block py-2.5 text-white font-medium" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {t('login')}
-                  </Link>
                 )
               )}
-              
-              <Link href="/apply" className="btn-primary text-center block mt-4" onClick={() => setIsMobileMenuOpen(false)}>
-                {t('apply')}
-              </Link>
               
               {/* Language Selection */}
               <div className="pt-4 border-t border-white/10">

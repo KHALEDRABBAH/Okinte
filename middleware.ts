@@ -8,11 +8,10 @@ const intlMiddleware = createMiddleware(routing);
 function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('FATAL: JWT_SECRET environment variable is not set. Refusing to start in production without it.');
-    }
-    console.warn('⚠️  JWT_SECRET not set — using development-only fallback. Do NOT deploy this to production.');
-    return new TextEncoder().encode('dev-only-fallback-do-not-deploy');
+    throw new Error(
+      '[Middleware] FATAL: JWT_SECRET environment variable is not set. ' +
+      'The application cannot start without it.'
+    );
   }
   return new TextEncoder().encode(secret);
 }
@@ -68,8 +67,22 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  // Proceed with i18n middleware
-  return intlMiddleware(request);
+  // Apply i18n middleware
+  const response = intlMiddleware(request);
+
+  // Add Security & SEO Headers
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+  // Cache control for public pages
+  if (!isProtected && !isAdminPath && !request.nextUrl.pathname.startsWith('/api')) {
+    response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400');
+  }
+
+  return response;
 }
 
 export const config = {

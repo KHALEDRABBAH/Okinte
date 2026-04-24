@@ -103,24 +103,23 @@ export async function POST(request: NextRequest) {
     // Handle free orders (e.g., 100% promo code discount) without calling Stripe
     // Stripe rejects unit_amount: 0 in payment mode
     if (finalPrice <= 0) {
-      // ATOMIC: Increment promo code usage with race condition guard
-      // Only increment if currentUses < maxUses (if maxUses is set)
+      // Track promo code usage atomically
       if (promoCodeId) {
-        const promoUpdateResult = await db.promoCode.updateMany({
+        const updated = await db.promoCode.updateMany({
           where: {
             id: promoCodeId,
-            // Ensure we only update if maxUses not reached (if it exists)
-            ...(promoMaxUses !== null ? { currentUses: { lt: promoMaxUses } } : {}),
+            OR: [
+              { maxUses: null },
+              { maxUses: { gt: db.promoCode.fields.currentUses } }
+            ]
           },
-          data: { currentUses: { increment: 1 } },
-        });
-
-        // If promo code update failed, it means max uses already reached
-        if (promoUpdateResult.count === 0 && promoMaxUses !== null) {
+          data: { currentUses: { increment: 1 } }
+        })
+        if (updated.count === 0) {
           return NextResponse.json(
-            { error: 'Promo code has reached its maximum usage limit' },
+            { error: 'Promo code has reached its usage limit.' },
             { status: 400 }
-          );
+          )
         }
       }
 

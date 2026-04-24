@@ -1,0 +1,27 @@
+# Okinte
+> The complete digital platform for managing service requests, payments, and client communications.
+
+## What is Okinte?
+Okinte is a digital service request management platform that enables users to submit service applications through a structured multi-step workflow. It integrates secure document uploads via Supabase Storage, online payment processing via Stripe, real-time messaging, promo code validation, and a full-featured admin dashboard.
+
+## Who is it for?
+It is for clients who want to apply for study, internship, or employment opportunities abroad. It is also designed for administrators who need a central dashboard to track applications, communicate with clients, process payments, and manage service offerings securely.
+
+## Core Features
+- Multi-step service applications (Info -> Selection -> Upload -> Promo -> Payment)
+- Admin analytics dashboard with Excel exports
+- Secure file and document uploads
+- Stripe payment integration with webhooks
+- Real-time client-admin messaging
+- Fully localized platform supporting multiple languages (EN, FR, AR, TR, JA, ES, IT)
+
+## How to get started
+1. Register an account or log in.
+2. Go to the 'Apply' section.
+3. Fill out personal details and choose the required service.
+4. Upload necessary documents securely.
+5. Apply a promo code if available and complete the payment.
+6. Track your status and chat with admins directly from the dashboard.
+
+## Contact
+Support Email: support@okinte.com

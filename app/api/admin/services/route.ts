@@ -41,9 +41,14 @@ export async function POST(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
-    // Verify admin role from database
-    const isAdmin = await verifyAdminRole(currentUser.userId);
-    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Re-verify admin role from DB (JWT role could be stale)
+    const freshUser = await db.user.findUnique({
+      where: { id: currentUser.userId },
+      select: { role: true },
+    });
+    if (freshUser?.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     const body = await request.json();
     const { key, price } = body;
@@ -80,9 +85,14 @@ export async function PATCH(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
-    // Verify admin role from database
-    const isAdmin = await verifyAdminRole(currentUser.userId);
-    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Re-verify admin role from DB (JWT role could be stale)
+    const freshUser = await db.user.findUnique({
+      where: { id: currentUser.userId },
+      select: { role: true },
+    });
+    if (freshUser?.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     const body = await request.json();
     const { id, price, isActive } = body;
@@ -113,9 +123,14 @@ export async function DELETE(request: NextRequest) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
-    // Verify admin role from database
-    const isAdmin = await verifyAdminRole(currentUser.userId);
-    if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Re-verify admin role from DB (JWT role could be stale)
+    const freshUser = await db.user.findUnique({
+      where: { id: currentUser.userId },
+      select: { role: true },
+    });
+    if (freshUser?.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

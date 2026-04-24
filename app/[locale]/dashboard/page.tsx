@@ -246,14 +246,7 @@ export default function Dashboard() {
               </h1>
               <p className="text-gray-500 mt-1">{user?.email}</p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/apply" className="btn-primary text-sm">
-                <Plus className="w-4 h-4 me-2" /> {t('title')}
-              </Link>
-              <button onClick={handleLogout} className="btn-secondary text-sm bg-gray-100 hover:bg-gray-200">
-                <LogOut className="w-4 h-4 me-2" /> {td('logout')}
-              </button>
-            </div>
+            {/* Actions removed from here since they are in the Header now */}
           </div>
 
           {/* Tabs Navigation */}

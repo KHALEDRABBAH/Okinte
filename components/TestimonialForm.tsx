@@ -56,7 +56,7 @@ export default function TestimonialForm() {
   return (
     <>
       <button 
-        onClick={() => setIsOpen(true)}
+        onClick={() => { setIsOpen(true); setError(null); }}
         className="flex items-center gap-2 text-primary font-medium text-sm hover:text-gold transition-colors"
       >
         <Star className="w-4 h-4" aria-hidden="true" /> Write a Review

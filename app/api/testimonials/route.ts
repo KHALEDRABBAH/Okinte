@@ -29,10 +29,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Step 2: Rate limiting (3 testimonials per 30 minutes per user)
+    // Step 2: Rate limiting (5 testimonials per 60 minutes per user)
     const rl = await rateLimitAsync(`testimonial:${currentUser.userId}`, {
-      maxRequests: 3,
-      windowMs: 30 * 60 * 1000,
+      maxRequests: 5,
+      windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
       return NextResponse.json(

@@ -36,9 +36,9 @@ export default function Hero() {
           
           {/* Badge */}
           <motion.div 
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0.5, y: 10 }} 
             animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.4 }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full mb-6 border border-white/10"
           >
             <Globe className="w-4.5 h-4.5 text-[#2563EB]" />
@@ -47,9 +47,9 @@ export default function Hero() {
 
           {/* Title */}
           <motion.h1 
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0.5, y: 15 }} 
             animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-5"
           >
             {t('title')}
@@ -57,9 +57,9 @@ export default function Hero() {
 
           {/* Subtitle */}
           <motion.p 
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 15 }} 
             animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, delay: 0.35 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed"
           >
             {t('subtitle')}
@@ -67,9 +67,9 @@ export default function Hero() {
 
           {/* CTA Buttons */}
           <motion.div 
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }} 
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 15 }} 
             animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mt-2"
           >
             <Link href="/apply" className="group">

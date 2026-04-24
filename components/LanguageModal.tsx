@@ -29,9 +29,7 @@ export default function LanguageModal() {
     // Only show if user hasn't chosen before
     const saved = localStorage.getItem('okinte-lang-chosen');
     if (!saved) {
-      // Brief delay so the page loads first
-      const timer = setTimeout(() => setShow(true), 800);
-      return () => clearTimeout(timer);
+      setShow(true);
     }
   }, []);
 

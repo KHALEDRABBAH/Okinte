@@ -73,6 +73,7 @@ export default function Dashboard() {
   const [promoError, setPromoError] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [showAddService, setShowAddService] = useState(false);
+  const [continuingDraftId, setContinuingDraftId] = useState<string | null>(null);
 
   const handleRespondToReturn = async (appId: string) => {
     setIsResponding(true);
@@ -833,6 +834,93 @@ export default function Dashboard() {
                                   Cancel
                                 </button>
                               </div>
+                            </motion.div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* DRAFT: Continue Application — select service + pay */}
+                      {app.status === 'DRAFT' && (
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                          {continuingDraftId !== app.id ? (
+                            <button
+                              onClick={() => { setContinuingDraftId(app.id); setSelectedService(app.service.key || ''); setAppFlowError(''); setPromoCode(''); setPromoResult(null); }}
+                              className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB]/5 hover:bg-[#2563EB]/10 rounded-lg"
+                            >
+                              <ArrowRight className="w-4 h-4" /> Continue Application
+                            </button>
+                          ) : (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+                              {/* Service Selection */}
+                              <div>
+                                <label className="block text-sm font-semibold text-[#1a1a2e] mb-3">Select Service *</label>
+                                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                  {[
+                                    { id: 'study', icon: GraduationCap, label: 'Study Abroad Placement' },
+                                    { id: 'internship', icon: Briefcase, label: 'International Internship' },
+                                    { id: 'scholarship', icon: Award, label: 'Scholarship Search' },
+                                    { id: 'sabbatical', icon: Palmtree, label: 'Sabbatical Experience' },
+                                    { id: 'employment', icon: Building2, label: 'Job Placement' },
+                                  ].map((svc) => (
+                                    <button key={svc.id} type="button" onClick={() => { setSelectedService(svc.id); setAppFlowError(''); }}
+                                      className={`p-3 rounded-xl border-2 text-start transition-all duration-200 ${selectedService === svc.id ? 'border-[#0f172a] bg-slate-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}>
+                                      <svc.icon className={`w-5 h-5 mb-1.5 ${selectedService === svc.id ? 'text-[#0f172a]' : 'text-gray-400'}`} />
+                                      <p className="font-semibold text-xs text-[#1a1a2e]">{svc.label}</p>
+                                      {servicePrices[svc.id] && <p className="text-[11px] text-gray-400 mt-0.5">${servicePrices[svc.id].toFixed(2)}</p>}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Order Summary + Payment */}
+                              {selectedService && (
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                                  <div className="bg-gray-50 rounded-xl p-5">
+                                    <div className="flex justify-between text-sm mb-2"><span className="text-gray-600">Service</span><span className="font-medium capitalize">{selectedService}</span></div>
+                                    <div className="flex justify-between text-sm"><span className="text-gray-600">Fee</span><span className="font-medium">{servicePrices[selectedService] ? `$${servicePrices[selectedService].toFixed(2)}` : '...'}</span></div>
+                                    {promoResult && <div className="flex justify-between text-sm text-emerald-700 mt-1"><span>Discount</span><span>−${promoResult.discount.toFixed(2)}</span></div>}
+                                    <div className="flex justify-between font-bold border-t border-gray-200 pt-2 mt-2"><span>Total</span><span className="text-[#2563EB]">{promoResult ? `$${promoResult.finalPrice.toFixed(2)}` : servicePrices[selectedService] ? `$${servicePrices[selectedService].toFixed(2)}` : '...'}</span></div>
+                                  </div>
+
+                                  {/* Promo */}
+                                  <div className="flex gap-2">
+                                    <input type="text" value={promoCode} onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoResult(null); }} placeholder="Promo code" className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono" />
+                                    <button type="button" onClick={async () => { if (!promoCode.trim()) return; setPromoLoading(true); setPromoError(''); try { const r = await fetch('/api/promo/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: promoCode, originalPrice: servicePrices[selectedService] }) }); const d = await r.json(); if (r.ok && d.valid) setPromoResult(d); else { setPromoError(d.error || 'Invalid'); setPromoResult(null); } } catch { setPromoError('Failed'); } finally { setPromoLoading(false); } }} disabled={promoLoading || !promoCode.trim()} className="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50">{promoLoading ? '...' : 'Apply'}</button>
+                                  </div>
+                                  {promoError && <p className="text-red-500 text-xs">{promoError}</p>}
+                                  {promoResult && <p className="text-emerald-700 text-xs font-medium">✓ {promoResult.code} applied</p>}
+
+                                  {appFlowError && <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">{appFlowError}</div>}
+
+                                  <div className="flex gap-3">
+                                    <button onClick={() => setContinuingDraftId(null)} className="btn-secondary flex-1 py-2.5 text-sm">Cancel</button>
+                                    <button
+                                      onClick={async () => {
+                                        setIsCreatingApp(true); setAppFlowError('');
+                                        try {
+                                          // Update the draft application's service
+                                          await fetch(`/api/applications/${app.id}`, {
+                                            method: 'PATCH',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ serviceKey: selectedService }),
+                                          });
+                                          // Process payment
+                                          const checkoutRes = await fetch('/api/payments/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ applicationId: app.id, promoCode: promoResult?.code || undefined }) });
+                                          const checkoutData = await checkoutRes.json();
+                                          if (!checkoutRes.ok) throw new Error(checkoutData.error || 'Payment failed');
+                                          if (checkoutData.free) { window.location.reload(); return; }
+                                          if (checkoutData.url) { window.location.href = checkoutData.url; return; }
+                                          throw new Error('Payment could not be processed.');
+                                        } catch (err: any) { setAppFlowError(err.message); } finally { setIsCreatingApp(false); }
+                                      }}
+                                      disabled={isCreatingApp || !selectedService}
+                                      className="btn-primary flex-1 py-2.5 text-sm disabled:opacity-50"
+                                    >
+                                      {isCreatingApp ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Pay & Submit <ArrowRight className="w-4 h-4 ms-1" /></>}
+                                    </button>
+                                  </div>
+                                </motion.div>
+                              )}
                             </motion.div>
                           )}
                         </div>

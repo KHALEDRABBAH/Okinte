@@ -139,3 +139,63 @@ export async function DELETE(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+/**
+ * PATCH /api/applications/[id]
+ * Update a DRAFT application's service before payment
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const currentUser = await getUserFromRequest(request);
+    if (!currentUser) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const application = await db.application.findUnique({
+      where: { id },
+      select: { id: true, userId: true, status: true },
+    });
+
+    if (!application) {
+      return NextResponse.json({ error: 'Application not found' }, { status: 404 });
+    }
+
+    if (application.userId !== currentUser.userId && currentUser.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    if (application.status !== 'DRAFT') {
+      return NextResponse.json({ error: 'Only draft applications can be updated' }, { status: 422 });
+    }
+
+    const body = await request.json();
+    const { serviceKey } = body;
+
+    if (!serviceKey) {
+      return NextResponse.json({ error: 'serviceKey is required' }, { status: 400 });
+    }
+
+    // Find the service
+    const service = await db.service.findUnique({ where: { key: serviceKey } });
+    if (!service) {
+      return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+    }
+
+    // Update the application's service
+    const updated = await db.application.update({
+      where: { id },
+      data: { serviceId: service.id },
+      include: { service: true },
+    });
+
+    return NextResponse.json({ application: updated });
+
+  } catch (error) {
+    console.error('Application update error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

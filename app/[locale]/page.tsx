@@ -1,15 +1,17 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import About from '@/components/About';
-
-import Services from '@/components/Services';
-import Process from '@/components/Process';
-import Partners from '@/components/Partners';
-import Testimonials from '@/components/Testimonials';
-import FAQ from '@/components/FAQ';
-import CTA from '@/components/CTA';
-import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd';
+import dynamic from 'next/dynamic';
+
+// Dynamically import below-the-fold components to reduce initial JS payload
+const About = dynamic(() => import('@/components/About'));
+const Services = dynamic(() => import('@/components/Services'));
+const Process = dynamic(() => import('@/components/Process'));
+const Partners = dynamic(() => import('@/components/Partners'));
+const Testimonials = dynamic(() => import('@/components/Testimonials'));
+const FAQ = dynamic(() => import('@/components/FAQ'));
+const CTA = dynamic(() => import('@/components/CTA'));
+const Footer = dynamic(() => import('@/components/Footer'));
 
 export default function Home() {
   return (

@@ -4,7 +4,8 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { Inter, Montserrat } from 'next/font/google';
 import { rtlLocales } from '@/i18n/routing';
 import FloatingContact from '@/components/FloatingContact';
-import LanguageModal from '@/components/LanguageModal';
+import dynamic from 'next/dynamic';
+const LanguageModal = dynamic(() => import('@/components/LanguageModal'), { ssr: false });
 import { Analytics } from '@vercel/analytics/next';
 import '../globals.css';
 

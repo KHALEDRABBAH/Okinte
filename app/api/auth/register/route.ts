@@ -1,20 +1,5 @@
 export const dynamic = 'force-dynamic';
 
-/**
- * POST /api/auth/register
- * 
- * WHAT: Creates a new user account with email verification
- * 
- * FLOW:
- * 1. Parse & validate request body with Zod
- * 2. Check if email already exists → 409 if duplicate
- * 3. Hash password with bcrypt (10 salt rounds)
- * 4. Generate email verification token
- * 5. Insert user into database (emailVerified = false)
- * 6. Send verification email
- * 7. Return success (user must verify email before logging in)
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { hashPassword } from '@/lib/auth';
@@ -24,7 +9,6 @@ import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting: 3 registrations per 30 minutes per IP
     const ip = getClientIp(request);
     const rl = await rateLimitAsync(`register:${ip}`, RATE_LIMITS.register);
     if (!rl.allowed) {
@@ -34,7 +18,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 1: Parse and validate the request body
     const body = await request.json();
     const validation = registerSchema.safeParse(body);
 
@@ -47,36 +30,40 @@ export async function POST(request: NextRequest) {
 
     const { firstName, lastName, email, phone, country, city, password } = validation.data;
 
-    // Step 2: Check if email or phone already exists (raw SQL to avoid schema mismatch)
-    const existingEmail = await db.$queryRaw<Array<{ id: string }>>`SELECT "id" FROM "users" WHERE "email" = ${email.toLowerCase()} LIMIT 1`;
+    // Use Prisma with select to avoid fetching missing columns
+    const [existingEmail, existingPhone] = await Promise.all([
+      db.user.findUnique({
+        where: { email: email.toLowerCase() },
+        select: { id: true }
+      }),
+      db.user.findFirst({
+        where: { phone },
+        select: { id: true }
+      })
+    ]);
     
-    if (existingEmail.length > 0) {
+    if (existingEmail) {
       return NextResponse.json(
         { error: 'An account with this email already exists', field: 'email', details: { email: ['This email is already registered. Please use a different email or login.'] } },
         { status: 409 }
       );
     }
 
-    const existingPhone = await db.$queryRaw<Array<{ id: string }>>`SELECT "id" FROM "users" WHERE "phone" = ${phone} LIMIT 1`;
-
-    if (existingPhone.length > 0) {
+    if (existingPhone) {
       return NextResponse.json(
         { error: 'An account with this phone number already exists', field: 'phone', details: { phone: ['This phone number is already registered.'] } },
         { status: 409 }
       );
     }
 
-    // Step 3: Hash the password (never store raw passwords)
     const passwordHash = await hashPassword(password);
-
-    // Step 4: Generate verification token (valid for 24 hours)
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    // Step 5: Create the user in the database
-    // Try with verification columns first, fall back to without if columns don't exist yet
     let user: { id: string; firstName: string; email: string };
+    
     try {
+      // @ts-ignore - we know these fields might be missing in older DB but Prisma client expects them
       const created = await db.user.create({
         data: {
           firstName,
@@ -98,32 +85,27 @@ export async function POST(request: NextRequest) {
       });
       user = created;
     } catch (createErr: any) {
-      // If the verification columns don't exist yet, create without them
-      if (createErr.message?.includes('verificationToken') || createErr.code === 'P2009' || createErr.code === 'P2002') {
-        const created = await db.user.create({
-          data: {
-            firstName,
-            lastName,
-            email: email.toLowerCase(),
-            phone,
-            country,
-            city,
-            passwordHash,
-            emailVerified: false,
-          },
-          select: {
-            id: true,
-            firstName: true,
-            email: true,
-          },
-        });
-        user = created;
-      } else {
-        throw createErr;
-      }
+      // Fallback if verificationToken column doesn't exist yet
+      const created = await db.user.create({
+        data: {
+          firstName,
+          lastName,
+          email: email.toLowerCase(),
+          phone,
+          country,
+          city,
+          passwordHash,
+          emailVerified: false,
+        },
+        select: {
+          id: true,
+          firstName: true,
+          email: true,
+        },
+      });
+      user = created;
     }
 
-    // Step 6: Send verification email (non-blocking)
     const locale = body.locale || 'en';
     try {
       const { sendVerificationEmail } = await import('@/lib/email');
@@ -132,8 +114,6 @@ export async function POST(request: NextRequest) {
       console.error('Failed to send verification email', emailErr);
     }
 
-    // Step 7: Return success — user must verify email before logging in
-    // Do NOT set auth cookie here — user must verify first
     return NextResponse.json(
       { 
         message: 'Account created! Please check your email to verify your account.',

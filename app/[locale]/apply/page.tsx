@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { GraduationCap, Briefcase, Award, Palmtree, Building2, Upload, FileText, CreditCard, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { rtlLocales } from '@/i18n/routing';
+import PhoneInput from '@/components/PhoneInput';
 
 const ALL_COUNTRIES = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Argentina","Armenia","Australia","Austria","Azerbaijan",
@@ -669,7 +670,15 @@ export default function Apply() {
                     <InputField name="firstName" label={t('form.firstName')} icon={User} value={formData.firstName} error={errors.firstName} onChange={handleInputChange} disabled={isLoggedIn} />
                     <InputField name="lastName" label={t('form.lastName')} icon={User} value={formData.lastName} error={errors.lastName} onChange={handleInputChange} disabled={isLoggedIn} />
                   </div>
-                  <InputField name="phone" label={t('form.phone')} type="tel" icon={Phone} hint={t('form.phoneHint')} value={formData.phone} error={errors.phone} onChange={handleInputChange} disabled={isLoggedIn} />
+                  <div>
+                    <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('form.phone')} <span className="text-red-500">*</span></label>
+                    <PhoneInput 
+                      value={formData.phone} 
+                      onChange={(val) => handleInputChange('phone', val)} 
+                      required 
+                    />
+                    {errors.phone && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.phone}</p>}
+                  </div>
                   <InputField name="email" label={t('form.email')} type="email" icon={Mail} value={formData.email} error={errors.email} onChange={handleInputChange} disabled={isLoggedIn} />
                   
                   {/* Only show password fields for new users */}

@@ -4,6 +4,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { rtlLocales } from '@/i18n/routing';
 import FloatingContact from '@/components/FloatingContact';
 import LanguageModal from '@/components/LanguageModal';
+import { Analytics } from '@vercel/analytics/next';
 import '../globals.css';
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
@@ -65,6 +66,7 @@ export default async function LocaleLayout({
           <FloatingContact />
           <LanguageModal />
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );

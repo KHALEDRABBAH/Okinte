@@ -1,5 +1,21 @@
 export const dynamic = 'force-dynamic';
 
+/**
+ * GET /api/auth/verify-email?token=xxx
+ * 
+ * WHAT: Verifies a user's email address using the token sent via email.
+ * 
+ * FLOW:
+ * 1. Extract token from query string
+ * 2. Find user with matching token that hasn't expired
+ * 3. Set emailVerified = true, clear token
+ * 4. Send welcome email
+ * 5. Return success
+ * 
+ * POST /api/auth/verify-email (resend)
+ * Resends the verification email to the user.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { createToken, setAuthCookie } from '@/lib/auth';
@@ -16,29 +32,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let user;
-    try {
-      // @ts-ignore - verificationToken exists in schema but might not in DB yet
-      user = await db.user.findFirst({
-        where: {
-          verificationToken: token,
-          verificationTokenExpires: { gt: new Date() },
-        },
-        select: {
-          id: true,
-          firstName: true,
-          email: true,
-          role: true,
-          tokenVersion: true,
-        }
-      });
-    } catch (e) {
-      // If column doesn't exist, this feature can't work yet
-      return NextResponse.json(
-        { error: 'Email verification is currently unavailable. Please contact support.' },
-        { status: 400 }
-      );
-    }
+    // Find user with matching token
+    const user = await db.user.findFirst({
+      where: {
+        verificationToken: token,
+        verificationTokenExpires: { gt: new Date() },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        email: true,
+        role: true,
+        tokenVersion: true,
+      },
+    });
 
     if (!user) {
       return NextResponse.json(
@@ -47,28 +54,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    try {
-      // @ts-ignore
-      await db.user.update({
-        where: { id: user.id },
-        data: {
-          emailVerified: true,
-          verificationToken: null,
-          verificationTokenExpires: null,
-        },
-      });
-    } catch (e) {
-      // Fallback
-      await db.user.update({
-        where: { id: user.id },
-        data: { emailVerified: true },
-      });
-    }
+    // Mark email as verified and clear the token
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        verificationToken: null,
+        verificationTokenExpires: null,
+      },
+    });
 
+    // Send welcome email now that email is verified
     const { sendRegistrationEmail } = await import('@/lib/email');
     await sendRegistrationEmail(user.email, user.firstName)
       .catch(err => console.error('Failed to send welcome email', err));
 
+    // Auto-login: create JWT and set cookie
     const jwtToken = await createToken({
       userId: user.id,
       email: user.email,
@@ -91,6 +92,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * POST /api/auth/verify-email
+ * Resend verification email
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -110,10 +115,11 @@ export async function POST(request: NextRequest) {
         firstName: true,
         email: true,
         emailVerified: true,
-      }
+      },
     });
 
     if (!user) {
+      // Don't reveal if email exists
       return NextResponse.json({ message: 'If an account exists, a verification email will be sent.' });
     }
 
@@ -121,24 +127,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Email is already verified. You can log in.' });
     }
 
+    // Generate new token
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    try {
-      // @ts-ignore
-      await db.user.update({
-        where: { id: user.id },
-        data: { verificationToken, verificationTokenExpires },
-      });
-      
-      const locale = body.locale || 'en';
-      const { sendVerificationEmail } = await import('@/lib/email');
-      await sendVerificationEmail(user.email, user.firstName, verificationToken, locale)
-        .catch(err => console.error('Failed to resend verification email', err));
-        
-    } catch (updateErr) {
-      console.error('Could not update verification token (columns may not exist):', updateErr);
-    }
+    await db.user.update({
+      where: { id: user.id },
+      data: { verificationToken, verificationTokenExpires },
+    });
+
+    // Send verification email
+    const locale = body.locale || 'en';
+    const { sendVerificationEmail } = await import('@/lib/email');
+    await sendVerificationEmail(user.email, user.firstName, verificationToken, locale)
+      .catch(err => console.error('Failed to resend verification email', err));
 
     return NextResponse.json({ message: 'Verification email sent! Please check your inbox.' });
 

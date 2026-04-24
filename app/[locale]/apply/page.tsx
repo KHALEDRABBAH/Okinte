@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { GraduationCap, Briefcase, Award, Palmtree, Building2, Upload, FileText, CreditCard, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { Upload, FileText, Check, ArrowRight, ArrowLeft, Loader2, User, Mail, Phone, MapPin, AlertCircle, Lock, Eye, EyeOff, MailCheck } from 'lucide-react';
 import { rtlLocales } from '@/i18n/routing';
 import PhoneInput from '@/components/PhoneInput';
 
@@ -31,7 +30,7 @@ const ALL_COUNTRIES = [
 ];
 
 // ============================================================
-// EXTRACTED COMPONENTS (outside main function to prevent re-render lag)
+// EXTRACTED COMPONENTS
 // ============================================================
 
 interface InputFieldProps {
@@ -90,13 +89,11 @@ interface FileUploadProps {
   onFileChange: (type: string, file: File | null) => void;
   uploadedLabel: string;
   formatsLabel: string;
-  existingFileName?: string;
 }
 
-function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel, formatsLabel, existingFileName }: FileUploadProps) {
-  const hasFile = file || existingFileName;
+function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel, formatsLabel }: FileUploadProps) {
   return (
-    <div className={`relative overflow-hidden border-2 border-dashed rounded-2xl p-6 text-center transition-all duration-300 group ${hasFile ? 'border-emerald-400 bg-emerald-50/50 shadow-sm' : 'border-gray-300 hover:border-[#2563EB]/60 hover:bg-[#2563EB]/5 hover:shadow-sm hover:-translate-y-0.5'}`}>
+    <div className={`relative overflow-hidden border-2 border-dashed rounded-2xl p-6 text-center transition-all duration-300 group ${file ? 'border-emerald-400 bg-emerald-50/50 shadow-sm' : 'border-gray-300 hover:border-[#2563EB]/60 hover:bg-[#2563EB]/5 hover:shadow-sm hover:-translate-y-0.5'}`}>
       <input type="file" id={type} onChange={(e) => onFileChange(type, e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.jpg,.jpeg,.png" />
       <div className="space-y-3 relative z-0 pointer-events-none">
         {file ? (
@@ -106,15 +103,6 @@ function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel
             </motion.div>
             <p className="text-emerald-700 font-semibold text-sm">{uploadedLabel}</p>
             <p className="text-xs text-emerald-600/80 truncate max-w-[200px] mx-auto bg-emerald-100/50 px-3 py-1.5 rounded-lg border border-emerald-100">{file.name}</p>
-          </>
-        ) : existingFileName ? (
-          <>
-            <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-emerald-200">
-              <Check className="w-7 h-7 text-emerald-600" />
-            </div>
-            <p className="text-emerald-700 font-semibold text-sm">✓ Already uploaded</p>
-            <p className="text-xs text-emerald-600/80 truncate max-w-[200px] mx-auto bg-emerald-100/50 px-3 py-1.5 rounded-lg border border-emerald-100">{existingFileName}</p>
-            <p className="text-[11px] text-emerald-600/60 mt-1 font-medium">Click to replace</p>
           </>
         ) : (
           <>
@@ -137,28 +125,14 @@ function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel
 
 export default function Apply() {
   const t = useTranslations('apply');
-  const tServices = useTranslations('services');
   const locale = useLocale();
   const isRTL = rtlLocales.includes(locale as any);
-  const searchParams = useSearchParams();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [applicationId, setApplicationId] = useState('');
-  const [referenceCode, setReferenceCode] = useState('');
-  const [servicePrice, setServicePrice] = useState<number | null>(null);
-  const [servicePrices, setServicePrices] = useState<Record<string, number>>({});
   const [submitError, setSubmitError] = useState('');
-  const [uploadProgress, setUploadProgress] = useState<Record<string, boolean>>({});
-  const [promoCode, setPromoCode] = useState('');
-  const [promoResult, setPromoResult] = useState<{ valid: boolean; discount: number; finalPrice: number; code: string; type: string; value: number } | null>(null);
-  const [promoError, setPromoError] = useState('');
-  const [promoLoading, setPromoLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<{ firstName: string; lastName: string; email: string; phone: string; country: string; city: string } | null>(null);
-  const [draftSaved, setDraftSaved] = useState(false);
-  const [existingDocs, setExistingDocs] = useState<Record<string, string>>({}); // type -> fileName
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -169,186 +143,20 @@ export default function Apply() {
     confirmPassword: '',
     country: '',
     city: '',
-    service: '',
   });
 
   const [files, setFiles] = useState({
     passport: null as File | null,
     cv: null as File | null,
     diploma: null as File | null,
-    paymentReceipt: null as File | null,
   });
-
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const pollingRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.user) {
-            setIsLoggedIn(true);
-            setLoggedInUser(data.user);
-            setFormData(prev => ({
-              ...prev,
-              firstName: data.user.firstName || '',
-              lastName: data.user.lastName || '',
-              email: data.user.email || '',
-              phone: data.user.phone || '',
-              country: data.user.country || '',
-              city: data.user.city || '',
-            }));
-          }
-        }
-      } catch {}
-    };
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    const successParam = searchParams.get('success');
-    const canceledParam = searchParams.get('canceled');
-    const appIdParam = searchParams.get('app');
-    const draftIdParam = searchParams.get('draftId');
-
-    if (successParam === 'true' && appIdParam) {
-      setApplicationId(appIdParam);
-      setIsProcessingPayment(true);
-      pollForConfirmation(appIdParam);
-      return;
-    }
-
-    if (canceledParam === 'true') {
-      setSubmitError('Payment was canceled. Your application is saved as a draft. You can try again below or from your dashboard.');
-    }
-
-    const draftToLoad = draftIdParam || (canceledParam === 'true' ? appIdParam : null);
-
-    if (draftToLoad && !successParam) {
-      fetch(`/api/applications/${draftToLoad}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.application) {
-            setApplicationId(data.application.id);
-            setReferenceCode(data.application.referenceCode);
-            setFormData(prev => ({ ...prev, service: data.application.service.key }));
-            
-            // Load existing documents so user doesn't re-upload
-            if (data.application.documents && data.application.documents.length > 0) {
-              const docs: Record<string, string> = {};
-              data.application.documents.forEach((doc: { type: string; fileName: string }) => {
-                const typeMap: Record<string, string> = { PASSPORT: 'passport', CV: 'cv', DIPLOMA: 'diploma', PAYMENT_RECEIPT: 'paymentReceipt' };
-                const key = typeMap[doc.type];
-                if (key) docs[key] = doc.fileName;
-              });
-              setExistingDocs(docs);
-            }
-            
-            // If returning from canceled payment, always jump to payment step
-            if (canceledParam === 'true') {
-              setCurrentStep(3);
-            } 
-            // If has all 4 documents, jump to payment step; otherwise documents
-            else if (data.application.documents?.length >= 4) {
-              setCurrentStep(3);
-            } else {
-              setCurrentStep(2);
-            }
-          }
-        }).catch(err => console.error('Failed to load draft:', err));
-    }
-
-    const preselected = searchParams.get('service');
-    if (preselected && ['study', 'internship', 'scholarship', 'sabbatical', 'employment'].includes(preselected)) {
-      setFormData(prev => ({ ...prev, service: preselected }));
-    }
-
-    fetchServicePrices();
-  }, [searchParams]);
-
-  const fetchServicePrices = async () => {
-    try {
-      const res = await fetch('/api/services');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.services) {
-          const prices: Record<string, number> = {};
-          data.services.forEach((svc: { key: string; price: number }) => {
-            prices[svc.key] = Number(svc.price);
-          });
-          setServicePrices(prices);
-        }
-      }
-    } catch {
-      console.error('Failed to fetch service prices');
-    }
-  };
-
-  useEffect(() => {
-    if (formData.service && servicePrices[formData.service]) {
-      setServicePrice(servicePrices[formData.service]);
-    } else {
-      setServicePrice(null);
-    }
-  }, [formData.service, servicePrices]);
-
-  useEffect(() => {
-    return () => {
-      if (pollingRef.current) clearTimeout(pollingRef.current);
-    };
-  }, []);
-
-  const pollForConfirmation = async (appId: string, attempts = 0) => {
-    const MAX_ATTEMPTS = 30;
-    if (attempts >= MAX_ATTEMPTS) {
-      setSubmitError('Payment confirmed but processing is taking longer than expected. Please check your dashboard.');
-      setIsProcessingPayment(false);
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/applications/${appId}`);
-      const data = await res.json();
-
-      if (res.ok && data.application) {
-        if (data.application.status === 'SUBMITTED') {
-          setReferenceCode(data.application.referenceCode);
-          setIsProcessingPayment(false);
-          setCurrentStep(4);
-          return;
-        }
-        if (data.application.payment?.status === 'FAILED') {
-          setSubmitError('Payment failed. Your application is saved as a draft. You can try again from your dashboard.');
-          setIsProcessingPayment(false);
-          return;
-        }
-      }
-    } catch {}
-
-    pollingRef.current = setTimeout(() => {
-      pollForConfirmation(appId, attempts + 1);
-    }, 1500);
-  };
-
-  const services = [
-    { id: 'study', icon: GraduationCap },
-    { id: 'internship', icon: Briefcase },
-    { id: 'scholarship', icon: Award },
-    { id: 'sabbatical', icon: Palmtree },
-    { id: 'employment', icon: Building2 },
-  ];
 
   const steps = [
     { number: 1, title: t('steps.personalInfo'), icon: User },
     { number: 2, title: t('steps.documents'), icon: Upload },
-    { number: 3, title: t('steps.payment'), icon: CreditCard },
-    { number: 4, title: t('steps.confirmation'), icon: Check },
+    { number: 3, title: 'Verify Email', icon: MailCheck },
   ];
 
-  // Stable callback for input changes (prevents re-render)
   const handleInputChange = useCallback((name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: '' }));
@@ -362,34 +170,28 @@ export default function Apply() {
     if (formData.lastName.trim() && formData.lastName.trim().length < 2) newErrors.lastName = 'At least 2 characters';
     if (!formData.phone.trim()) newErrors.phone = 'Required';
     if (!formData.email.trim()) newErrors.email = 'Required';
-    if (!isLoggedIn) {
-      if (!formData.password) {
-        newErrors.password = 'Required';
-      } else if (formData.password.length < 8) {
-        newErrors.password = 'Min 8 characters';
-      } else if (!/[A-Z]/.test(formData.password)) {
-        newErrors.password = 'Must contain at least one uppercase letter (A-Z)';
-      } else if (!/[0-9]/.test(formData.password)) {
-        newErrors.password = 'Must contain at least one number (0-9)';
-      }
-      if (!formData.confirmPassword) {
-        newErrors.confirmPassword = 'Please confirm your password';
-      } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
-      }
+    if (!formData.password) {
+      newErrors.password = 'Required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Min 8 characters';
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = 'Must contain at least one uppercase letter (A-Z)';
+    } else if (!/[0-9]/.test(formData.password)) {
+      newErrors.password = 'Must contain at least one number (0-9)';
+    }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
     }
     if (!formData.country) newErrors.country = 'Required';
     if (!formData.city.trim()) newErrors.city = 'Required';
     if (formData.city.trim() && formData.city.trim().length < 2) newErrors.city = 'At least 2 characters';
-    if (!formData.service) newErrors.service = 'Required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Check duplicate email/phone before proceeding
   const checkAvailability = async (): Promise<boolean> => {
-    if (isLoggedIn) return true; // Skip check for logged-in users
-    
     try {
       const res = await fetch('/api/auth/check-availability', {
         method: 'POST',
@@ -398,7 +200,7 @@ export default function Apply() {
       });
       const data = await res.json();
       
-      if (!res.ok) return true; // If API fails, don't block the user
+      if (!res.ok) return true;
       
       const newErrors: Record<string, string> = {};
       if (data.emailTaken) {
@@ -414,7 +216,7 @@ export default function Apply() {
       }
       return true;
     } catch {
-      return true; // Don't block on network errors
+      return true;
     }
   };
 
@@ -424,7 +226,6 @@ export default function Apply() {
     if (currentStep === 1) {
       if (!validateStep1()) return;
       
-      // Check duplicate email/phone
       setIsSubmitting(true);
       const available = await checkAvailability();
       setIsSubmitting(false);
@@ -435,142 +236,65 @@ export default function Apply() {
     }
 
     if (currentStep === 2) {
-      const hasPassport = files.passport || existingDocs.passport;
-      const hasCv = files.cv || existingDocs.cv;
-      const hasDiploma = files.diploma || existingDocs.diploma;
-      const hasReceipt = files.paymentReceipt || existingDocs.paymentReceipt;
-      if (!hasPassport || !hasCv || !hasDiploma || !hasReceipt) {
-        setSubmitError('Please upload all required documents.');
+      if (!files.passport || !files.cv || !files.diploma) {
+        setSubmitError('Please upload all required documents (Passport, CV, Diploma).');
         return;
       }
-      setCurrentStep(3);
+      // Submit: register user + upload docs, then show verify email step
+      await handleSubmitRegistration();
       return;
     }
-
-    setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmitRegistration = async () => {
     setIsSubmitting(true);
     setSubmitError('');
-    setDraftSaved(false);
 
     try {
-      // Step A: Register or verify login
-      if (!isLoggedIn) {
-        const meRes = await fetch('/api/auth/me');
-        let loggedIn = meRes.ok;
-
-        if (!loggedIn) {
-          const regRes = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password, locale }),
-          });
-          const regData = await regRes.json();
-          
-          if (!regRes.ok) {
-            if (regRes.status === 409) {
-              const field = regData.field || 'email';
-              if (field === 'phone') {
-                throw new Error('This phone number is already registered. Please login or use a different number.');
-              }
-              throw new Error('An account with this email already exists. Please login first.');
+      // Step A: Register user
+      const regRes = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          country: formData.country,
+          city: formData.city,
+          password: formData.password,
+          locale,
+        }),
+      });
+      const regData = await regRes.json();
+      
+      if (!regRes.ok) {
+        if (regRes.status === 409) {
+          const field = regData.field || 'email';
+          if (field === 'phone') {
+            throw new Error('This phone number is already registered. Please login or use a different number.');
+          }
+          throw new Error('An account with this email already exists. Please login first.');
+        }
+        if (regData.details) {
+          const messages: string[] = [];
+          for (const [field, errs] of Object.entries(regData.details)) {
+            if (Array.isArray(errs) && errs.length > 0) {
+              messages.push(`${field}: ${errs[0]}`);
             }
-            if (regData.details) {
-              const fieldErrors = regData.details;
-              const messages: string[] = [];
-              for (const [field, errs] of Object.entries(fieldErrors)) {
-                if (Array.isArray(errs) && errs.length > 0) {
-                  messages.push(`${field}: ${errs[0]}`);
-                }
-              }
-              if (messages.length > 0) {
-                throw new Error(messages.join(' | '));
-              }
-            }
-            throw new Error(regData.error || 'Registration failed');
           }
-
-          // Registration successful — user needs to verify email first
-          if (regData.requiresVerification) {
-            setIsSubmitting(false);
-            window.location.href = `/${locale}/verify-email`;
-            return;
-          }
-
-          setIsLoggedIn(true);
+          if (messages.length > 0) throw new Error(messages.join(' | '));
         }
+        throw new Error(regData.error || 'Registration failed');
       }
 
-      // Step B: Create application
-      let newAppId = applicationId;
+      // Step B: Upload documents (we need to do this after registration)
+      // Note: Documents will be uploaded when user continues from dashboard after verifying email
+      // For now, we store them temporarily and the user will re-upload from the dashboard
 
-      if (!newAppId) {
-        const appRes = await fetch('/api/applications', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ serviceKey: formData.service }),
-        });
-        const appData = await appRes.json();
-        if (!appRes.ok) throw new Error(appData.error || 'Failed to create application');
-        
-        newAppId = appData.application.id;
-        setApplicationId(newAppId);
-        setReferenceCode(appData.application.referenceCode);
-      }
+      setRegisteredEmail(formData.email);
+      setCurrentStep(3);
 
-      // Step C: Upload documents (only new files — skip already-uploaded ones)
-      const fileEntries: [string, File | null][] = [['PASSPORT', files.passport], ['CV', files.cv], ['DIPLOMA', files.diploma], ['PAYMENT_RECEIPT', files.paymentReceipt]];
-      for (const [type, file] of fileEntries) {
-        if (file) {
-          const fd = new FormData();
-          fd.append('file', file);
-          fd.append('applicationId', newAppId);
-          fd.append('type', type);
-
-          const uploadRes = await fetch('/api/documents/upload', { method: 'POST', body: fd });
-          if (!uploadRes.ok) {
-            throw new Error(`Failed to upload ${type}. Your application has been saved as a draft. You can try again from your dashboard.`);
-          }
-          setUploadProgress(prev => ({ ...prev, [type]: true }));
-        }
-      }
-
-      // Step D: Process payment via Stripe
-      try {
-        const checkoutRes = await fetch('/api/payments/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ applicationId: newAppId, promoCode: promoResult?.code || undefined }),
-        });
-        
-        const checkoutData = await checkoutRes.json();
-        
-        if (!checkoutRes.ok) {
-          setDraftSaved(true);
-          setSubmitError(checkoutData.error || `Payment service is currently unavailable. Your application has been saved as a draft (Ref: ${referenceCode || 'see dashboard'}). You can complete the payment later from your dashboard.`);
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (checkoutData.free) {
-          setIsProcessingPayment(true);
-          setTimeout(() => pollForConfirmation(newAppId), 500);
-          return;
-        }
-
-        if (checkoutData.url) {
-          window.location.href = checkoutData.url;
-          return;
-        }
-
-        setDraftSaved(true);
-        setSubmitError(`Payment service is temporarily unavailable. Your application has been saved as a draft. You can complete the payment later from your dashboard.`);
-      } catch (paymentErr) {
-        setDraftSaved(true);
-        setSubmitError(`Payment service is temporarily unavailable. Your application has been saved as a draft. You can complete the payment later from your dashboard.`);
-      }
     } catch (err: any) {
       setSubmitError(err.message);
     } finally {
@@ -591,6 +315,23 @@ export default function Apply() {
     setFiles(prev => ({ ...prev, [type]: file }));
   }, []);
 
+  const handleResendVerification = async () => {
+    try {
+      setIsSubmitting(true);
+      await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: registeredEmail, locale }),
+      });
+      setSubmitError('');
+      alert('Verification email resent! Please check your inbox.');
+    } catch {
+      // silent fail
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <Header />
@@ -598,22 +339,19 @@ export default function Apply() {
         <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
           {/* Page Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10 md:mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#1a1a2e] mb-2">{t('title')}</h1>
-            <p className="text-gray-500">{t('subtitle')}</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-[#1a1a2e] mb-2">Create Your Account</h1>
+            <p className="text-gray-500">Fill in your details, upload documents, and verify your email to get started.</p>
           </motion.div>
 
-          {/* Logged-in indicator */}
-          {isLoggedIn && loggedInUser && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-emerald-800">
-                  Logged in as <strong>{loggedInUser.firstName} {loggedInUser.lastName}</strong> ({loggedInUser.email})
-                </p>
-                <p className="text-xs text-emerald-600 mt-0.5">Your information has been pre-filled. Just pick a service, upload documents, and pay.</p>
-              </div>
-            </motion.div>
-          )}
+          {/* Already have an account? */}
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center">
+            <p className="text-gray-500 text-sm">
+              Already have an account?{' '}
+              <Link href="/login" className="text-[#2563EB] font-semibold hover:text-[#1D4ED8] transition-colors underline underline-offset-4 decoration-[#2563EB]/30">
+                Log in here
+              </Link>
+            </p>
+          </motion.div>
 
           {/* Step Indicator */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8 md:mb-10">
@@ -644,17 +382,7 @@ export default function Apply() {
             </div>
           </motion.div>
 
-          {/* Payment Processing Overlay */}
-          {isProcessingPayment && (
-            <div className="bg-white rounded-2xl shadow-sm p-10 border border-gray-100 text-center">
-              <Loader2 className="w-12 h-12 animate-spin text-[#2563EB] mx-auto mb-4" />
-              <h2 className="font-bold text-xl text-[#1a1a2e] mb-2">Processing Payment...</h2>
-              <p className="text-gray-500">Please wait while we confirm your payment.</p>
-            </div>
-          )}
-
           {/* Step Content */}
-          {!isProcessingPayment && (
           <motion.div 
             key={currentStep} 
             initial={{ opacity: 0, x: isRTL ? -20 : 20 }} 
@@ -667,8 +395,8 @@ export default function Apply() {
                 <h2 className="font-bold text-xl md:text-2xl text-[#1a1a2e] mb-6">{t('steps.personalInfo')}</h2>
                 <div className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
-                    <InputField name="firstName" label={t('form.firstName')} icon={User} value={formData.firstName} error={errors.firstName} onChange={handleInputChange} disabled={isLoggedIn} />
-                    <InputField name="lastName" label={t('form.lastName')} icon={User} value={formData.lastName} error={errors.lastName} onChange={handleInputChange} disabled={isLoggedIn} />
+                    <InputField name="firstName" label={t('form.firstName')} icon={User} value={formData.firstName} error={errors.firstName} onChange={handleInputChange} />
+                    <InputField name="lastName" label={t('form.lastName')} icon={User} value={formData.lastName} error={errors.lastName} onChange={handleInputChange} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1a1a2e] mb-2">{t('form.phone')} <span className="text-red-500">*</span></label>
@@ -679,15 +407,12 @@ export default function Apply() {
                     />
                     {errors.phone && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.phone}</p>}
                   </div>
-                  <InputField name="email" label={t('form.email')} type="email" icon={Mail} value={formData.email} error={errors.email} onChange={handleInputChange} disabled={isLoggedIn} />
+                  <InputField name="email" label={t('form.email')} type="email" icon={Mail} value={formData.email} error={errors.email} onChange={handleInputChange} />
                   
-                  {/* Only show password fields for new users */}
-                  {!isLoggedIn && (
-                    <div className="grid md:grid-cols-2 gap-5">
-                      <InputField name="password" label={t('form.password')} type="password" icon={Lock} hint={t('form.passwordHint')} value={formData.password} error={errors.password} onChange={handleInputChange} />
-                      <InputField name="confirmPassword" label="Confirm Password" type="password" icon={Lock} value={formData.confirmPassword} error={errors.confirmPassword} onChange={handleInputChange} />
-                    </div>
-                  )}
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <InputField name="password" label={t('form.password')} type="password" icon={Lock} hint={t('form.passwordHint')} value={formData.password} error={errors.password} onChange={handleInputChange} />
+                    <InputField name="confirmPassword" label="Confirm Password" type="password" icon={Lock} value={formData.confirmPassword} error={errors.confirmPassword} onChange={handleInputChange} />
+                  </div>
                   
                   <div className="grid md:grid-cols-2 gap-5">
                     <div>
@@ -698,9 +423,8 @@ export default function Apply() {
                           name="country"
                           required
                           value={formData.country}
-                          disabled={isLoggedIn}
                           onChange={(e) => handleInputChange('country', e.target.value)}
-                          className={`input-field ps-12 appearance-none ${isLoggedIn ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${errors.country ? 'border-red-400' : ''}`}
+                          className={`input-field ps-12 appearance-none ${errors.country ? 'border-red-400' : ''}`}
                         >
                           <option value="">{t('form.selectCountry')}</option>
                           {ALL_COUNTRIES.map((c) => (<option key={c} value={c}>{c}</option>))}
@@ -708,30 +432,7 @@ export default function Apply() {
                       </div>
                       {errors.country && <p className="text-xs text-red-500 mt-1">{errors.country}</p>}
                     </div>
-                    <InputField name="city" label={t('form.city')} icon={MapPin} value={formData.city} error={errors.city} onChange={handleInputChange} disabled={isLoggedIn} />
-                  </div>
-
-                  {/* Service selection */}
-                  <div>
-                    <label className="block text-sm font-medium text-[#1a1a2e] mb-3">{t('form.service')} <span className="text-red-500">*</span></label>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {services.map((service) => (
-                        <button
-                          key={service.id}
-                          type="button"
-                          onClick={() => handleInputChange('service', service.id)}
-                          className={`p-4 rounded-xl border-2 text-start transition-all duration-200 ${
-                            formData.service === service.id 
-                              ? 'border-[#0f172a] bg-slate-50 shadow-sm' 
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <service.icon className={`w-6 h-6 mb-2 ${formData.service === service.id ? 'text-[#0f172a]' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                          <p className="font-semibold text-sm text-[#1a1a2e]">{tServices(`${service.id}.title`)}</p>
-                        </button>
-                      ))}
-                    </div>
-                    {errors.service && <p className="text-xs text-red-500 mt-2">{errors.service}</p>}
+                    <InputField name="city" label={t('form.city')} icon={MapPin} value={formData.city} error={errors.city} onChange={handleInputChange} />
                   </div>
                 </div>
                 {submitError && (
@@ -751,12 +452,11 @@ export default function Apply() {
             {currentStep === 2 && (
               <div>
                 <h2 className="font-bold text-xl md:text-2xl text-[#1a1a2e] mb-2">{t('documents.title')}</h2>
-                <p className="text-gray-500 text-sm mb-6">{t('documents.subtitle')}</p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FileUpload type="passport" label={t('documents.passport')} icon={FileText} file={files.passport} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.passport} />
-                  <FileUpload type="cv" label={t('documents.cv')} icon={FileText} file={files.cv} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.cv} />
-                  <FileUpload type="diploma" label={t('documents.diploma')} icon={FileText} file={files.diploma} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.diploma} />
-                  <FileUpload type="paymentReceipt" label={t('documents.paymentReceipt')} icon={FileText} file={files.paymentReceipt} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} existingFileName={existingDocs.paymentReceipt} />
+                <p className="text-gray-500 text-sm mb-6">Upload your Passport, CV, and Diploma to complete your registration.</p>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <FileUpload type="passport" label={t('documents.passport')} icon={FileText} file={files.passport} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} />
+                  <FileUpload type="cv" label={t('documents.cv')} icon={FileText} file={files.cv} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} />
+                  <FileUpload type="diploma" label={t('documents.diploma')} icon={FileText} file={files.diploma} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} />
                 </div>
                 {fileError && (
                   <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl text-sm mt-5 flex items-center gap-2">
@@ -770,207 +470,45 @@ export default function Apply() {
                 )}
                 <div className="mt-8 flex justify-between">
                   <button onClick={handleBack} className="btn-secondary"><ArrowLeft className="w-5 h-5 me-2 rtl:rotate-180" />{t('form.back')}</button>
-                  <button onClick={handleNext} disabled={isSubmitting || !(
-                    (files.passport || existingDocs.passport) &&
-                    (files.cv || existingDocs.cv) &&
-                    (files.diploma || existingDocs.diploma) &&
-                    (files.paymentReceipt || existingDocs.paymentReceipt)
-                  )} className="btn-primary disabled:opacity-50">
-                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('form.next')} <ArrowRight className="w-5 h-5 ms-2 rtl:rotate-180" /></>}
+                  <button onClick={handleNext} disabled={isSubmitting || !(files.passport && files.cv && files.diploma)} className="btn-primary disabled:opacity-50">
+                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Create Account <ArrowRight className="w-5 h-5 ms-2 rtl:rotate-180" /></>}
                   </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: Payment */}
+            {/* STEP 3: Verify Email */}
             {currentStep === 3 && (
-              <div>
-                <h2 className="font-bold text-xl md:text-2xl text-[#1a1a2e] mb-6 text-center">{t('payment.title')}</h2>
-                <div className="max-w-md mx-auto space-y-6">
-                  <div className="bg-gray-50 rounded-xl p-6">
-                    <h3 className="font-semibold text-[#1a1a2e] mb-4">{t('payment.orderSummary')}</h3>
-                    <div className="space-y-3 text-sm">
-                      <div className="flex justify-between"><span className="text-gray-600">{t('payment.service')}</span><span className="font-medium text-[#1a1a2e]">{tServices(`${formData.service}.title`)}</span></div>
-                      <div className="flex justify-between"><span className="text-gray-600">{t('payment.processingFee')}</span><span className="font-medium text-[#1a1a2e]">{servicePrice !== null ? `$${servicePrice.toFixed(2)}` : '...'}</span></div>
-                      <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3 mt-3">
-                        <span className="text-[#1a1a2e]">{t('payment.total')}</span>
-                        <span className="text-[#2563EB]">{servicePrice !== null ? `$${servicePrice.toFixed(2)}` : '...'}</span>
-                      </div>
-                    </div>
-                </div>
-
-                  {/* Promo Code */}
-                  <div className="bg-gray-50 rounded-xl p-5">
-                    <label className="block text-sm font-medium text-[#1a1a2e] mb-3">Promo Code (optional)</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={promoCode}
-                        onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoResult(null); }}
-                        placeholder="Enter code"
-                        className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          if (!promoCode.trim()) return;
-                          setPromoLoading(true);
-                          setPromoError('');
-                          try {
-                            const res = await fetch('/api/promo/validate', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ code: promoCode, originalPrice: servicePrice }),
-                            });
-                            const data = await res.json();
-                            if (res.ok && data.valid) {
-                              setPromoResult(data);
-                            } else {
-                              setPromoError(data.error || 'Invalid promo code');
-                              setPromoResult(null);
-                            }
-                          } catch {
-                            setPromoError('Failed to validate');
-                          } finally {
-                            setPromoLoading(false);
-                          }
-                        }}
-                        disabled={promoLoading || !promoCode.trim()}
-                        className="bg-[#0f172a] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-black disabled:opacity-50 transition-colors"
-                      >
-                        {promoLoading ? 'Checking...' : 'Apply'}
-                      </button>
-                    </div>
-                    {promoError && <p className="text-red-500 text-xs mt-2">{promoError}</p>}
-                    {promoResult && (
-                      <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
-                        <span className="text-emerald-700 font-medium">✓ Code {promoResult.code} applied — {promoResult.type === 'PERCENTAGE' ? `${promoResult.value}%` : `$${promoResult.value}`} off (−${promoResult.discount.toFixed(2)})</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Updated Total with discount */}
-                  {promoResult && servicePrice !== null && (
-                    <div className="bg-emerald-50 rounded-xl p-5">
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>${servicePrice.toFixed(2)}</span></div>
-                        <div className="flex justify-between text-emerald-700"><span>Discount</span><span>−${promoResult.discount.toFixed(2)}</span></div>
-                        <div className="flex justify-between text-lg font-bold border-t border-emerald-200 pt-2 mt-2">
-                          <span className="text-[#1a1a2e]">New Total</span>
-                          <span className="text-emerald-600">${promoResult.finalPrice.toFixed(2)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#1a1a2e] mb-3">{t('payment.paymentMethod')}</label>
-                    <div className="p-4 rounded-xl border-2 border-[#0f172a] bg-slate-50 shadow-sm flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full border-2 border-[#0f172a] flex items-center justify-center"><div className="w-3 h-3 rounded-full bg-[#0f172a]" /></div>
-                      <CreditCard className="w-5 h-5 text-[#0f172a]" />
-                      <span className="font-medium text-[#1a1a2e]">{t('payment.card')}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                {submitError && (
-                  <div className={`px-4 py-3 rounded-xl text-sm mt-5 ${draftSaved ? 'bg-amber-50 border border-amber-200 text-amber-700' : 'bg-red-50 border border-red-200 text-red-700'}`}>
-                    {draftSaved && <p className="font-semibold mb-1">✓ Application Saved as Draft</p>}
-                    {submitError}
-                    {draftSaved && (
-                      <Link href="/dashboard" className="inline-block mt-3 text-sm font-medium text-[#2563EB] underline">
-                        Go to Dashboard →
-                      </Link>
-                    )}
-                  </div>
-                )}
-                
-                <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
-                  <button onClick={handleBack} className="btn-secondary"><ArrowLeft className="w-5 h-5 me-2 rtl:rotate-180" />{t('form.back')}</button>
-                  <div className="flex items-center gap-3">
-                    <button 
-                      onClick={async () => {
-                        // Save as draft — register + create app + upload docs, but skip payment
-                        setIsSubmitting(true);
-                        setSubmitError('');
-                        try {
-                          if (!isLoggedIn) {
-                            const meRes = await fetch('/api/auth/me');
-                            if (!meRes.ok) {
-                              const regRes = await fetch('/api/auth/register', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password }),
-                              });
-                              if (!regRes.ok) {
-                                const regData = await regRes.json();
-                                throw new Error(regData.error || 'Registration failed');
-                              }
-                              setIsLoggedIn(true);
-                            }
-                          }
-                          let newAppId = applicationId;
-                          if (!newAppId) {
-                            const appRes = await fetch('/api/applications', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ serviceKey: formData.service }),
-                            });
-                            const appData = await appRes.json();
-                            if (!appRes.ok) throw new Error(appData.error || 'Failed to create application');
-                            newAppId = appData.application.id;
-                            setApplicationId(newAppId);
-                          }
-                          // Upload docs
-                          const fileEntries: [string, File | null][] = [['PASSPORT', files.passport], ['CV', files.cv], ['DIPLOMA', files.diploma], ['PAYMENT_RECEIPT', files.paymentReceipt]];
-                          for (const [type, file] of fileEntries) {
-                            if (file) {
-                              const fd = new FormData();
-                              fd.append('file', file);
-                              fd.append('applicationId', newAppId);
-                              fd.append('type', type);
-                              await fetch('/api/documents/upload', { method: 'POST', body: fd });
-                            }
-                          }
-                          setDraftSaved(true);
-                          setSubmitError('Your application has been saved as a draft. You can complete the payment later from your dashboard.');
-                        } catch (err: any) {
-                          setSubmitError(err.message);
-                        } finally {
-                          setIsSubmitting(false);
-                        }
-                      }} 
-                      disabled={isSubmitting}
-                      className="btn-secondary text-sm whitespace-nowrap"
-                    >
-                      Save as Draft
-                    </button>
-                    <button onClick={handleSubmit} disabled={isSubmitting} className="btn-primary min-w-[160px]">
-                      {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('payment.payNow')} <ArrowRight className="w-5 h-5 ms-2 rtl:rotate-180" /></>}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 4: Confirmation */}
-            {currentStep === 4 && (
               <div className="text-center py-8">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }} className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Check className="w-10 h-10 text-emerald-600" />
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }} className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MailCheck className="w-10 h-10 text-[#2563EB]" />
                 </motion.div>
-                <h2 className="font-bold text-3xl text-[#1a1a2e] mb-4">{t('confirmation.title')}</h2>
-                <p className="text-gray-600 mb-4 max-w-md mx-auto">{t('confirmation.message')}</p>
-                <p className="text-gray-500 text-sm mb-6">{t('confirmation.emailSent')}</p>
-                <div className="bg-gray-50 rounded-xl p-6 max-w-md mx-auto mb-8">
-                  <p className="text-sm text-gray-500 mb-2">{t('confirmation.reference')}</p>
-                  <p className="font-mono font-bold text-xl text-[#1a1a2e]">{referenceCode}</p>
+                <h2 className="font-bold text-3xl text-[#1a1a2e] mb-4">Check Your Email</h2>
+                <p className="text-gray-600 mb-2 max-w-md mx-auto">
+                  We&apos;ve sent a verification link to:
+                </p>
+                <p className="font-mono font-bold text-lg text-[#2563EB] mb-6">{registeredEmail}</p>
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 max-w-md mx-auto mb-8">
+                  <p className="text-sm text-blue-800 leading-relaxed">
+                    Please open the email and click the verification link to activate your account. 
+                    Once verified, you&apos;ll be able to log in, select a service, and complete your application.
+                  </p>
                 </div>
-                <Link href="/" className="btn-primary">{t('confirmation.backHome')}</Link>
+                <div className="flex flex-col items-center gap-4">
+                  <Link href="/login" className="btn-primary px-8 py-3">
+                    Go to Login
+                  </Link>
+                  <button 
+                    onClick={handleResendVerification}
+                    disabled={isSubmitting}
+                    className="text-sm text-gray-500 hover:text-[#2563EB] transition-colors underline underline-offset-4 disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'Sending...' : 'Didn\'t receive it? Resend verification email'}
+                  </button>
+                </div>
               </div>
             )}
           </motion.div>
-          )}
         </div>
       </div>
       <Footer />

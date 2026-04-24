@@ -12,7 +12,8 @@ import TestimonialForm from '@/components/TestimonialForm';
 import PhoneInput from '@/components/PhoneInput';
 import { 
   FileText, Clock, CheckCircle, XCircle, Eye, Upload,
-  Plus, LogOut, User, AlertCircle, Loader2, MessageSquare, Trash2, RotateCcw, MessageCircle, Check
+  Plus, LogOut, User, AlertCircle, Loader2, MessageSquare, Trash2, RotateCcw, MessageCircle, Check,
+  GraduationCap, Briefcase, Award, Palmtree, Building2, CreditCard, ArrowRight
 } from 'lucide-react';
 
 interface Application {
@@ -61,6 +62,16 @@ export default function Dashboard() {
   const [responseFiles, setResponseFiles] = useState<Record<string, File | null>>({});
   const [isResponding, setIsResponding] = useState(false);
   const [responseSuccess, setResponseSuccess] = useState<string | null>(null);
+
+  // Continue Application flow (service selection + payment)
+  const [selectedService, setSelectedService] = useState('');
+  const [servicePrices, setServicePrices] = useState<Record<string, number>>({});
+  const [isCreatingApp, setIsCreatingApp] = useState(false);
+  const [appFlowError, setAppFlowError] = useState('');
+  const [promoCode, setPromoCode] = useState('');
+  const [promoResult, setPromoResult] = useState<{ valid: boolean; discount: number; finalPrice: number; code: string; type: string; value: number } | null>(null);
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
 
   const handleRespondToReturn = async (appId: string) => {
     setIsResponding(true);
@@ -131,6 +142,21 @@ export default function Dashboard() {
         const appsRes = await fetch('/api/applications');
         const appsData = await appsRes.json();
         if (appsRes.ok) setApplications(appsData.applications);
+
+        // Fetch service prices for continue application flow
+        try {
+          const svcRes = await fetch('/api/services');
+          if (svcRes.ok) {
+            const svcData = await svcRes.json();
+            if (svcData.services) {
+              const prices: Record<string, number> = {};
+              svcData.services.forEach((svc: { key: string; price: number }) => {
+                prices[svc.key] = Number(svc.price);
+              });
+              setServicePrices(prices);
+            }
+          }
+        } catch {}
       } catch {
         router.push(`/${locale}/login`);
       } finally {
@@ -431,15 +457,178 @@ export default function Dashboard() {
             )}
 
             {applications.length === 0 ? (
-              <div className="bg-white rounded-3xl p-10 md:p-14 text-center border border-gray-100 shadow-sm">
-                <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-[#2563EB]/5 flex items-center justify-center transition-transform hover:scale-105 hover:-rotate-3 duration-300 group">
-                  <FileText className="w-10 h-10 text-[#2563EB] group-hover:text-[#1D4ED8] transition-colors" />
+              <div className="bg-white rounded-3xl p-6 md:p-10 border border-gray-100 shadow-sm">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#2563EB]/5 flex items-center justify-center">
+                    <ArrowRight className="w-8 h-8 text-[#2563EB]" />
+                  </div>
+                  <h3 className="font-heading font-bold text-2xl text-[#1a1a2e] mb-2">Continue Your Application</h3>
+                  <p className="text-gray-500 max-w-md mx-auto">Select the service you need and proceed to payment to submit your application.</p>
                 </div>
-                <h3 className="font-heading font-bold text-xl text-[#1a1a2e] mb-2">{td('noApplications')}</h3>
-                <p className="text-gray-500 mb-8 max-w-md mx-auto leading-relaxed">{td('noApplicationsText')}</p>
-                <Link href="/apply" className="btn-primary px-8 py-3.5">
-                  <Plus className="w-4 h-4 me-2" /> {td('applyNow')}
-                </Link>
+
+                {/* Service Selection */}
+                <div className="mb-8">
+                  <label className="block text-sm font-semibold text-[#1a1a2e] mb-4">Select Service *</label>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {[
+                      { id: 'study', icon: GraduationCap, label: 'Study Abroad Placement' },
+                      { id: 'internship', icon: Briefcase, label: 'International Internship Placement' },
+                      { id: 'scholarship', icon: Award, label: 'Scholarship Search & Application' },
+                      { id: 'sabbatical', icon: Palmtree, label: 'Sabbatical Professional Experience' },
+                      { id: 'employment', icon: Building2, label: 'International Job Placement' },
+                    ].map((service) => (
+                      <button
+                        key={service.id}
+                        type="button"
+                        onClick={() => { setSelectedService(service.id); setAppFlowError(''); }}
+                        className={`p-4 rounded-xl border-2 text-start transition-all duration-200 ${
+                          selectedService === service.id 
+                            ? 'border-[#0f172a] bg-slate-50 shadow-sm' 
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <service.icon className={`w-6 h-6 mb-2 ${selectedService === service.id ? 'text-[#0f172a]' : 'text-gray-400'}`} />
+                        <p className="font-semibold text-sm text-[#1a1a2e]">{service.label}</p>
+                        {servicePrices[service.id] && (
+                          <p className="text-xs text-gray-400 mt-1">${servicePrices[service.id].toFixed(2)}</p>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Payment Summary */}
+                {selectedService && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg mx-auto space-y-5">
+                    <div className="bg-gray-50 rounded-xl p-6">
+                      <h4 className="font-semibold text-[#1a1a2e] mb-4">Order Summary</h4>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between"><span className="text-gray-600">Service</span><span className="font-medium text-[#1a1a2e] capitalize">{selectedService.replace('_', ' ')}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600">Processing Fee</span><span className="font-medium text-[#1a1a2e]">{servicePrices[selectedService] ? `$${servicePrices[selectedService].toFixed(2)}` : '...'}</span></div>
+                        {promoResult && (
+                          <div className="flex justify-between text-emerald-700"><span>Discount</span><span>−${promoResult.discount.toFixed(2)}</span></div>
+                        )}
+                        <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3 mt-3">
+                          <span className="text-[#1a1a2e]">Total</span>
+                          <span className="text-[#2563EB]">{promoResult ? `$${promoResult.finalPrice.toFixed(2)}` : servicePrices[selectedService] ? `$${servicePrices[selectedService].toFixed(2)}` : '...'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Promo Code */}
+                    <div className="bg-gray-50 rounded-xl p-5">
+                      <label className="block text-sm font-medium text-[#1a1a2e] mb-3">Promo Code (optional)</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoResult(null); }}
+                          placeholder="Enter code"
+                          className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (!promoCode.trim()) return;
+                            setPromoLoading(true);
+                            setPromoError('');
+                            try {
+                              const res = await fetch('/api/promo/validate', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ code: promoCode, originalPrice: servicePrices[selectedService] }),
+                              });
+                              const data = await res.json();
+                              if (res.ok && data.valid) {
+                                setPromoResult(data);
+                              } else {
+                                setPromoError(data.error || 'Invalid promo code');
+                                setPromoResult(null);
+                              }
+                            } catch {
+                              setPromoError('Failed to validate');
+                            } finally {
+                              setPromoLoading(false);
+                            }
+                          }}
+                          disabled={promoLoading || !promoCode.trim()}
+                          className="bg-[#0f172a] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-black disabled:opacity-50 transition-colors"
+                        >
+                          {promoLoading ? 'Checking...' : 'Apply'}
+                        </button>
+                      </div>
+                      {promoError && <p className="text-red-500 text-xs mt-2">{promoError}</p>}
+                      {promoResult && (
+                        <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
+                          <span className="text-emerald-700 font-medium">✓ Code {promoResult.code} applied — {promoResult.type === 'PERCENTAGE' ? `${promoResult.value}%` : `$${promoResult.value}`} off</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Payment method */}
+                    <div className="p-4 rounded-xl border-2 border-[#0f172a] bg-slate-50 shadow-sm flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full border-2 border-[#0f172a] flex items-center justify-center"><div className="w-3 h-3 rounded-full bg-[#0f172a]" /></div>
+                      <CreditCard className="w-5 h-5 text-[#0f172a]" />
+                      <span className="font-medium text-[#1a1a2e]">Credit / Debit Card (Stripe)</span>
+                    </div>
+
+                    {appFlowError && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                        {appFlowError}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={async () => {
+                        if (!selectedService) { setAppFlowError('Please select a service.'); return; }
+                        setIsCreatingApp(true);
+                        setAppFlowError('');
+                        try {
+                          // Create application
+                          const appRes = await fetch('/api/applications', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ serviceKey: selectedService }),
+                          });
+                          const appData = await appRes.json();
+                          if (!appRes.ok) throw new Error(appData.error || 'Failed to create application');
+                          const newAppId = appData.application.id;
+
+                          // Process payment
+                          const checkoutRes = await fetch('/api/payments/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ applicationId: newAppId, promoCode: promoResult?.code || undefined }),
+                          });
+                          const checkoutData = await checkoutRes.json();
+
+                          if (!checkoutRes.ok) throw new Error(checkoutData.error || 'Payment service unavailable');
+
+                          if (checkoutData.free) {
+                            // Redirect to dashboard after free payment
+                            window.location.reload();
+                            return;
+                          }
+
+                          if (checkoutData.url) {
+                            window.location.href = checkoutData.url;
+                            return;
+                          }
+
+                          throw new Error('Payment could not be processed.');
+                        } catch (err: any) {
+                          setAppFlowError(err.message);
+                        } finally {
+                          setIsCreatingApp(false);
+                        }
+                      }}
+                      disabled={isCreatingApp || !selectedService}
+                      className="btn-primary w-full py-3.5 disabled:opacity-50 text-base"
+                    >
+                      {isCreatingApp ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Pay Now & Submit <ArrowRight className="w-5 h-5 ms-2" /></>}
+                    </button>
+                  </motion.div>
+                )}
               </div>
             ) : (
               <div className="space-y-4">

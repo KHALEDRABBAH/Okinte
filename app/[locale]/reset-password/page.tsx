@@ -74,7 +74,7 @@ export default function ResetPassword() {
         <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full text-center border border-red-100">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-[#1a1a2e] mb-2">{t('invalidToken')}</h2>
-          <p className="text-gray-500 mb-6">{t('invalidTokenDescription')}</p>
+          <p className="text-gray-400 mb-6">{t('invalidTokenDescription')}</p>
           <Link href="/forgot-password" className="btn-primary w-full justify-center">
             {t('requestNewLink')}
           </Link>
@@ -104,7 +104,7 @@ export default function ResetPassword() {
                     <CheckCircle className="w-8 h-8 text-green-500" />
                   </div>
                   <h3 className="text-xl font-bold text-[#1a1a2e] mb-2">{t('passwordResetSuccess')}</h3>
-                  <p className="text-gray-500 text-sm mb-6">
+                  <p className="text-gray-400 text-sm mb-6">
                     {t('passwordResetSuccessDescription')}
                   </p>
                   <Link href="/login" className="btn-secondary w-full justify-center">

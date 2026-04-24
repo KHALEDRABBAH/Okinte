@@ -16,7 +16,7 @@ export default function AdminError({
           </svg>
         </div>
         <h2 className="font-heading font-bold text-xl text-[#1a1a2e] mb-2">Admin Panel Error</h2>
-        <p className="text-gray-500 text-sm mb-6">
+        <p className="text-gray-400 text-sm mb-6">
           An unexpected error occurred in the admin panel. Please try again or contact the development team.
         </p>
         <button

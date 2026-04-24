@@ -31,7 +31,7 @@ export default function FAQ() {
         >
           <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 tracking-tight">{t('title')}</h2>
-          <p className="text-white/60 mt-4">{t('subtitle')}</p>
+          <p className="text-white/70 mt-4">{t('subtitle')}</p>
         </motion.div>
 
         {/* FAQ Items */}
@@ -71,7 +71,7 @@ export default function FAQ() {
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="p-5 md:p-6 pt-0 text-white/60 leading-relaxed bg-transparent">
+                    <div className="p-5 md:p-6 pt-0 text-white/70 leading-relaxed bg-transparent">
                       {faq.a}
                     </div>
                   </motion.div>

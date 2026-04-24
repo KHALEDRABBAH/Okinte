@@ -80,13 +80,13 @@ export default function TestimonialForm() {
               </button>
 
               <h2 className="text-xl font-heading font-bold text-primary mb-2">Share Your Experience</h2>
-              <p className="text-gray-500 text-sm mb-6">Your feedback helps us improve and helps others make informed decisions.</p>
+              <p className="text-gray-400 text-sm mb-6">Your feedback helps us improve and helps others make informed decisions.</p>
 
               {isSuccess ? (
                 <div className="text-center py-8">
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" aria-hidden="true" />
                   <h3 className="text-lg font-bold text-primary">Thank You!</h3>
-                  <p className="text-gray-500 text-sm mt-2">Your review has been submitted and is pending approval.</p>
+                  <p className="text-gray-400 text-sm mt-2">Your review has been submitted and is pending approval.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -132,7 +132,7 @@ export default function TestimonialForm() {
                       maxLength={500}
                       className="w-full border border-gray-200 rounded-xl p-3 focus:outline-none focus:border-gold resize-none h-32"
                     />
-                    <p className="text-xs text-gray-500 mt-1">{content.length} / 500 characters</p>
+                    <p className="text-xs text-gray-400 mt-1">{content.length} / 500 characters</p>
                   </div>
 
                   <button 

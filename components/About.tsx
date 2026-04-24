@@ -20,8 +20,8 @@ export default function About() {
           >
             <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 mb-4 tracking-tight">{t('title')}</h2>
-            <p className="text-base md:text-lg text-white/60 mb-5 leading-relaxed">{t('subtitle')}</p>
-            <p className="text-white/60 leading-[1.7]">{t('description')}</p>
+            <p className="text-base md:text-lg text-white/70 mb-5 leading-relaxed">{t('subtitle')}</p>
+            <p className="text-white/70 leading-[1.7]">{t('description')}</p>
           </motion.div>
 
           {/* Right Content - Core Values */}
@@ -46,7 +46,7 @@ export default function About() {
                     <Globe className="w-6 h-6 text-[#3b82f6]" />
                   </div>
                   <h4 className="font-heading font-semibold text-lg text-white mb-2">{t('features.secure.title')}</h4>
-                  <p className="text-sm text-white/60 leading-relaxed">{t('features.secure.description')}</p>
+                  <p className="text-sm text-white/70 leading-relaxed">{t('features.secure.description')}</p>
                 </motion.div>
               </div>
             </div>

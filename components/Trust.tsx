@@ -37,7 +37,7 @@ export default function Trust() {
             whileInView={{ opacity: 1, y: 0 }} 
             viewport={{ once: true }} 
             transition={{ delay: 0.1 }}
-            className="text-base md:text-lg text-white/60 mt-4 leading-relaxed"
+            className="text-base md:text-lg text-white/70 mt-4 leading-relaxed"
           >
             {t('subtitle')}
           </motion.p>

@@ -228,7 +228,7 @@ export default function Dashboard() {
   };
 
   const statusConfig: Record<string, { icon: any; color: string; bg: string }> = {
-    DRAFT: { icon: Clock, color: 'text-gray-500', bg: 'bg-gray-100' },
+    DRAFT: { icon: Clock, color: 'text-gray-400', bg: 'bg-gray-100' },
     SUBMITTED: { icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50' },
     UNDER_REVIEW: { icon: Eye, color: 'text-yellow-600', bg: 'bg-yellow-50' },
     APPROVED: { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
@@ -249,7 +249,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-[3px] border-[#2563EB]/20 border-t-[#2563EB] animate-spin" />
-          <span className="text-sm text-gray-500">Loading your dashboard...</span>
+          <span className="text-sm text-gray-400">Loading your dashboard...</span>
         </div>
       </div>
     );
@@ -272,7 +272,7 @@ export default function Dashboard() {
                 <FileText className="w-8 h-8 text-[#2563EB]" />
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] mb-2">Complete Your Application</h1>
-              <p className="text-gray-500 max-w-md mx-auto">Welcome, {user?.firstName}! Please select a service and complete payment to finalize your application.</p>
+              <p className="text-gray-400 max-w-md mx-auto">Welcome, {user?.firstName}! Please select a service and complete payment to finalize your application.</p>
               <p className="text-xs text-gray-400 mt-2 font-mono">Ref: {pendingDraft.referenceCode}</p>
             </motion.div>
 
@@ -280,7 +280,7 @@ export default function Dashboard() {
               {/* Step 1: Select Service */}
               <div className="mb-6">
                 <h2 className="text-lg font-bold text-[#1a1a2e] mb-1">Select Your Service</h2>
-                <p className="text-sm text-gray-500 mb-4">Choose the service that best matches your goals</p>
+                <p className="text-sm text-gray-400 mb-4">Choose the service that best matches your goals</p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {[
                     { id: 'study', icon: GraduationCap, label: 'Study Abroad Placement', desc: 'University enrollment & visa support' },
@@ -320,7 +320,7 @@ export default function Dashboard() {
 
                   {/* Promo Code */}
                   <div>
-                    <label className="text-xs font-medium text-gray-500 mb-1.5 block">Promo Code (optional)</label>
+                    <label className="text-xs font-medium text-gray-400 mb-1.5 block">Promo Code (optional)</label>
                     <div className="flex gap-2">
                       <input type="text" value={promoCode} onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoResult(null); }} placeholder="Enter code" className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] outline-none" />
                       <button type="button" onClick={async () => { if (!promoCode.trim()) return; setPromoLoading(true); setPromoError(''); try { const r = await fetch('/api/promo/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: promoCode, originalPrice: servicePrices[selectedService] }) }); const d = await r.json(); if (r.ok && d.valid) setPromoResult(d); else { setPromoError(d.error || 'Invalid'); setPromoResult(null); } } catch { setPromoError('Failed'); } finally { setPromoLoading(false); } }} disabled={promoLoading || !promoCode.trim()} className="bg-[#0f172a] text-white px-5 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-[#1e293b] transition-colors">{promoLoading ? '...' : 'Apply'}</button>
@@ -383,7 +383,7 @@ export default function Dashboard() {
               <h1 className="text-2xl md:text-3xl font-bold text-[#1a1a2e]">
                 {user ? `${user.firstName} ${user.lastName}` : 'Dashboard'}
               </h1>
-              <p className="text-gray-500 mt-1">{user?.email}</p>
+              <p className="text-gray-400 mt-1">{user?.email}</p>
             </div>
             {/* Actions removed from here since they are in the Header now */}
           </div>
@@ -444,7 +444,7 @@ export default function Dashboard() {
                   {/* User info */}
                   <div>
                     <h2 className="font-bold text-xl text-[#1a1a2e]">{user.firstName} {user.lastName}</h2>
-                    <p className="text-sm text-gray-500">{user.email}</p>
+                    <p className="text-sm text-gray-400">{user.email}</p>
                   </div>
                 </div>
                 
@@ -516,7 +516,7 @@ export default function Dashboard() {
                     <button 
                       onClick={() => setIsEditingProfile(false)} 
                       disabled={isSaving} 
-                      className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50"
+                      className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors disabled:opacity-50"
                     >
                       {td('cancel')}
                     </button>
@@ -593,7 +593,7 @@ export default function Dashboard() {
                     <ArrowRight className="w-8 h-8 text-[#2563EB]" />
                   </div>
                   <h3 className="font-heading font-bold text-2xl text-[#1a1a2e] mb-2">Continue Your Application</h3>
-                  <p className="text-gray-500 max-w-md mx-auto">Select the service you need and proceed to payment to submit your application.</p>
+                  <p className="text-gray-400 max-w-md mx-auto">Select the service you need and proceed to payment to submit your application.</p>
                 </div>
 
                 {/* Service Selection */}
@@ -940,7 +940,7 @@ export default function Dashboard() {
                                 <button
                                   onClick={() => { setRespondingAppId(null); setResponseComment(''); setResponseFiles({}); }}
                                   disabled={isResponding}
-                                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-2.5"
+                                  className="text-sm text-gray-400 hover:text-gray-700 transition-colors px-3 py-2.5"
                                 >
                                   Cancel
                                 </button>
@@ -1048,7 +1048,7 @@ export default function Dashboard() {
               <motion.div id="add-service-section" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 md:p-10 border border-gray-100 shadow-sm mt-6">
                 <div className="text-center mb-8">
                   <h3 className="font-heading font-bold text-2xl text-[#1a1a2e] mb-2">Add New Service</h3>
-                  <p className="text-gray-500 max-w-md mx-auto">Select a service and proceed to payment.</p>
+                  <p className="text-gray-400 max-w-md mx-auto">Select a service and proceed to payment.</p>
                 </div>
 
                 {/* Service Selection */}
@@ -1158,7 +1158,7 @@ export default function Dashboard() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-4">
               <div className="mb-6">
                 <h2 className="text-xl md:text-2xl font-bold text-[#1a1a2e]">Support Chat</h2>
-                <p className="text-gray-500 mt-1">Get in touch with our team for any assistance you need.</p>
+                <p className="text-gray-400 mt-1">Get in touch with our team for any assistance you need.</p>
               </div>
               <ChatPanel user={user || undefined} inline={true} />
             </motion.div>

@@ -26,7 +26,15 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 // - Service role bypasses Row Level Security
 // - Needed to upload/delete files on behalf of users
 export const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: { persistSession: false },
+  auth: { 
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+  global: {
+    headers: {
+      Authorization: `Bearer ${supabaseServiceKey}`,
+    },
+  },
 });
 
 export const STORAGE_BUCKET = 'bolila-documents';

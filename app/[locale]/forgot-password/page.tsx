@@ -63,7 +63,7 @@ export default function ForgotPassword() {
                     <CheckCircle className="w-8 h-8 text-green-500" />
                   </div>
                   <h3 className="text-xl font-bold text-[#1a1a2e] mb-2">{t('checkEmail')}</h3>
-                  <p className="text-gray-500 text-sm mb-6">
+                  <p className="text-gray-400 text-sm mb-6">
                     {t('resetEmailSent', { email })}
                   </p>
                   <Link href="/login" className="btn-secondary w-full justify-center">
@@ -105,7 +105,7 @@ export default function ForgotPassword() {
               )}
 
               <div className="mt-6 flex justify-center">
-                <Link href="/login" className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#2563EB] transition-colors font-medium">
+                <Link href="/login" className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#2563EB] transition-colors font-medium">
                   <ArrowLeft className="w-4 h-4" /> {t('backToLogin')}
                 </Link>
               </div>

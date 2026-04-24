@@ -62,7 +62,7 @@ function InputField({ name, label, type = 'text', icon: Icon, hint, value, error
           disabled={disabled}
           onChange={(e) => onChange(name, e.target.value)}
           autoComplete={type === 'email' ? 'email' : type === 'tel' ? 'tel' : isPassword ? 'new-password' : 'given-name'}
-          className={`input-field ps-12 ${isPassword ? 'pe-12' : ''} ${disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
+          className={`input-field ps-12 ${isPassword ? 'pe-12' : ''} ${disabled ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : ''} ${error ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : ''}`}
         />
         {isPassword && (
           <button
@@ -110,7 +110,7 @@ function FileUpload({ type, label, icon: Icon, file, onFileChange, uploadedLabel
               <Icon className="w-7 h-7 text-gray-400 group-hover:text-[#2563EB] transition-colors" />
             </div>
             <p className="font-semibold text-[15px] text-[#1a1a2e] group-hover:text-[#2563EB] transition-colors">{label}</p>
-            <p className="text-xs text-gray-500">Drag & drop or <span className="text-[#2563EB] font-medium underline decoration-[#2563EB]/30 underline-offset-2">browse</span></p>
+            <p className="text-xs text-gray-400">Drag & drop or <span className="text-[#2563EB] font-medium underline decoration-[#2563EB]/30 underline-offset-2">browse</span></p>
             <p className="text-[11px] text-gray-400 mt-2">{formatsLabel}</p>
           </>
         )}
@@ -379,12 +379,12 @@ export default function Apply() {
           {/* Page Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10 md:mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-[#1a1a2e] mb-2">Create Your Account</h1>
-            <p className="text-gray-500">Fill in your details, upload documents, and verify your email to get started.</p>
+            <p className="text-gray-400">Fill in your details, upload documents, and verify your email to get started.</p>
           </motion.div>
 
           {/* Already have an account? */}
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center">
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-400 text-sm">
               Already have an account?{' '}
               <Link href="/login" className="text-[#2563EB] font-semibold hover:text-[#1D4ED8] transition-colors underline underline-offset-4 decoration-[#2563EB]/30">
                 Log in here
@@ -491,7 +491,7 @@ export default function Apply() {
             {currentStep === 2 && (
               <div>
                 <h2 className="font-bold text-xl md:text-2xl text-[#1a1a2e] mb-2">{t('documents.title')}</h2>
-                <p className="text-gray-500 text-sm mb-6">Upload your Passport, CV, and Diploma to complete your registration.</p>
+                <p className="text-gray-400 text-sm mb-6">Upload your Passport, CV, and Diploma to complete your registration.</p>
                 <div className="grid md:grid-cols-3 gap-4">
                   <FileUpload type="passport" label={t('documents.passport')} icon={FileText} file={files.passport} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} />
                   <FileUpload type="cv" label={t('documents.cv')} icon={FileText} file={files.cv} onFileChange={handleFileChange} uploadedLabel={t('documents.uploaded')} formatsLabel={t('documents.formats')} />
@@ -540,7 +540,7 @@ export default function Apply() {
                   <button 
                     onClick={handleResendVerification}
                     disabled={isSubmitting}
-                    className="text-sm text-gray-500 hover:text-[#2563EB] transition-colors underline underline-offset-4 disabled:opacity-50"
+                    className="text-sm text-gray-400 hover:text-[#2563EB] transition-colors underline underline-offset-4 disabled:opacity-50"
                   >
                     {isSubmitting ? 'Sending...' : 'Didn\'t receive it? Resend verification email'}
                   </button>

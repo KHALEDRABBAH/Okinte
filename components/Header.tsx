@@ -318,7 +318,7 @@ export default function Header() {
               
               {/* Language Selection */}
               <div className="pt-4 border-t border-white/10">
-                <p className="text-xs text-white/60 mb-3">{t('selectLanguage')}:</p>
+                <p className="text-xs text-white/70 mb-3">{t('selectLanguage')}:</p>
                 <div className="flex flex-wrap gap-2">
                   {locales.map((loc) => (
                     <button 

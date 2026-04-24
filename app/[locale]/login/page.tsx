@@ -73,7 +73,7 @@ export default function Login() {
         <div className="max-w-6xl mx-auto mb-6">
           <Link 
             href="/" 
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-[#2563EB] transition-colors group"
+            className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-[#2563EB] transition-colors group"
           >
             <ArrowLeft className={`w-4 h-4 transition-transform group-hover:-translate-x-1 ${isRTL ? 'rotate-180 group-hover:translate-x-1' : ''}`} />
             <Home className="w-4 h-4" />
@@ -111,9 +111,9 @@ export default function Login() {
 
               {/* Languages */}
               <div className="flex items-center gap-4 pt-6 border-t border-white/10">
-                <Globe className="w-5 h-5 text-white/40" />
+                <Globe className="w-5 h-5 text-white/70" />
                 <div>
-                  <p className="text-white/50 text-sm">FR • EN • AR • TR • JA • ES • IT</p>
+                  <p className="text-white/70 text-sm">FR • EN • AR • TR • JA • ES • IT</p>
                 </div>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function Login() {
               <h2 className="font-bold text-2xl md:text-3xl text-[#1a1a2e] mb-2">
                 {t('loginTitle')}
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-400 text-sm">
                 {t('noAccount')} <Link href="/apply" className="text-[#2563EB] font-semibold hover:underline">{t('signUp')}</Link>
               </p>
             </div>

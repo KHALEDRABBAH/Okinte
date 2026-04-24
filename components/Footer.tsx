@@ -27,7 +27,7 @@ export default function Footer() {
               </div>
               <span className="font-heading font-bold text-2xl tracking-tight text-white group-hover:text-white/90 transition-colors">Okinte</span>
             </Link>
-            <p className="text-white/60 text-sm mb-1 leading-relaxed">{t('tagline')}</p>
+            <p className="text-white/70 text-sm mb-1 leading-relaxed">{t('tagline')}</p>
             
             {/* Social Links */}
             <div className="flex gap-3 mt-6">
@@ -42,30 +42,30 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('quickLinks')}</h3>
+            <h2 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('quickLinks')}</h2>
             <ul className="space-y-3">
-              <li><Link href="/" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('home')}</Link></li>
-              <li><Link href="/apply" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('services')}</Link></li>
-              <li><a href="#about" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('about')}</a></li>
-              <li><Link href="/contact" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tNav('contact')}</Link></li>
+              <li><Link href="/" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tNav('home')}</Link></li>
+              <li><Link href="/apply" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tNav('services')}</Link></li>
+              <li><a href="#about" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tNav('about')}</a></li>
+              <li><Link href="/contact" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tNav('contact')}</Link></li>
             </ul>
           </div>
 
           {/* Services */}
           <div>
-            <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('services')}</h3>
+            <h2 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('services')}</h2>
             <ul className="space-y-3">
-              <li><Link href="/apply?service=study" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('study.title')}</Link></li>
-              <li><Link href="/apply?service=internship" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('internship.title')}</Link></li>
-              <li><Link href="/apply?service=scholarship" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('scholarship.title')}</Link></li>
-              <li><Link href="/apply?service=sabbatical" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('sabbatical.title')}</Link></li>
-              <li><Link href="/apply?service=employment" className="text-white/60 hover:text-[#2563EB] transition-colors text-sm">{tServices('employment.title')}</Link></li>
+              <li><Link href="/apply?service=study" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tServices('study.title')}</Link></li>
+              <li><Link href="/apply?service=internship" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tServices('internship.title')}</Link></li>
+              <li><Link href="/apply?service=scholarship" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tServices('scholarship.title')}</Link></li>
+              <li><Link href="/apply?service=sabbatical" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tServices('sabbatical.title')}</Link></li>
+              <li><Link href="/apply?service=employment" className="text-white/70 hover:text-[#2563EB] transition-colors text-sm">{tServices('employment.title')}</Link></li>
             </ul>
           </div>
 
           {/* Contact */}
           <div className="col-span-2 md:col-span-1">
-            <h3 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('contactTitle')}</h3>
+            <h2 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('contactTitle')}</h2>
             <ul className="space-y-2.5">
               <li>
                 <a href="https://wa.me/201280109982" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
@@ -112,10 +112,10 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container mx-auto px-6 lg:px-12 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/60 text-sm">{t('copyright', { year: String(currentYear) })}</p>
+            <p className="text-white/70 text-sm">{t('copyright', { year: String(currentYear) })}</p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="text-white/60 text-sm hover:text-[#2563EB] transition-colors">{t('privacy')}</Link>
-              <Link href="/terms" className="text-white/60 text-sm hover:text-[#2563EB] transition-colors">{t('terms')}</Link>
+              <Link href="/privacy" className="text-white/70 text-sm hover:text-[#2563EB] transition-colors">{t('privacy')}</Link>
+              <Link href="/terms" className="text-white/70 text-sm hover:text-[#2563EB] transition-colors">{t('terms')}</Link>
             </div>
           </div>
         </div>

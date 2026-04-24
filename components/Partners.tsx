@@ -26,7 +26,7 @@ export default function Partners() {
             <Clock className="w-8 h-8 md:w-10 md:h-10 text-[#2563EB]" />
           </div>
           <h3 className="text-xl md:text-2xl font-heading font-bold text-white mb-3 tracking-tight">{t('comingSoon')}</h3>
-          <p className="text-white/60 leading-relaxed text-sm md:text-base">{t('comingSoonText')}</p>
+          <p className="text-white/70 leading-relaxed text-sm md:text-base">{t('comingSoonText')}</p>
         </motion.div>
       </div>
     </section>

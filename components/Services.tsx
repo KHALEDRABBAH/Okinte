@@ -31,7 +31,7 @@ export default function Services() {
         >
           <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 tracking-tight">{t('title')}</h2>
-          <p className="text-white/60 mt-4">{t('subtitle')}</p>
+          <p className="text-white/70 mt-4">{t('subtitle')}</p>
         </motion.div>
 
         {/* Services Grid */}
@@ -61,7 +61,7 @@ export default function Services() {
                     </h3>
                     <p className="text-sm text-[#3b82f6] font-medium mb-4">{t(`${service.id}.subtitle`)}</p>
                     
-                    <div className="text-sm text-white/60 mb-6 md:mb-8 flex-1 leading-relaxed">
+                    <div className="text-sm text-white/70 mb-6 md:mb-8 flex-1 leading-relaxed">
                       <ExpandableText text={t(`${service.id}.description`)} maxLength={100} />
                     </div>
                     

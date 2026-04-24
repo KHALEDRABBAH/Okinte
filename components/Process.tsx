@@ -26,7 +26,7 @@ export default function Process() {
         >
           <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 tracking-tight">{t('title')}</h2>
-          <p className="text-white/60 mt-4">{t('subtitle')}</p>
+          <p className="text-white/70 mt-4">{t('subtitle')}</p>
         </motion.div>
 
         {/* Steps */}
@@ -57,7 +57,7 @@ export default function Process() {
                   
                   {/* Content */}
                   <h3 className="font-heading font-bold text-lg text-white mb-2">{t(`${step.key}.title`)}</h3>
-                  <p className="text-sm text-white/60 leading-relaxed">{t(`${step.key}.description`)}</p>
+                  <p className="text-sm text-white/70 leading-relaxed">{t(`${step.key}.description`)}</p>
                 </div>
               </motion.div>
             ))}

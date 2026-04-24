@@ -16,7 +16,7 @@ export default function DashboardError({
           </svg>
         </div>
         <h2 className="font-heading font-bold text-xl text-[#1a1a2e] mb-2">Something went wrong</h2>
-        <p className="text-gray-500 text-sm mb-6">
+        <p className="text-gray-400 text-sm mb-6">
           We encountered an unexpected error loading your dashboard. Please try again.
         </p>
         <button

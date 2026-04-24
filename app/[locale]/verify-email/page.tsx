@@ -59,7 +59,7 @@ export default function VerifyEmail() {
               <>
                 <Loader2 className="w-16 h-16 animate-spin text-[#2563EB] mx-auto mb-6" />
                 <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Verifying Your Email...</h1>
-                <p className="text-gray-500">Please wait while we confirm your email address.</p>
+                <p className="text-gray-400">Please wait while we confirm your email address.</p>
               </>
             )}
 
@@ -74,7 +74,7 @@ export default function VerifyEmail() {
                   <CheckCircle className="w-10 h-10 text-emerald-600" />
                 </motion.div>
                 <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Email Verified! ✅</h1>
-                <p className="text-gray-500 mb-8">{message}</p>
+                <p className="text-gray-400 mb-8">{message}</p>
                 <Link href="/dashboard" className="btn-primary">
                   Go to Dashboard
                 </Link>
@@ -91,7 +91,7 @@ export default function VerifyEmail() {
                   <XCircle className="w-10 h-10 text-red-600" />
                 </motion.div>
                 <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Verification Failed</h1>
-                <p className="text-gray-500 mb-6">{message}</p>
+                <p className="text-gray-400 mb-6">{message}</p>
                 <div className="flex flex-col gap-3">
                   <Link href="/login" className="btn-primary">
                     Go to Login
@@ -109,7 +109,7 @@ export default function VerifyEmail() {
                   <Mail className="w-10 h-10 text-amber-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Check Your Email</h1>
-                <p className="text-gray-500 mb-6">
+                <p className="text-gray-400 mb-6">
                   We've sent you a verification email. Please click the link in your email to verify your account.
                 </p>
                 <Link href="/login" className="btn-secondary">

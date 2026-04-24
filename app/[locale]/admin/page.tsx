@@ -429,7 +429,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-[3px] border-[#2563EB]/20 border-t-[#2563EB] animate-spin" />
-          <span className="text-sm text-gray-500">Loading admin panel...</span>
+          <span className="text-sm text-gray-400">Loading admin panel...</span>
         </div>
       </div>
     );
@@ -446,14 +446,14 @@ export default function AdminDashboard() {
             </div>
             <div>
               <h1 className="text-lg font-bold">Okinte Admin</h1>
-              <p className="text-xs text-gray-500">Dashboard</p>
+              <p className="text-xs text-gray-400">Dashboard</p>
             </div>
           </div>
           <div className="flex items-center gap-5">
-            <span className="text-gray-500 text-sm hidden sm:block">{adminUser.email}</span>
+            <span className="text-gray-400 text-sm hidden sm:block">{adminUser.email}</span>
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-2 text-gray-500 hover:text-red-600 transition-colors text-sm bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg"
+              className="flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors text-sm bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg"
             >
               <LogOut className="w-4 h-4" /> Logout
             </button>
@@ -517,7 +517,7 @@ export default function AdminDashboard() {
                           <div key={app.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                             <div>
                               <span className="font-mono text-[#2563EB] text-sm font-bold">{app.referenceCode}</span>
-                              <span className="text-gray-500 text-sm ml-3">{app.user.firstName} {app.user.lastName}</span>
+                              <span className="text-gray-400 text-sm ml-3">{app.user.firstName} {app.user.lastName}</span>
                             </div>
                             <span className={`text-xs px-2.5 py-1 rounded-full ${config.bg} ${config.text}`}>
                               {app.status.replace('_', ' ')}
@@ -580,11 +580,11 @@ export default function AdminDashboard() {
                                     {app.status.replace('_', ' ')}
                                   </span>
                                 </div>
-                                <div className="text-gray-500 text-sm mt-1.5">
+                                <div className="text-gray-400 text-sm mt-1.5">
                                   {app.user.firstName} {app.user.lastName} · {app.user.email} · {app.user.country}
                                 </div>
                               </div>
-                              <div className="text-sm text-gray-500 hidden sm:block">{app.service ? (serviceLabels[app.service.key] || app.service.key) : <span className="text-amber-600 italic">Pending</span>}</div>
+                              <div className="text-sm text-gray-400 hidden sm:block">{app.service ? (serviceLabels[app.service.key] || app.service.key) : <span className="text-amber-600 italic">Pending</span>}</div>
                               <div className="text-sm text-gray-400 hidden md:block">{new Date(app.createdAt).toLocaleDateString()}</div>
                               {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-400 shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" />}
                             </div>
@@ -678,7 +678,7 @@ export default function AdminDashboard() {
                                 {/* Notes */}
                                 <div className="bg-white rounded-xl p-4 border border-gray-200">
                                   <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm font-medium text-gray-500">Admin Notes</span>
+                                    <span className="text-sm font-medium text-gray-400">Admin Notes</span>
                                     {editingNotes !== app.id ? (
                                       <button onClick={() => { setEditingNotes(app.id); setNotesText(app.notes || ''); }} className="text-xs text-[#0f172a] hover:text-black flex items-center gap-1 transition-colors">
                                         <Edit3 className="w-3 h-3" /> Edit
@@ -761,7 +761,7 @@ export default function AdminDashboard() {
                   <div className="bg-white rounded-2xl p-12 text-center border border-gray-200">
                     <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold mb-2">No Messages Yet</h3>
-                    <p className="text-gray-500">Messages from the contact form will appear here.</p>
+                    <p className="text-gray-400">Messages from the contact form will appear here.</p>
                   </div>
                 ) : (
                   messages.map((msg, index) => (
@@ -778,7 +778,7 @@ export default function AdminDashboard() {
                             <span className="font-semibold text-lg">{msg.name}</span>
                             {!msg.isRead && <span className="bg-[#2563EB] text-white text-xs px-2.5 py-0.5 rounded-full font-bold">NEW</span>}
                           </div>
-                          <p className="text-gray-500 text-sm mb-3">{msg.email} {msg.phone && `· ${msg.phone}`}</p>
+                          <p className="text-gray-400 text-sm mb-3">{msg.email} {msg.phone && `· ${msg.phone}`}</p>
                           <ExpandableText text={msg.message} maxLength={200} className="text-gray-700 leading-relaxed" />
                           <p className="text-gray-400 text-xs mt-3">{new Date(msg.createdAt).toLocaleString()}</p>
                         </div>
@@ -834,7 +834,7 @@ export default function AdminDashboard() {
                           <div key={msg.id} className={`flex ${msg.isAdmin ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[70%] rounded-2xl p-3 text-sm ${msg.isAdmin ? 'bg-[#0f172a] text-white rounded-tr-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm'}`}>
                               <p>{msg.content}</p>
-                              <span className={`text-[10px] mt-1 block text-end ${msg.isAdmin ? 'text-white/50' : 'text-gray-400'}`}>
+                              <span className={`text-[10px] mt-1 block text-end ${msg.isAdmin ? 'text-white/70' : 'text-gray-400'}`}>
                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
@@ -904,7 +904,7 @@ export default function AdminDashboard() {
                           <td className="px-5 py-3 text-sm text-gray-600">{p.currentUses}{p.maxUses ? ` / ${p.maxUses}` : ' / ∞'}</td>
                           <td className="px-5 py-3 text-sm text-gray-400">{p.expiresAt ? new Date(p.expiresAt).toLocaleDateString() : 'Never'}</td>
                           <td className="px-5 py-3">
-                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${p.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${p.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'}`}>
                               {p.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </td>
@@ -934,11 +934,11 @@ export default function AdminDashboard() {
                   <h3 className="font-semibold mb-4">Create New Service</h3>
                   <div className="flex gap-4 items-end">
                     <div className="flex-1">
-                      <label className="text-sm text-gray-500 mb-1 block">Service Key</label>
+                      <label className="text-sm text-gray-400 mb-1 block">Service Key</label>
                       <input value={serviceForm.key} onChange={(e) => setServiceForm({ ...serviceForm, key: e.target.value })} placeholder="e.g. language_course" className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20" />
                     </div>
                     <div className="w-32">
-                      <label className="text-sm text-gray-500 mb-1 block">Price ($)</label>
+                      <label className="text-sm text-gray-400 mb-1 block">Price ($)</label>
                       <input value={serviceForm.price} onChange={(e) => setServiceForm({ ...serviceForm, price: e.target.value })} type="number" placeholder="150" className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20" />
                     </div>
                     <button onClick={handleCreateService} disabled={serviceCreating || !serviceForm.key || !serviceForm.price} className="bg-[#0f172a] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-black disabled:opacity-50 transition-colors flex items-center gap-2 shrink-0">
@@ -976,7 +976,7 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-5 py-3 text-sm text-gray-600">{s._count?.applications || 0}</td>
                           <td className="px-5 py-3">
-                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${s.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${s.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'}`}>
                               {s.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </td>

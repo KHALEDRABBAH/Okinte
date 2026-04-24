@@ -203,7 +203,7 @@ export default function ChatPanel({ user, inline = false }: ChatPanelProps) {
                             : 'bg-[#2563EB] text-white rounded-tr-sm'
                         }`}>
                           <span>{msg.content}</span>
-                          <span className={`text-[10px] mt-1 text-end ${msg.isAdmin ? 'text-gray-400' : 'text-white/60'}`}>
+                          <span className={`text-[10px] mt-1 text-end ${msg.isAdmin ? 'text-gray-400' : 'text-white/70'}`}>
                             {formatTime(msg.createdAt)}
                           </span>
                         </div>

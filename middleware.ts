@@ -26,6 +26,33 @@ async function verifyTokenInMiddleware(token: string): Promise<{ userId: string;
 }
 
 export default async function middleware(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://js.stripe.com 'unsafe-inline' 'unsafe-eval';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data: https:;
+    font-src 'self' data:;
+    connect-src 'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io;
+    frame-src https://js.stripe.com;
+    base-uri 'self';
+    form-action 'self';
+    upgrade-insecure-requests;
+  `.replace(/\s{2,}/g, ' ').trim();
+
+  // Clone headers so Next.js can read the nonce
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('Content-Security-Policy', cspHeader);
+
+  // We must re-create the request with our updated headers
+  request = new NextRequest(request.url, {
+    headers: requestHeaders,
+    method: request.method,
+    body: request.body,
+    referrer: request.referrer,
+  });
+
   const token = request.cookies.get('okinte-auth-token')?.value;
 
   const protectedPaths = ['/dashboard', '/admin'];
@@ -71,11 +98,13 @@ export default async function middleware(request: NextRequest) {
   const response = intlMiddleware(request);
 
   // Add Security & SEO Headers
+  // Add Security & SEO Headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  response.headers.set('Content-Security-Policy', cspHeader);
 
   // Cache control for public pages
   if (!isProtected && !isAdminPath && !request.nextUrl.pathname.startsWith('/api')) {

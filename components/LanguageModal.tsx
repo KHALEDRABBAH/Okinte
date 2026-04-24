@@ -74,7 +74,7 @@ export default function LanguageModal() {
               <h2 className="text-2xl font-heading font-bold text-primary">
                 Choose Your Language
               </h2>
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-gray-400 text-sm mt-2">
                 Choisissez votre langue · اختر لغتك
               </p>
             </div>

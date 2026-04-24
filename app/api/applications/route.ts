@@ -42,41 +42,46 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Step 2: Validate input
+    // Step 2: Parse input
     const body = await request.json();
     const { serviceKey } = body;
 
-    if (!serviceKey || !['study', 'internship', 'scholarship', 'sabbatical', 'employment'].includes(serviceKey)) {
-      return NextResponse.json(
-        { error: 'Valid service key is required (study, internship, scholarship, sabbatical, employment)' },
-        { status: 400 }
-      );
+    let serviceId: string | null = null;
+
+    // If serviceKey is provided, validate and find the service
+    if (serviceKey) {
+      if (!['study', 'internship', 'scholarship', 'sabbatical', 'employment'].includes(serviceKey)) {
+        return NextResponse.json(
+          { error: 'Valid service key is required (study, internship, scholarship, sabbatical, employment)' },
+          { status: 400 }
+        );
+      }
+
+      const service = await db.service.findUnique({ where: { key: serviceKey } });
+      if (!service || !service.isActive) {
+        return NextResponse.json({ error: 'Service not found or not active' }, { status: 404 });
+      }
+
+      // Check for duplicate application for this service
+      const existing = await db.application.findFirst({
+        where: {
+          userId: currentUser.userId,
+          serviceId: service.id,
+          status: { notIn: ['REJECTED'] },
+        },
+      });
+
+      if (existing) {
+        return NextResponse.json(
+          { error: 'You already have an active application for this service', existingRef: existing.referenceCode },
+          { status: 409 }
+        );
+      }
+
+      serviceId = service.id;
     }
 
-    // Step 3: Find the service
-    const service = await db.service.findUnique({ where: { key: serviceKey } });
-
-    if (!service || !service.isActive) {
-      return NextResponse.json({ error: 'Service not found or not active' }, { status: 404 });
-    }
-
-    // Step 4: Check for duplicate application
-    const existing = await db.application.findFirst({
-      where: {
-        userId: currentUser.userId,
-        serviceId: service.id,
-        status: { notIn: ['REJECTED'] }, // Allow re-applying after rejection
-      },
-    });
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'You already have an active application for this service', existingRef: existing.referenceCode },
-        { status: 409 }
-      );
-    }
-
-    // Step 5: Generate unique reference code (retry if collision)
+    // Step 3: Generate unique reference code (retry if collision)
     let referenceCode = generateReferenceCode();
     let attempts = 0;
     let isUnique = false;
@@ -94,11 +99,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 6: Create application
+    // Step 4: Create application (serviceId can be null for registration flow)
     const application = await db.application.create({
       data: {
         userId: currentUser.userId,
-        serviceId: service.id,
+        serviceId,
         referenceCode,
         status: 'DRAFT',
       },
@@ -107,13 +112,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Step 7: Return
+    // Step 5: Return
     return NextResponse.json({
       application: {
         id: application.id,
         referenceCode: application.referenceCode,
         status: application.status,
-        serviceKey: application.service.key,
+        serviceKey: application.service?.key || null,
         createdAt: application.createdAt,
       },
     }, { status: 201 });

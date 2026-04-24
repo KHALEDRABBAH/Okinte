@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
         const row = [
           app.referenceCode,
           app.status,
-          app.service.key,
+          app.service?.key || 'pending',
           app.user.firstName,
           app.user.lastName,
           app.user.email,

@@ -75,7 +75,7 @@ model Service {
 model Application {
   id            String            @id @default(uuid())
   userId        String
-  serviceId     String
+  serviceId     String?
   referenceCode String            @unique // e.g., "BOL-2026-A3F8K2"
   status        ApplicationStatus @default(DRAFT)
   notes         String?           // Admin review notes
@@ -87,7 +87,7 @@ model Application {
 
   // Relations
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  service   Service    @relation(fields: [serviceId], references: [id])
+  service   Service?   @relation(fields: [serviceId], references: [id])
   documents Document[]
   payment   Payment?
 

@@ -294,7 +294,7 @@ export default function Apply() {
         const appRes = await fetch('/api/applications', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ serviceKey: 'study' }), // Default service, will be changed from dashboard
+          body: JSON.stringify({}), // No service — user selects from dashboard
         });
         const appData = await appRes.json();
         if (appRes.ok && appData.application) {

@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
             updatedApp.user.email,
             updatedApp.user.firstName,
             updatedApp.referenceCode,
-            updatedApp.service.key
+            updatedApp.service?.key || 'service'
           ).catch(err => console.error('Failed to send receipt email:', err));
         }
         break;

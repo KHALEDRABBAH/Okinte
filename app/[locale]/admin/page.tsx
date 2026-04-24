@@ -584,7 +584,7 @@ export default function AdminDashboard() {
                                   {app.user.firstName} {app.user.lastName} · {app.user.email} · {app.user.country}
                                 </div>
                               </div>
-                              <div className="text-sm text-gray-500 hidden sm:block">{serviceLabels[app.service.key] || app.service.key}</div>
+                              <div className="text-sm text-gray-500 hidden sm:block">{app.service ? (serviceLabels[app.service.key] || app.service.key) : <span className="text-amber-600 italic">Pending</span>}</div>
                               <div className="text-sm text-gray-400 hidden md:block">{new Date(app.createdAt).toLocaleDateString()}</div>
                               {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-400 shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" />}
                             </div>

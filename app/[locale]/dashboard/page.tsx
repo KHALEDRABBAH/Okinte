@@ -23,7 +23,7 @@ interface Application {
   createdAt: string;
   notes?: string;
   userResponse?: string;
-  service: { key: string };
+  service: { key: string } | null;
   documents: { id: string; type: string; fileName: string }[];
   payment: { status: string; amount: number } | null;
 }
@@ -672,7 +672,7 @@ export default function Dashboard() {
                               {app.status.replace('_', ' ')}
                             </span>
                           </div>
-                          <p className="text-gray-700 font-medium">{serviceLabels[app.service.key] || app.service.key}</p>
+                          <p className="text-gray-700 font-medium">{app.service ? (serviceLabels[app.service.key] || app.service.key) : <span className="text-amber-600 italic">No service selected</span>}</p>
                           <p className="text-gray-400 text-sm mt-1">
                             {td('applied')}: {new Date(app.createdAt).toLocaleDateString('en-GB', { 
                               day: 'numeric', 
@@ -730,7 +730,7 @@ export default function Dashboard() {
                               </div>
                             </div>
                           )}
-                          <Link href={`/apply?service=${app.service.key}` as any} className="btn-primary text-sm py-2 px-4 shadow-sm">
+                          <Link href={`/apply?service=${app.service?.key || ''}` as any} className="btn-primary text-sm py-2 px-4 shadow-sm">
                             <Plus className="w-4 h-4 me-2" /> {td('reapply')}
                           </Link>
                         </div>
@@ -844,7 +844,7 @@ export default function Dashboard() {
                         <div className="mt-4 pt-4 border-t border-gray-100">
                           {continuingDraftId !== app.id ? (
                             <button
-                              onClick={() => { setContinuingDraftId(app.id); setSelectedService(app.service.key || ''); setAppFlowError(''); setPromoCode(''); setPromoResult(null); }}
+                              onClick={() => { setContinuingDraftId(app.id); setSelectedService(app.service?.key || ''); setAppFlowError(''); setPromoCode(''); setPromoResult(null); }}
                               className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB]/5 hover:bg-[#2563EB]/10 rounded-lg"
                             >
                               <ArrowRight className="w-4 h-4" /> Continue Application

@@ -69,6 +69,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Application already paid' }, { status: 400 });
     }
 
+    // Ensure service is selected before payment
+    if (!application.service) {
+      return NextResponse.json({ error: 'Please select a service before proceeding to payment' }, { status: 400 });
+    }
+
     const protocol = request.headers.get('x-forwarded-proto') || 'http';
     const host = request.headers.get('host');
     const baseUrl = `${protocol}://${host}`;
@@ -169,7 +174,7 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `Okinte Application: ${application.service.key.toUpperCase()}`,
+              name: `Okinte Application: ${application.service?.key?.toUpperCase() || 'SERVICE'}`,
               description: `Application Reference: ${application.referenceCode}${discount > 0 ? ` (Discount: $${discount})` : ''}`,
             },
             unit_amount: unitAmount,

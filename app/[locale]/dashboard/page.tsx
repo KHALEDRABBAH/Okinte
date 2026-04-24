@@ -311,7 +311,7 @@ export default function Dashboard() {
                 
                 {/* Actions */}
                 <div className="flex items-center gap-3 flex-wrap justify-end">
-                  <TestimonialForm />
+
                   {!isEditingProfile && (
                     <button 
                       onClick={() => setIsEditingProfile(true)} 

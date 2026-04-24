@@ -27,6 +27,53 @@ function getResendClient(): Resend {
 const resend = getResendClient();
 const FROM_EMAIL = 'Okinte Support <support@okinte.com>';
 
+export async function sendVerificationEmail(to: string, name: string, token: string, locale: string = 'en') {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
+  const verifyUrl = `${appUrl}/${locale}/verify-email?token=${token}`;
+
+  try {
+    const data = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'Verify Your Email — Okinte',
+      html: `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: left; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: #1e293b; font-size: 22px; margin-top: 0; margin-bottom: 16px;">Verify Your Email Address</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Hi ${escapeHtml(name)},<br><br>
+              Thanks for creating an account on Okinte! Please verify your email address by clicking the button below.
+            </p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${verifyUrl}" style="background-color: #2563EB; color: #ffffff; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Verify Email Address</a>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+              This link is valid for 24 hours. If you didn't create an account on Okinte, you can safely ignore this email.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
 export async function sendRegistrationEmail(to: string, name: string) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
   const loginUrl = `${appUrl}/login`;
@@ -46,7 +93,7 @@ export async function sendRegistrationEmail(to: string, name: string) {
             <h2 style="color: #1e293b; font-size: 22px; margin-top: 0; margin-bottom: 16px;">Welcome to Okinte, ${escapeHtml(name)}!</h2>
             
             <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-              Your account has been successfully created. We're thrilled to have you on board! You can now browse our services and submit applications for study, internship, or employment opportunities abroad.
+              Your email has been verified and your account is now active. You can browse our services and submit applications for study, internship, or employment opportunities abroad.
             </p>
             
             <div style="text-align: center; margin: 32px 0;">

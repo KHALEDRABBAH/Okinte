@@ -3,23 +3,24 @@ export const dynamic = 'force-dynamic';
 /**
  * POST /api/auth/register
  * 
- * WHAT: Creates a new user account
+ * WHAT: Creates a new user account with email verification
  * 
  * FLOW:
  * 1. Parse & validate request body with Zod
  * 2. Check if email already exists → 409 if duplicate
  * 3. Hash password with bcrypt (10 salt rounds)
- * 4. Insert user into database
- * 5. Create JWT token with { userId, email, role }
- * 6. Set JWT as httpOnly cookie
- * 7. Return user profile (never return password hash)
+ * 4. Generate email verification token
+ * 5. Insert user into database (emailVerified = false)
+ * 6. Send verification email
+ * 7. Return success (user must verify email before logging in)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { hashPassword, createToken, setAuthCookie } from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
 import { registerSchema } from '@/lib/validations';
 import { rateLimitAsync, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
+import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // Step 2: Check if email or phone already exists
     const [existingEmail, existingPhone] = await Promise.all([
-      db.user.findUnique({ where: { email } }),
+      db.user.findUnique({ where: { email: email.toLowerCase() } }),
       db.user.findFirst({ where: { phone } }),
     ]);
 
@@ -69,7 +70,11 @@ export async function POST(request: NextRequest) {
     // Step 3: Hash the password (never store raw passwords)
     const passwordHash = await hashPassword(password);
 
-    // Step 4: Create the user in the database
+    // Step 4: Generate verification token (valid for 24 hours)
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    // Step 5: Create the user in the database (NOT verified yet)
     const user = await db.user.create({
       data: {
         firstName,
@@ -79,9 +84,11 @@ export async function POST(request: NextRequest) {
         country,
         city,
         passwordHash,
+        emailVerified: false,
+        verificationToken,
+        verificationTokenExpires,
       },
       select: {
-        // Only select fields we want to return (NEVER return passwordHash)
         id: true,
         firstName: true,
         lastName: true,
@@ -94,24 +101,22 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Step 5: Create JWT token
-    const token = await createToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      tokenVersion: 0, // Default for new users
-    });
+    // Step 6: Send verification email (non-blocking)
+    const locale = body.locale || 'en';
+    const { sendVerificationEmail } = await import('@/lib/email');
+    await sendVerificationEmail(user.email, user.firstName, verificationToken, locale)
+      .catch(err => console.error('Failed to send verification email', err));
 
-    // Step 6: Set the token as an httpOnly cookie
-    await setAuthCookie(token);
-
-    // Send welcome email (non-blocking)
-    const { sendRegistrationEmail } = await import('@/lib/email');
-    await sendRegistrationEmail(user.email, user.firstName)
-      .catch(err => console.error('Failed to send registration email', err));
-
-    // Step 7: Return the user (without sensitive data)
-    return NextResponse.json({ user }, { status: 201 });
+    // Step 7: Return success — user must verify email before logging in
+    // Do NOT set auth cookie here — user must verify first
+    return NextResponse.json(
+      { 
+        message: 'Account created! Please check your email to verify your account.',
+        requiresVerification: true,
+        user: { email: user.email, firstName: user.firstName },
+      }, 
+      { status: 201 }
+    );
 
   } catch (error) {
     console.error('Registration error:', error);

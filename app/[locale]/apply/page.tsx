@@ -446,10 +446,11 @@ export default function Apply() {
           const regRes = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password }),
+            body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, country: formData.country, city: formData.city, password: formData.password, locale }),
           });
+          const regData = await regRes.json();
+          
           if (!regRes.ok) {
-            const regData = await regRes.json();
             if (regRes.status === 409) {
               const field = regData.field || 'email';
               if (field === 'phone') {
@@ -457,7 +458,6 @@ export default function Apply() {
               }
               throw new Error('An account with this email already exists. Please login first.');
             }
-            // Show specific validation errors
             if (regData.details) {
               const fieldErrors = regData.details;
               const messages: string[] = [];
@@ -472,6 +472,14 @@ export default function Apply() {
             }
             throw new Error(regData.error || 'Registration failed');
           }
+
+          // Registration successful — user needs to verify email first
+          if (regData.requiresVerification) {
+            setIsSubmitting(false);
+            window.location.href = `/${locale}/verify-email`;
+            return;
+          }
+
           setIsLoggedIn(true);
         }
       }
@@ -494,11 +502,9 @@ export default function Apply() {
       }
 
       // Step C: Upload documents (only new files — skip already-uploaded ones)
-      const typeMap: Record<string, string> = { PASSPORT: 'passport', CV: 'cv', DIPLOMA: 'diploma', PAYMENT_RECEIPT: 'paymentReceipt' };
       const fileEntries: [string, File | null][] = [['PASSPORT', files.passport], ['CV', files.cv], ['DIPLOMA', files.diploma], ['PAYMENT_RECEIPT', files.paymentReceipt]];
       for (const [type, file] of fileEntries) {
         if (file) {
-          // Upload new file (replaces existing if any)
           const fd = new FormData();
           fd.append('file', file);
           fd.append('applicationId', newAppId);
@@ -506,15 +512,13 @@ export default function Apply() {
 
           const uploadRes = await fetch('/api/documents/upload', { method: 'POST', body: fd });
           if (!uploadRes.ok) {
-            // Don't delete the application! Save as draft instead
             throw new Error(`Failed to upload ${type}. Your application has been saved as a draft. You can try again from your dashboard.`);
           }
           setUploadProgress(prev => ({ ...prev, [type]: true }));
         }
-        // If no new file but existing doc exists, skip (already uploaded)
       }
 
-      // Step D: Try payment — if it fails, save as draft (NEVER delete the application)
+      // Step D: Process payment via Stripe
       try {
         const checkoutRes = await fetch('/api/payments/checkout', {
           method: 'POST',
@@ -525,8 +529,6 @@ export default function Apply() {
         const checkoutData = await checkoutRes.json();
         
         if (!checkoutRes.ok) {
-          // Payment failed — but DON'T delete the application!
-          // Save as draft and let user continue later
           setDraftSaved(true);
           setSubmitError(checkoutData.error || `Payment service is currently unavailable. Your application has been saved as a draft (Ref: ${referenceCode || 'see dashboard'}). You can complete the payment later from your dashboard.`);
           setIsSubmitting(false);
@@ -535,7 +537,6 @@ export default function Apply() {
 
         if (checkoutData.free) {
           setIsProcessingPayment(true);
-          // Wait briefly for DB to be consistent before polling or jumping
           setTimeout(() => pollForConfirmation(newAppId), 500);
           return;
         }
@@ -545,11 +546,9 @@ export default function Apply() {
           return;
         }
 
-        // No URL returned — payment service issue, save as draft
         setDraftSaved(true);
         setSubmitError(`Payment service is temporarily unavailable. Your application has been saved as a draft. You can complete the payment later from your dashboard.`);
       } catch (paymentErr) {
-        // Network error or other — save as draft
         setDraftSaved(true);
         setSubmitError(`Payment service is temporarily unavailable. Your application has been saved as a draft. You can complete the payment later from your dashboard.`);
       }

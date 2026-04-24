@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, Globe, Home } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, Globe, Home, Loader2, RefreshCw } from 'lucide-react';
 import { rtlLocales } from '@/i18n/routing';
 
 export default function Login() {
@@ -19,6 +19,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,7 +44,13 @@ export default function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Login failed');
+        if (data.requiresVerification) {
+          setNeedsVerification(true);
+          setVerificationEmail(data.email || formData.email);
+          setError(data.error);
+        } else {
+          setError(data.error || 'Login failed');
+        }
         setIsLoading(false);
         return;
       }
@@ -192,6 +202,38 @@ export default function Login() {
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                   {error}
+                  {needsVerification && (
+                    <div className="mt-3 pt-3 border-t border-red-200">
+                      <button
+                        type="button"
+                        disabled={resendLoading}
+                        onClick={async () => {
+                          setResendLoading(true);
+                          setResendSuccess('');
+                          try {
+                            const res = await fetch('/api/auth/verify-email', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ email: verificationEmail, locale }),
+                            });
+                            const data = await res.json();
+                            setResendSuccess(data.message || 'Verification email sent!');
+                          } catch {
+                            setResendSuccess('Failed to send. Please try again.');
+                          } finally {
+                            setResendLoading(false);
+                          }
+                        }}
+                        className="inline-flex items-center gap-2 text-[#2563EB] font-semibold hover:underline"
+                      >
+                        {resendLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                        Resend Verification Email
+                      </button>
+                      {resendSuccess && (
+                        <p className="text-emerald-600 text-xs mt-2">{resendSuccess}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

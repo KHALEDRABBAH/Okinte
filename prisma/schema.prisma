@@ -25,6 +25,8 @@ model User {
   passwordHash  String
   role          Role     @default(USER)
   emailVerified Boolean  @default(false)
+  verificationToken       String?   @unique
+  verificationTokenExpires DateTime?
   resetToken       String?   @unique
   resetTokenExpiry DateTime?
   avatarUrl        String?   // User profile picture URL

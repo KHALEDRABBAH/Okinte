@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 /**
  * POST /api/applications/[id]/respond
@@ -92,7 +93,8 @@ export async function POST(
       
       const { path, error } = await uploadFile(buffer, storagePath, file.type);
       if (error || !path) {
-        return NextResponse.json({ error: `${docType}: Upload failed` }, { status: 500 });
+        console.error(`Upload failed for ${docType}:`, error);
+        return NextResponse.json({ error: `${docType}: Upload failed — ${error || 'Unknown storage error'}` }, { status: 500 });
       }
 
       uploadedDocs.push({

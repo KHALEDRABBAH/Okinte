@@ -62,19 +62,20 @@ export default function AdminCharts({ monthlyData, statusCounts }: AdminChartsPr
       {/* Applications Trend */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
         <h3 className="text-sm font-semibold text-gray-600 mb-4">Applications (Last 6 Months)</h3>
-        <div className="flex items-end gap-3 h-40">
+        <div className="flex items-end gap-3 pt-6">
           {monthlyData.map((m, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-xs font-medium text-gray-900">{m.applications}</span>
-              <div
-                className="w-full rounded-t-lg transition-all duration-500"
-                style={{
-                  height: `${Math.max((m.applications / maxApps) * 100, 4)}%`,
-                  backgroundColor: '#3b82f6',
-                  minHeight: '4px',
-                }}
-              />
-              <span className="text-[10px] text-gray-400 mt-1">{m.label}</span>
+            <div key={i} className="flex-1 flex flex-col items-center gap-2">
+              <div className="w-full h-32 flex flex-col justify-end items-center relative">
+                <span className="text-xs font-medium text-gray-900 absolute -top-5">{m.applications}</span>
+                <div
+                  className="w-full rounded-t-lg transition-all duration-500"
+                  style={{
+                    height: `${Math.max((m.applications / maxApps) * 100, 4)}%`,
+                    backgroundColor: '#3b82f6',
+                  }}
+                />
+              </div>
+              <span className="text-[10px] text-gray-400">{m.label}</span>
             </div>
           ))}
         </div>
@@ -83,19 +84,20 @@ export default function AdminCharts({ monthlyData, statusCounts }: AdminChartsPr
       {/* Revenue Trend */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
         <h3 className="text-sm font-semibold text-gray-600 mb-4">Revenue (Last 6 Months)</h3>
-        <div className="flex items-end gap-3 h-40">
+        <div className="flex items-end gap-3 pt-6">
           {monthlyData.map((m, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-xs font-medium text-gray-900">${m.revenue}</span>
-              <div
-                className="w-full rounded-t-lg transition-all duration-500"
-                style={{
-                  height: `${Math.max((m.revenue / maxRevenue) * 100, 4)}%`,
-                  backgroundColor: '#10b981',
-                  minHeight: '4px',
-                }}
-              />
-              <span className="text-[10px] text-gray-400 mt-1">{m.label}</span>
+            <div key={i} className="flex-1 flex flex-col items-center gap-2">
+              <div className="w-full h-32 flex flex-col justify-end items-center relative">
+                <span className="text-xs font-medium text-gray-900 absolute -top-5">${m.revenue}</span>
+                <div
+                  className="w-full rounded-t-lg transition-all duration-500"
+                  style={{
+                    height: `${Math.max((m.revenue / maxRevenue) * 100, 4)}%`,
+                    backgroundColor: '#10b981',
+                  }}
+                />
+              </div>
+              <span className="text-[10px] text-gray-400">{m.label}</span>
             </div>
           ))}
         </div>
@@ -104,19 +106,20 @@ export default function AdminCharts({ monthlyData, statusCounts }: AdminChartsPr
       {/* Users Trend */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
         <h3 className="text-sm font-semibold text-gray-600 mb-4">New Users (Last 6 Months)</h3>
-        <div className="flex items-end gap-3 h-40">
+        <div className="flex items-end gap-3 pt-6">
           {monthlyData.map((m, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-xs font-medium text-gray-900">{m.users}</span>
-              <div
-                className="w-full rounded-t-lg transition-all duration-500"
-                style={{
-                  height: `${Math.max((m.users / maxUsers) * 100, 4)}%`,
-                  backgroundColor: '#8b5cf6',
-                  minHeight: '4px',
-                }}
-              />
-              <span className="text-[10px] text-gray-400 mt-1">{m.label}</span>
+            <div key={i} className="flex-1 flex flex-col items-center gap-2">
+              <div className="w-full h-32 flex flex-col justify-end items-center relative">
+                <span className="text-xs font-medium text-gray-900 absolute -top-5">{m.users}</span>
+                <div
+                  className="w-full rounded-t-lg transition-all duration-500"
+                  style={{
+                    height: `${Math.max((m.users / maxUsers) * 100, 4)}%`,
+                    backgroundColor: '#8b5cf6',
+                  }}
+                />
+              </div>
+              <span className="text-[10px] text-gray-400">{m.label}</span>
             </div>
           ))}
         </div>

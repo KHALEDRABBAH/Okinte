@@ -49,10 +49,23 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validation.data;
 
-    // Step 2: Find user by email
-    const user = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    // Step 2: Find user by email (use raw query to avoid Prisma schema mismatch)
+    const users = await db.$queryRaw<Array<{
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string | null;
+      country: string | null;
+      city: string | null;
+      role: string;
+      passwordHash: string;
+      emailVerified: boolean;
+      tokenVersion: number;
+      createdAt: Date;
+    }>>`SELECT "id", "firstName", "lastName", "email", "phone", "country", "city", "role", "passwordHash", "emailVerified", "tokenVersion", "createdAt" FROM "users" WHERE "email" = ${email.toLowerCase()} LIMIT 1`;
+
+    const user = users[0] || null;
 
     if (!user) {
       // Generic message to prevent email enumeration

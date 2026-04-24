@@ -41,9 +41,12 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Find user — but ALWAYS return success to prevent email enumeration
     const user = await db.user.findUnique({
       where: { email: normalizedEmail },
+      select: {
+        id: true,
+        firstName: true,
+      },
     });
 
     if (user) {

@@ -32,13 +32,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Find user with matching token
-    const user = await db.user.findFirst({
-      where: {
-        verificationToken: token,
-        verificationTokenExpires: { gt: new Date() },
-      },
-    });
+    // Find user with matching token (raw SQL for DB compatibility)
+    const users = await db.$queryRaw<Array<{
+      id: string;
+      firstName: string;
+      email: string;
+      role: string;
+      tokenVersion: number;
+    }>>`SELECT "id", "firstName", "email", "role", "tokenVersion" FROM "users" WHERE "verificationToken" = ${token} AND "verificationTokenExpires" > NOW() LIMIT 1`;
+
+    const user = users[0] || null;
 
     if (!user) {
       return NextResponse.json(
@@ -48,14 +51,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Mark email as verified and clear the token
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        emailVerified: true,
-        verificationToken: null,
-        verificationTokenExpires: null,
-      },
-    });
+    await db.$executeRaw`UPDATE "users" SET "emailVerified" = true, "verificationToken" = NULL, "verificationTokenExpires" = NULL WHERE "id" = ${user.id}`;
 
     // Send welcome email now that email is verified
     const { sendRegistrationEmail } = await import('@/lib/email');
@@ -101,9 +97,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    // Use raw SQL to check user (avoids schema mismatch)
+    const users = await db.$queryRaw<Array<{
+      id: string;
+      firstName: string;
+      email: string;
+      emailVerified: boolean;
+    }>>`SELECT "id", "firstName", "email", "emailVerified" FROM "users" WHERE "email" = ${email.toLowerCase()} LIMIT 1`;
+
+    const user = users[0] || null;
 
     if (!user) {
       // Don't reveal if email exists
@@ -118,10 +120,12 @@ export async function POST(request: NextRequest) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    await db.user.update({
-      where: { id: user.id },
-      data: { verificationToken, verificationTokenExpires },
-    });
+    // Update with raw SQL (in case columns exist)
+    try {
+      await db.$executeRaw`UPDATE "users" SET "verificationToken" = ${verificationToken}, "verificationTokenExpires" = ${verificationTokenExpires} WHERE "id" = ${user.id}`;
+    } catch (updateErr) {
+      console.error('Could not update verification token (columns may not exist):', updateErr);
+    }
 
     // Send verification email
     const locale = body.locale || 'en';

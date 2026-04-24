@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
         resetToken: token,
         resetTokenExpiry: { gt: new Date() }, // Token must not be expired
       },
+      select: { id: true },
     });
 
     if (!user) {

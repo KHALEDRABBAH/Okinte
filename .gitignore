@@ -31,3 +31,4 @@ prisma/migrations/migration_lock.toml
 _*_backup/
 
 .vercel
+.env*.local

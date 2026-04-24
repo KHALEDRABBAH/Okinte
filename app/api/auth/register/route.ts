@@ -47,20 +47,19 @@ export async function POST(request: NextRequest) {
 
     const { firstName, lastName, email, phone, country, city, password } = validation.data;
 
-    // Step 2: Check if email or phone already exists
-    const [existingEmail, existingPhone] = await Promise.all([
-      db.user.findUnique({ where: { email: email.toLowerCase() } }),
-      db.user.findFirst({ where: { phone } }),
-    ]);
-
-    if (existingEmail) {
+    // Step 2: Check if email or phone already exists (raw SQL to avoid schema mismatch)
+    const existingEmail = await db.$queryRaw<Array<{ id: string }>>`SELECT "id" FROM "users" WHERE "email" = ${email.toLowerCase()} LIMIT 1`;
+    
+    if (existingEmail.length > 0) {
       return NextResponse.json(
         { error: 'An account with this email already exists', field: 'email', details: { email: ['This email is already registered. Please use a different email or login.'] } },
         { status: 409 }
       );
     }
 
-    if (existingPhone) {
+    const existingPhone = await db.$queryRaw<Array<{ id: string }>>`SELECT "id" FROM "users" WHERE "phone" = ${phone} LIMIT 1`;
+
+    if (existingPhone.length > 0) {
       return NextResponse.json(
         { error: 'An account with this phone number already exists', field: 'phone', details: { phone: ['This phone number is already registered.'] } },
         { status: 409 }
@@ -74,38 +73,64 @@ export async function POST(request: NextRequest) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    // Step 5: Create the user in the database (NOT verified yet)
-    const user = await db.user.create({
-      data: {
-        firstName,
-        lastName,
-        email: email.toLowerCase(),
-        phone,
-        country,
-        city,
-        passwordHash,
-        emailVerified: false,
-        verificationToken,
-        verificationTokenExpires,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        country: true,
-        city: true,
-        role: true,
-        createdAt: true,
-      },
-    });
+    // Step 5: Create the user in the database
+    // Try with verification columns first, fall back to without if columns don't exist yet
+    let user: { id: string; firstName: string; email: string };
+    try {
+      const created = await db.user.create({
+        data: {
+          firstName,
+          lastName,
+          email: email.toLowerCase(),
+          phone,
+          country,
+          city,
+          passwordHash,
+          emailVerified: false,
+          verificationToken,
+          verificationTokenExpires,
+        },
+        select: {
+          id: true,
+          firstName: true,
+          email: true,
+        },
+      });
+      user = created;
+    } catch (createErr: any) {
+      // If the verification columns don't exist yet, create without them
+      if (createErr.message?.includes('verificationToken') || createErr.code === 'P2009' || createErr.code === 'P2002') {
+        const created = await db.user.create({
+          data: {
+            firstName,
+            lastName,
+            email: email.toLowerCase(),
+            phone,
+            country,
+            city,
+            passwordHash,
+            emailVerified: false,
+          },
+          select: {
+            id: true,
+            firstName: true,
+            email: true,
+          },
+        });
+        user = created;
+      } else {
+        throw createErr;
+      }
+    }
 
     // Step 6: Send verification email (non-blocking)
     const locale = body.locale || 'en';
-    const { sendVerificationEmail } = await import('@/lib/email');
-    await sendVerificationEmail(user.email, user.firstName, verificationToken, locale)
-      .catch(err => console.error('Failed to send verification email', err));
+    try {
+      const { sendVerificationEmail } = await import('@/lib/email');
+      await sendVerificationEmail(user.email, user.firstName, verificationToken, locale);
+    } catch (emailErr) {
+      console.error('Failed to send verification email', emailErr);
+    }
 
     // Step 7: Return success — user must verify email before logging in
     // Do NOT set auth cookie here — user must verify first

@@ -31,7 +31,7 @@ interface Application {
   createdAt: string;
   notes: string | null;
   user: { firstName: string; lastName: string; email: string; country: string };
-  service: { key: string };
+  service: { key: string } | null;
   payment: { status: string; amount: number } | null;
   documents: { id: string; type: string; fileName: string }[];
 }
@@ -554,8 +554,8 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <FilterButton label="All" active={!statusFilter} onClick={() => setStatusFilter('')} />
-                  {['SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'RETURNED', 'DRAFT'].map(s => (
-                    <FilterButton key={s} label={s.replace('_', ' ')} active={statusFilter === s} onClick={() => setStatusFilter(s)} />
+                  {['SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'RETURNED', 'DRAFT', 'NO_SERVICE'].map(s => (
+                    <FilterButton key={s} label={s === 'NO_SERVICE' ? 'NO SERVICE' : s.replace('_', ' ')} active={statusFilter === s} onClick={() => setStatusFilter(s)} />
                   ))}
                 </div>
 

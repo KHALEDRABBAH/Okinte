@@ -40,7 +40,9 @@ export async function GET(request: NextRequest) {
 
     // Build filter
     const where: any = {};
-    if (status) {
+    if (status === 'NO_SERVICE') {
+      where.serviceId = null;
+    } else if (status) {
       where.status = status;
     }
     if (search) {

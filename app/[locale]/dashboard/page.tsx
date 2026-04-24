@@ -255,6 +255,117 @@ export default function Dashboard() {
     );
   }
 
+  // Check if user has an incomplete application (DRAFT with no service selected)
+  const pendingDraft = applications.find(app => app.status === 'DRAFT' && !app.service);
+
+  // ═══════════════════════════════════════════════════════════════
+  // ONBOARDING: Complete Your Application (blocks normal dashboard)
+  // ═══════════════════════════════════════════════════════════════
+  if (pendingDraft) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA]">
+        <Header />
+        <div className="pt-28 pb-16">
+          <div className="container mx-auto px-4 lg:px-8 max-w-2xl">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+              <div className="w-16 h-16 bg-[#2563EB]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <FileText className="w-8 h-8 text-[#2563EB]" />
+              </div>
+              <h1 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] mb-2">Complete Your Application</h1>
+              <p className="text-gray-500 max-w-md mx-auto">Welcome, {user?.firstName}! Please select a service and complete payment to finalize your application.</p>
+              <p className="text-xs text-gray-400 mt-2 font-mono">Ref: {pendingDraft.referenceCode}</p>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+              {/* Step 1: Select Service */}
+              <div className="mb-6">
+                <h2 className="text-lg font-bold text-[#1a1a2e] mb-1">Select Your Service</h2>
+                <p className="text-sm text-gray-500 mb-4">Choose the service that best matches your goals</p>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {[
+                    { id: 'study', icon: GraduationCap, label: 'Study Abroad Placement', desc: 'University enrollment & visa support' },
+                    { id: 'internship', icon: Briefcase, label: 'International Internship', desc: 'Professional experience abroad' },
+                    { id: 'scholarship', icon: Award, label: 'Scholarship Search', desc: 'Find & apply for scholarships' },
+                    { id: 'sabbatical', icon: Palmtree, label: 'Sabbatical Experience', desc: 'Cultural immersion programs' },
+                    { id: 'employment', icon: Building2, label: 'Job Placement', desc: 'International career opportunities' },
+                  ].map((svc) => (
+                    <button key={svc.id} type="button" onClick={() => { setSelectedService(svc.id); setAppFlowError(''); }}
+                      className={`p-4 rounded-xl border-2 text-start transition-all duration-200 ${selectedService === svc.id ? 'border-[#2563EB] bg-[#2563EB]/5 shadow-sm ring-1 ring-[#2563EB]/20' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>
+                      <div className="flex items-start gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${selectedService === svc.id ? 'bg-[#2563EB]/10' : 'bg-gray-100'}`}>
+                          <svc.icon className={`w-5 h-5 ${selectedService === svc.id ? 'text-[#2563EB]' : 'text-gray-400'}`} />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-[#1a1a2e]">{svc.label}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{svc.desc}</p>
+                          {servicePrices[svc.id] && <p className="text-xs font-medium text-[#2563EB] mt-1">${servicePrices[svc.id].toFixed(2)}</p>}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Step 2: Payment Summary (only after service selected) */}
+              {selectedService && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="border-t border-gray-100 pt-6 space-y-4">
+                  <h2 className="text-lg font-bold text-[#1a1a2e] mb-1">Payment Summary</h2>
+                  
+                  <div className="bg-gray-50 rounded-xl p-5">
+                    <div className="flex justify-between text-sm mb-2"><span className="text-gray-600">Service</span><span className="font-medium capitalize">{selectedService}</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-gray-600">Fee</span><span className="font-medium">{servicePrices[selectedService] ? `$${servicePrices[selectedService].toFixed(2)}` : '...'}</span></div>
+                    {promoResult && <div className="flex justify-between text-sm text-emerald-700 mt-1"><span>Discount</span><span>−${promoResult.discount.toFixed(2)}</span></div>}
+                    <div className="flex justify-between font-bold border-t border-gray-200 pt-2 mt-2"><span>Total</span><span className="text-[#2563EB]">{promoResult ? `$${promoResult.finalPrice.toFixed(2)}` : servicePrices[selectedService] ? `$${servicePrices[selectedService].toFixed(2)}` : '...'}</span></div>
+                  </div>
+
+                  {/* Promo Code */}
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 mb-1.5 block">Promo Code (optional)</label>
+                    <div className="flex gap-2">
+                      <input type="text" value={promoCode} onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoResult(null); }} placeholder="Enter code" className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] outline-none" />
+                      <button type="button" onClick={async () => { if (!promoCode.trim()) return; setPromoLoading(true); setPromoError(''); try { const r = await fetch('/api/promo/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: promoCode, originalPrice: servicePrices[selectedService] }) }); const d = await r.json(); if (r.ok && d.valid) setPromoResult(d); else { setPromoError(d.error || 'Invalid'); setPromoResult(null); } } catch { setPromoError('Failed'); } finally { setPromoLoading(false); } }} disabled={promoLoading || !promoCode.trim()} className="bg-[#0f172a] text-white px-5 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-[#1e293b] transition-colors">{promoLoading ? '...' : 'Apply'}</button>
+                    </div>
+                    {promoError && <p className="text-red-500 text-xs mt-1">{promoError}</p>}
+                    {promoResult && <p className="text-emerald-700 text-xs font-medium mt-1">✓ {promoResult.code} applied — you save ${promoResult.discount.toFixed(2)}</p>}
+                  </div>
+
+                  {appFlowError && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{appFlowError}</div>}
+
+                  <button
+                    onClick={async () => {
+                      setIsCreatingApp(true); setAppFlowError('');
+                      try {
+                        // Update the draft with selected service
+                        const patchRes = await fetch(`/api/applications/${pendingDraft.id}`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ serviceKey: selectedService }),
+                        });
+                        if (!patchRes.ok) { const d = await patchRes.json(); throw new Error(d.error || 'Failed to set service'); }
+                        // Process payment
+                        const checkoutRes = await fetch('/api/payments/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ applicationId: pendingDraft.id, promoCode: promoResult?.code || undefined }) });
+                        const checkoutData = await checkoutRes.json();
+                        if (!checkoutRes.ok) throw new Error(checkoutData.error || 'Payment failed');
+                        if (checkoutData.free) { window.location.reload(); return; }
+                        if (checkoutData.url) { window.location.href = checkoutData.url; return; }
+                        throw new Error('Payment could not be processed.');
+                      } catch (err: any) { setAppFlowError(err.message); } finally { setIsCreatingApp(false); }
+                    }}
+                    disabled={isCreatingApp || !selectedService}
+                    className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold py-3.5 px-6 rounded-xl disabled:opacity-50 transition-all duration-200 flex items-center justify-center gap-2 text-base shadow-sm hover:shadow-md"
+                  >
+                    {isCreatingApp ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CreditCard className="w-5 h-5" /> Pay & Submit Application</>}
+                  </button>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <Header />
@@ -839,8 +950,8 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      {/* DRAFT: Continue Application — select service + pay */}
-                      {app.status === 'DRAFT' && (
+                      {/* DRAFT with service selected: Continue to payment */}
+                      {app.status === 'DRAFT' && app.service && (
                         <div className="mt-4 pt-4 border-t border-gray-100">
                           {continuingDraftId !== app.id ? (
                             <button

@@ -18,7 +18,7 @@ export default function About() {
             viewport={{ once: true }} 
             transition={{ duration: 0.6 }}
           >
-            <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
+            <span className="text-[#60a5fa] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 mb-4 tracking-tight">{t('title')}</h2>
             <p className="text-base md:text-lg text-white/70 mb-5 leading-relaxed">{t('subtitle')}</p>
             <p className="text-white/70 leading-[1.7]">{t('description')}</p>

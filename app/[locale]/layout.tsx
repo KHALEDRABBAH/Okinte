@@ -1,11 +1,24 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
+import { Inter, Montserrat } from 'next/font/google';
 import { rtlLocales } from '@/i18n/routing';
 import FloatingContact from '@/components/FloatingContact';
 import LanguageModal from '@/components/LanguageModal';
 import { Analytics } from '@vercel/analytics/next';
 import '../globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-montserrat',
+});
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
@@ -59,8 +72,8 @@ export default async function LocaleLayout({
   const isRTL = rtlLocales.includes(locale as any);
 
   return (
-    <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'} suppressHydrationWarning>
-      <body>
+    <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'} className={`${inter.variable} ${montserrat.variable}`} suppressHydrationWarning>
+      <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
           {children}
           <FloatingContact />
@@ -70,4 +83,4 @@ export default async function LocaleLayout({
       </body>
     </html>
   );
-}
+}

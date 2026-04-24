@@ -30,10 +30,10 @@ export default async function middleware(request: NextRequest) {
   const cspHeader = [
     `default-src 'self'`,
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://js.stripe.com`,
-    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+    `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' blob: data: https:`,
-    `font-src 'self' data: https://fonts.gstatic.com`,
-    `connect-src 'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com`,
+    `font-src 'self' data:`,
+    `connect-src 'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com`,
     `frame-src https://js.stripe.com`,
     `base-uri 'self'`,
     `form-action 'self'`,

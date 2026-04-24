@@ -29,7 +29,7 @@ export default function Services() {
           viewport={{ once: true }} 
           className="text-center max-w-2xl mx-auto mb-14 md:mb-20"
         >
-          <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
+          <span className="text-[#60a5fa] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 tracking-tight">{t('title')}</h2>
           <p className="text-white/70 mt-4">{t('subtitle')}</p>
         </motion.div>
@@ -59,7 +59,7 @@ export default function Services() {
                     <h3 className="font-heading font-bold text-xl text-white mb-2 line-clamp-2">
                       {t(`${service.id}.title`)}
                     </h3>
-                    <p className="text-sm text-[#3b82f6] font-medium mb-4">{t(`${service.id}.subtitle`)}</p>
+                    <p className="text-sm text-[#60a5fa] font-medium mb-4">{t(`${service.id}.subtitle`)}</p>
                     
                     <div className="text-sm text-white/70 mb-6 md:mb-8 flex-1 leading-relaxed">
                       <ExpandableText text={t(`${service.id}.description`)} maxLength={100} />

@@ -24,7 +24,7 @@ export default function Process() {
           viewport={{ once: true }} 
           className="text-center max-w-2xl mx-auto mb-14 md:mb-20"
         >
-          <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
+          <span className="text-[#60a5fa] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 tracking-tight">{t('title')}</h2>
           <p className="text-white/70 mt-4">{t('subtitle')}</p>
         </motion.div>

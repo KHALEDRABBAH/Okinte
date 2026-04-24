@@ -15,7 +15,7 @@ export default function Testimonials() {
     <section className="py-20 md:py-28 lg:py-32 bg-[#0f172a]">
       <div className="container mx-auto px-6 lg:px-12">
         <motion.div initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }} whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-[#2563EB] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
+          <span className="text-[#60a5fa] font-semibold text-sm uppercase tracking-wider">{t('label')}</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white mt-3 tracking-tight">{t('title')}</h2>
           <p className="text-white/70 mt-4">{t('subtitle')}</p>
         </motion.div>
@@ -35,7 +35,7 @@ export default function Testimonials() {
                   </div>
                   <div>
                     <p className="font-heading font-semibold text-white">{t(`items.${key}.name`)}</p>
-                    <p className="text-xs font-medium text-[#3b82f6]">{t(`items.${key}.role`)}</p>
+                    <p className="text-xs font-medium text-[#60a5fa]">{t(`items.${key}.role`)}</p>
                   </div>
                 </div>
               </div>

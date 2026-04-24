@@ -28,18 +28,42 @@ const resend = getResendClient();
 const FROM_EMAIL = 'Okinte Support <support@okinte.com>';
 
 export async function sendRegistrationEmail(to: string, name: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com';
+  const loginUrl = `${appUrl}/login`;
+
   try {
     const data = await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: 'Welcome to Okinte!',
       html: `
-        <div style="font-family: sans-serif; color: #1a1a1a;">
-          <h2>Welcome to Okinte, ${escapeHtml(name)}!</h2>
-          <p>Your account has been successfully created. You can now browse our services and submit applications for study, internship, or employment opportunities abroad.</p>
-          <p>Log in to your dashboard to get started.</p>
-          <br>
-          <p>Best regards,<br>The Okinte Team</p>
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: left; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: #1e293b; font-size: 22px; margin-top: 0; margin-bottom: 16px;">Welcome to Okinte, ${escapeHtml(name)}!</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Your account has been successfully created. We're thrilled to have you on board! You can now browse our services and submit applications for study, internship, or employment opportunities abroad.
+            </p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${loginUrl}" style="background-color: #0f172a; color: #ffffff; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Log in to your Dashboard</a>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+              If you have any questions or need assistance, our support team is always here to help.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
+          </div>
         </div>
       `,
     });
@@ -56,14 +80,35 @@ export async function sendApplicationReceiptEmail(to: string, name: string, refe
       to,
       subject: `Application Received - ${escapeHtml(referenceCode)}`,
       html: `
-        <div style="font-family: sans-serif; color: #1a1a1a;">
-          <h2>Application Received</h2>
-          <p>Hi ${escapeHtml(name)},</p>
-          <p>Your application for <strong>${escapeHtml(serviceKey.toUpperCase())}</strong> has been submitted successfully and your payment was securely processed.</p>
-          <p><strong>Your Reference Code:</strong> ${escapeHtml(referenceCode)}</p>
-          <p>Our team will review your submitted documents and reach out to you shortly. You can track your status in your Okinte Dashboard.</p>
-          <br>
-          <p>Best regards,<br>The Okinte Team</p>
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: left; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: #1e293b; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Application Received</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Hi ${escapeHtml(name)},<br><br>
+              Your application for <strong>${escapeHtml(serviceKey.toUpperCase())}</strong> has been submitted successfully and your payment was securely processed.
+            </p>
+            
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+              <p style="color: #475569; font-size: 14px; margin: 0;"><strong>Your Reference Code:</strong></p>
+              <p style="color: #0f172a; font-size: 20px; font-weight: 700; margin: 4px 0 0 0; letter-spacing: 1px;">${escapeHtml(referenceCode)}</p>
+            </div>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Our team will review your submitted documents and reach out to you shortly. You can track your status in your Okinte Dashboard.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
+          </div>
         </div>
       `,
     });
@@ -79,21 +124,42 @@ export async function sendStatusUpdateEmail(to: string, name: string, referenceC
     const isReturned = status === 'RETURNED';
     const subjectTitle = isApproved ? 'Application Approved!' : isReturned ? 'Action Required: Application Returned' : 'Application Update';
     const color = isApproved ? '#10b981' : isReturned ? '#f97316' : '#f59e0b';
+    const bgColor = isApproved ? '#d1fae5' : isReturned ? '#ffedd5' : '#fef3c7';
     
     const data = await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: `Status Update [${escapeHtml(referenceCode)}]: ${subjectTitle}`,
       html: `
-        <div style="font-family: sans-serif; color: #1a1a1a;">
-          <h2 style="color: ${color};">${subjectTitle}</h2>
-          <p>Hi ${escapeHtml(name)},</p>
-          <p>We have an update regarding your application <strong>${escapeHtml(referenceCode)}</strong>.</p>
-          <p>The current status is now: <strong>${escapeHtml(status.replace('_', ' '))}</strong></p>
-          ${notes ? `<div style="background-color: #f3f4f6; padding: 12px; border-left: 4px solid ${color};"><strong>Admin Notes:</strong> ${escapeHtml(notes)}</div>` : ''}
-          <p>Please log in to your Okinte Dashboard for more details.</p>
-          <br>
-          <p>Best regards,<br>The Okinte Team</p>
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: left; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: ${color}; font-size: 20px; margin-top: 0; margin-bottom: 16px;">${subjectTitle}</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Hi ${escapeHtml(name)},<br><br>
+              We have an update regarding your application <strong>${escapeHtml(referenceCode)}</strong>.
+            </p>
+            
+            <div style="background-color: ${bgColor}; border-left: 4px solid ${color}; border-radius: 4px; padding: 16px; margin-bottom: 24px;">
+              <p style="color: #0f172a; font-size: 16px; margin: 0;"><strong>Current Status:</strong> ${escapeHtml(status.replace('_', ' '))}</p>
+              ${notes ? `<p style="color: #475569; font-size: 14px; margin: 12px 0 0 0;"><strong>Admin Notes:</strong><br>${escapeHtml(notes)}</p>` : ''}
+            </div>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Please log in to your Okinte Dashboard for more details.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
+          </div>
         </div>
       `,
     });
@@ -171,19 +237,38 @@ export async function sendChatNotificationEmail(to: string, name: string, messag
       to,
       subject: 'New Message from Okinte Support',
       html: `
-        <div style="font-family: sans-serif; color: #1a1a1a;">
-          <h2>You have a new message</h2>
-          <p>Hi ${safeName},</p>
-          <p>The Okinte Support team has sent you a message:</p>
-          <div style="background-color: #f3f4f6; padding: 16px; border-radius: 8px; border-left: 4px solid #2563EB; margin: 16px 0;">
-            <p style="margin: 0; color: #374151;">${safePreview}</p>
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: left; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: #1e293b; font-size: 20px; margin-top: 0; margin-bottom: 16px;">You have a new message</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Hi ${safeName},<br><br>
+              The Okinte Support team has sent you a message:
+            </p>
+            
+            <div style="background-color: #f8fafc; border-left: 4px solid #2563EB; border-radius: 4px; padding: 16px; margin-bottom: 24px;">
+              <p style="color: #334155; font-size: 15px; margin: 0; font-style: italic;">"${safePreview}"</p>
+            </div>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${dashboardUrl}" style="background-color: #2563EB; color: #ffffff; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">View in Dashboard</a>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+              You can reply to this message directly from your Okinte Dashboard.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
           </div>
-          <div style="text-align: center; margin: 24px 0;">
-            <a href="${dashboardUrl}" style="background-color: #2563EB; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">View in Dashboard</a>
-          </div>
-          <p style="color: #666; font-size: 14px;">You can reply to this message from your Okinte Dashboard.</p>
-          <br>
-          <p>Best regards,<br>The Okinte Team</p>
         </div>
       `,
     });

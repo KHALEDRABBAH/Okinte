@@ -819,20 +819,7 @@ export default function Dashboard() {
                           )}
                         </div>
                       )}
-                      
-                      {/* Continue Application — always show unless APPROVED, REJECTED, or RETURNED */}
-                      {app.status !== 'APPROVED' && app.status !== 'REJECTED' && app.status !== 'RETURNED' && (
-                        <div className={`mt-4 pt-4 border-t border-gray-100 flex items-center justify-end gap-3 ${(app.notes && app.status !== 'RETURNED') ? '-mx-5 md:-mx-6 -mb-5 md:-mb-6 px-5 md:px-6 pb-5 md:pb-6' : ''}`}>
-                          <Link href={`/apply?draftId=${app.id}` as any} className="text-sm font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB]/5 hover:bg-[#2563EB]/10 rounded-lg">
-                            <Plus className="w-4 h-4" /> Continue Application
-                          </Link>
-                          {app.status === 'DRAFT' && (
-                            <button onClick={() => handleDeleteDraft(app.id)} className="text-sm text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5">
-                              <Trash2 className="w-4 h-4" /> Delete Draft
-                            </button>
-                          )}
-                        </div>
-                      )}
+
                     </motion.div>
                   );
                 })}

@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
         userId: currentUser.userId,
         type: upperDocType as any,
         applicationId: targetApplicationId,
+        deletedAt: null,
       }
     });
 
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
           fileName,
           storagePath,
           mimeType,
-          fileSize,
+          fileSize: fileSize || 0,
           uploadedAt: new Date(),
         }
       });
@@ -79,14 +80,14 @@ export async function POST(request: NextRequest) {
           fileName,
           storagePath,
           mimeType,
-          fileSize,
+          fileSize: fileSize || 0,
         }
       });
     }
 
     return NextResponse.json({ document }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Confirm document error:', error);
-    return NextResponse.json({ error: 'Failed to confirm document record.' }, { status: 500 });
+    return NextResponse.json({ error: `Failed to confirm document record: ${error?.message || 'Unknown error'}` }, { status: 500 });
   }
 }

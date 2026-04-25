@@ -1146,6 +1146,29 @@ export default function Dashboard() {
                         </div>
                       )}
 
+                      {/* REJECTED: Show reason and allow re-applying */}
+                      {app.status === 'REJECTED' && (
+                        <div className="mt-4 pt-4 border-t border-red-200 bg-red-50/50 -mx-5 md:-mx-6 -mb-5 md:-mb-6 p-5 md:p-6 rounded-b-2xl">
+                          <div className="mb-4">
+                            <div className="flex items-start gap-2">
+                              <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
+                              <div>
+                                <h4 className="text-sm font-semibold text-red-800 mb-1">Application Rejected</h4>
+                                <p className="text-sm text-red-700">
+                                  {app.notes || 'Your application was rejected. You can submit a new application with corrected details.'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <a 
+                            href={`/${locale}/apply${app.service ? `?service=${app.service.key}` : ''}`}
+                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-4 rounded-lg shadow-sm transition-colors font-medium"
+                          >
+                            <Plus className="w-4 h-4" /> Start New Application
+                          </a>
+                        </div>
+                      )}
+
                       {/* DRAFT with service selected: Continue to payment */}
                       {app.status === 'DRAFT' && app.service && (
                         <div className="mt-4 pt-4 border-t border-gray-100">

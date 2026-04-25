@@ -213,17 +213,6 @@ export default function Dashboard() {
     loadData();
   }, [locale, router]);
 
-  useEffect(() => {
-    if (searchParams?.get('success') === 'true') {
-      alert('Transaction completed successfully!');
-      // Remove query params to prevent alert on refresh
-      window.history.replaceState({}, '', `/${locale}/dashboard`);
-    } else if (searchParams?.get('canceled') === 'true') {
-      alert('Payment was canceled. You can try again when you are ready.');
-      window.history.replaceState({}, '', `/${locale}/dashboard`);
-    }
-  }, [searchParams, locale]);
-
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push(`/${locale}/login`);

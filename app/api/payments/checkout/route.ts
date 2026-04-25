@@ -183,8 +183,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'payment',
-      success_url: `${baseUrl}/en/dashboard?session_id={CHECKOUT_SESSION_ID}&success=true&app=${applicationId}`,
-      cancel_url: `${baseUrl}/en/dashboard?canceled=true&app=${applicationId}`,
+      success_url: `${baseUrl}/en/payment?session_id={CHECKOUT_SESSION_ID}&success=true&app=${applicationId}`,
+      cancel_url: `${baseUrl}/en/payment?canceled=true&app=${applicationId}`,
       client_reference_id: applicationId,
       customer_email: currentUser.email,
       metadata: {

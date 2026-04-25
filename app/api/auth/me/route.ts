@@ -21,6 +21,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
+import { getSignedUrl } from '@/lib/storage';
 
 export async function GET() {
   try {
@@ -72,8 +73,19 @@ export async function GET() {
       );
     }
 
-    // Step 5: Return user profile
-    return NextResponse.json({ user });
+    // Step 5: Generate signed avatar URL if avatar exists
+    let avatarSignedUrl: string | null = null;
+    if (user.avatarUrl) {
+      avatarSignedUrl = await getSignedUrl(user.avatarUrl, 3600);
+    }
+
+    // Step 6: Return user profile with signed avatar URL
+    return NextResponse.json({
+      user: {
+        ...user,
+        avatarUrl: avatarSignedUrl || user.avatarUrl,
+      }
+    });
 
   } catch (error) {
     console.error('Auth check error:', error);

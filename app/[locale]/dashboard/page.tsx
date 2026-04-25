@@ -530,7 +530,7 @@ export default function Dashboard() {
                         <Loader2 className="w-6 h-6 animate-spin text-[#0f172a]" />
                       ) : user.avatarUrl ? (
                         <img 
-                          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/bolila-documents/${user.avatarUrl}`} 
+                          src={user.avatarUrl} 
                           alt="Avatar" 
                           className="w-full h-full object-cover rounded-full" 
                         />

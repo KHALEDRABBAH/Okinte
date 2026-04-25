@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
-import { uploadFile, deleteFile } from '@/lib/storage';
+import { uploadFile, deleteFile, getSignedUrl } from '@/lib/storage';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -70,7 +70,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to update avatar. Please try again.' }, { status: 500 });
     }
 
-    return NextResponse.json({ user: updatedUser }, { status: 200 });
+    // Generate signed URL for the new avatar
+    const signedAvatarUrl = await getSignedUrl(path, 3600);
+
+    return NextResponse.json({ user: { ...updatedUser, avatarUrl: signedAvatarUrl || updatedUser.avatarUrl } }, { status: 200 });
 
   } catch (error) {
     console.error('Avatar upload error:', error);

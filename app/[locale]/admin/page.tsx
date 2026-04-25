@@ -684,23 +684,42 @@ export default function AdminDashboard() {
                                 </div>
 
                                 {/* Admin Actions */}
-                                {['SUBMITTED', 'UNDER_REVIEW'].includes(app.status) && (
+                                {['SUBMITTED', 'UNDER_REVIEW', 'RETURNED'].includes(app.status) && (
                                   <div className="space-y-3 pt-2">
                                     <div className="flex gap-3 flex-wrap">
+                                      {/* SUBMITTED → UNDER_REVIEW or RETURNED */}
                                       {app.status === 'SUBMITTED' && (
                                         <button onClick={() => handleStatusUpdate(app.id, 'UNDER_REVIEW')} className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
                                           <Clock className="w-4 h-4" /> Start Review
                                         </button>
                                       )}
-                                      <button onClick={() => handleStatusUpdate(app.id, 'APPROVED', 'Application approved by admin')} className="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
-                                        <CheckCircle className="w-4 h-4" /> Approve
-                                      </button>
-                                      <button onClick={() => { setReturningApp(returningApp === app.id ? null : app.id); setReturnNote(''); }} className="bg-orange-100 hover:bg-orange-200 text-orange-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
-                                        <RotateCcw className="w-4 h-4" /> Return
-                                      </button>
-                                      <button onClick={() => { setRejectingApp(rejectingApp === app.id ? null : app.id); setRejectReason(''); }} className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
-                                        <XCircle className="w-4 h-4" /> Reject
-                                      </button>
+                                      {app.status === 'SUBMITTED' && (
+                                        <button onClick={() => { setReturningApp(returningApp === app.id ? null : app.id); setReturnNote(''); }} className="bg-orange-100 hover:bg-orange-200 text-orange-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                                          <RotateCcw className="w-4 h-4" /> Return
+                                        </button>
+                                      )}
+
+                                      {/* RETURNED → UNDER_REVIEW */}
+                                      {app.status === 'RETURNED' && (
+                                        <button onClick={() => handleStatusUpdate(app.id, 'UNDER_REVIEW')} className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                                          <Clock className="w-4 h-4" /> Start Review
+                                        </button>
+                                      )}
+
+                                      {/* UNDER_REVIEW → APPROVED, REJECTED, or RETURNED */}
+                                      {app.status === 'UNDER_REVIEW' && (
+                                        <>
+                                          <button onClick={() => handleStatusUpdate(app.id, 'APPROVED', 'Application approved by admin')} className="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                                            <CheckCircle className="w-4 h-4" /> Approve
+                                          </button>
+                                          <button onClick={() => { setReturningApp(returningApp === app.id ? null : app.id); setReturnNote(''); }} className="bg-orange-100 hover:bg-orange-200 text-orange-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                                            <RotateCcw className="w-4 h-4" /> Return
+                                          </button>
+                                          <button onClick={() => { setRejectingApp(rejectingApp === app.id ? null : app.id); setRejectReason(''); }} className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors">
+                                            <XCircle className="w-4 h-4" /> Reject
+                                          </button>
+                                        </>
+                                      )}
                                     </div>
 
                                     {/* Return Note */}

@@ -34,9 +34,30 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Cron] Cleaned up ${deleted.count} webhook events older than 90 days`);
 
+    // Alert on payments stuck in PENDING for > 1 hour
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
+    const stuckPayments = await db.payment.findMany({
+      where: {
+        status: 'PENDING',
+        amount: { gt: 0 },
+        createdAt: { lt: oneHourAgo },
+      },
+    });
+
+    if (stuckPayments.length > 0) {
+      const { alertCriticalError } = await import('@/lib/alert');
+      await alertCriticalError('Payment', `Found ${stuckPayments.length} stuck payments`, {
+        count: stuckPayments.length,
+        paymentIds: stuckPayments.map((p: any) => p.id),
+      });
+    }
+
     return NextResponse.json({
       success: true,
       deletedCount: deleted.count,
+      stuckPaymentsCount: stuckPayments.length,
       cutoffDate: ninetyDaysAgo.toISOString(),
     });
 

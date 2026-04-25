@@ -23,6 +23,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
+import { alertCriticalError } from '@/lib/alert';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-12-18.acacia' as any,
@@ -76,27 +77,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 400 });
     }
 
-    // ATOMIC IDEMPOTENCY: Try to claim this event first
-    // The INSERT will fail if event.id already exists (unique constraint)
-    // This is the key to preventing concurrent duplicate processing
-    try {
+    // IDEMPOTENCY: Check if event was already processed successfully
+    const existingEvent = await db.webhookEvent.findUnique({
+      where: { id: event.id },
+    });
+
+    if (existingEvent) {
+      if (existingEvent.status === 'COMPLETED' || existingEvent.status === 'PROCESSING') {
+        console.log(`Event ${event.id} already processed or processing, skipping`);
+        return NextResponse.json({ received: true, status: 'duplicate_skipped' });
+      }
+      
+      // If FAILED, we want to retry it
+      await db.webhookEvent.update({
+        where: { id: event.id },
+        data: {
+          status: 'PROCESSING',
+          retryCount: { increment: 1 },
+        },
+      });
+    } else {
       await db.webhookEvent.create({
         data: {
           id: event.id,
           type: event.type,
+          status: 'PROCESSING',
         },
       });
-    } catch (err: unknown) {
-      // P2002 = Prisma unique constraint violation = duplicate event
-      // Prisma errors have a `code` property: err.code === 'P2002'
-      // Check both for safety
-      const errorCode = (err as any)?.code;
-      if (errorCode === 'P2002' || (err instanceof Error && err.message.includes('P2002'))) {
-        console.log(`Event ${event.id} already processed, skipping duplicate`);
-        return NextResponse.json({ received: true, status: 'duplicate_skipped' });
-      }
-      // Re-throw unexpected errors
-      throw err;
     }
 
     // Event claimed successfully - now process it
@@ -107,22 +114,66 @@ export async function POST(req: NextRequest) {
         const paymentIntentId = session.payment_intent as string;
 
         if (applicationId) {
-          // Update payment to SUCCEEDED (only if not already succeeded)
-          const paymentUpdateResult = await db.payment.updateMany({
-            where: {
-              applicationId,
-              status: { not: 'SUCCEEDED' },
-            },
-            data: {
-              status: 'SUCCEEDED',
-              stripePaymentIntentId: paymentIntentId,
-              paidAt: new Date(),
-            },
+          // RACE-SAFE: The payment record may not exist yet if the webhook
+          // arrives before the submit endpoint finishes writing the payment row.
+          // This happens with fast payers (Apple Pay, saved cards) because Stripe
+          // fires the webhook instantly on payment completion.
+          //
+          // Strategy: find the application first, then find-or-create the payment.
+
+          const application = await db.application.findFirst({
+            where: { id: applicationId, deletedAt: null },
+            select: { id: true, userId: true, status: true },
           });
 
-          if (paymentUpdateResult.count === 0) {
-            console.log(`Payment already processed for application ${applicationId}`);
+          if (!application) {
+            console.error(`Webhook: Application ${applicationId} not found`);
             break;
+          }
+
+          // Skip if application already advanced past SUBMITTED (admin already acted)
+          if (['APPROVED', 'REJECTED', 'UNDER_REVIEW', 'RETURNED'].includes(application.status)) {
+            console.log(`Application ${applicationId} already past SUBMITTED, skipping`);
+            break;
+          }
+
+          // Find existing payment record (may or may not exist yet)
+          const existingPayment = await db.payment.findUnique({
+            where: { applicationId },
+          });
+
+          // If payment already succeeded, skip (true idempotency)
+          if (existingPayment?.status === 'SUCCEEDED') {
+            console.log(`Payment already SUCCEEDED for application ${applicationId}`);
+            break;
+          }
+
+          // Update existing payment or create one if the submit endpoint hasn't written it yet
+          if (existingPayment) {
+            await db.payment.update({
+              where: { applicationId },
+              data: {
+                status: 'SUCCEEDED',
+                stripePaymentIntentId: paymentIntentId,
+                paidAt: new Date(),
+              },
+            });
+          } else {
+            // Payment record doesn't exist — webhook arrived before submit endpoint finished.
+            // Create it ourselves using data from the Stripe session.
+            console.warn(`Webhook: Payment record missing for ${applicationId}, creating from Stripe session data`);
+            await db.payment.create({
+              data: {
+                userId: application.userId,
+                applicationId,
+                stripeSessionId: session.id,
+                stripePaymentIntentId: paymentIntentId,
+                amount: session.amount_total ? session.amount_total / 100 : 0,
+                currency: session.currency || 'usd',
+                status: 'SUCCEEDED',
+                paidAt: new Date(),
+              },
+            });
           }
 
           // Update application status to SUBMITTED
@@ -195,9 +246,37 @@ export async function POST(req: NextRequest) {
         break;
     }
 
+    // Successfully processed
+    await db.webhookEvent.update({
+      where: { id: event.id },
+      data: {
+        status: 'COMPLETED',
+        processedAt: new Date(),
+      },
+    });
+
     return NextResponse.json({ received: true, eventId: event.id });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Webhook processing error:', error);
+    
+    const stripeEventId = (event as any)?.id;
+    // Attempt to mark as failed
+    if (stripeEventId) {
+      await db.webhookEvent.update({
+        where: { id: stripeEventId },
+        data: {
+          status: 'FAILED',
+          lastError: error?.message || 'Unknown processing error',
+        },
+      }).catch(() => {}); // ignore error here
+    }
+
+    await alertCriticalError('Webhook', 'Stripe processing crashed', {
+      eventId: stripeEventId,
+      error: error?.message,
+      stack: error?.stack,
+    });
+
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }

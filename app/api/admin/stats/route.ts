@@ -30,6 +30,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Run all queries in parallel for speed
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
     const [
       totalUsers,
       totalApplications,
@@ -37,16 +41,20 @@ export async function GET(request: NextRequest) {
       succeededPayments,
       unreadMessages,
       recentApplications,
+      stuckPayments,
+      systemErrors,
+      pendingWebhooks,
     ] = await Promise.all([
       // Total registered users (excluding admins)
-      db.user.count({ where: { role: 'USER' } }),
+      db.user.count({ where: { role: 'USER', deletedAt: null } }),
 
       // Total applications
-      db.application.count(),
+      db.application.count({ where: { deletedAt: null } }),
 
       // Applications grouped by status
       db.application.groupBy({
         by: ['status'],
+        where: { deletedAt: null },
         _count: { status: true },
       }),
 
@@ -63,6 +71,7 @@ export async function GET(request: NextRequest) {
       // 10 most recent applications with user and service info
       db.application.findMany({
         take: 10,
+        where: { deletedAt: null },
         orderBy: { createdAt: 'desc' },
         include: {
           user: {
@@ -73,6 +82,35 @@ export async function GET(request: NextRequest) {
           payment: { select: { status: true, amount: true } },
         },
       }),
+
+      // Observability: Stuck payments (> 1hr)
+      db.payment.findMany({
+        where: {
+          status: 'PENDING',
+          amount: { gt: 0 },
+          createdAt: { lt: oneHourAgo },
+          application: { deletedAt: null }
+        },
+        include: { user: { select: { firstName: true, email: true } } },
+        orderBy: { createdAt: 'desc' }
+      }),
+
+      // Observability: System fires (last 24h)
+      (db as any).auditLog.findMany({
+        where: {
+          action: 'SYSTEM_ERROR',
+          createdAt: { gt: twentyFourHoursAgo }
+        },
+        orderBy: { createdAt: 'desc' }
+      }),
+
+      // Observability: Pending webhooks (> 5 mins)
+      db.webhookEvent.count({
+        where: {
+          status: 'PROCESSING',
+          createdAt: { lt: fiveMinsAgo }
+        }
+      })
     ]);
 
     // Format status counts into an object
@@ -89,6 +127,11 @@ export async function GET(request: NextRequest) {
         totalRevenue: Number(succeededPayments._sum.amount || 0),
         totalPayments: succeededPayments._count.id,
         unreadMessages,
+      },
+      observability: {
+        stuckPayments,
+        systemErrors,
+        pendingWebhooks,
       },
       recentApplications,
       // Monthly analytics for charts (last 6 months)
@@ -118,14 +161,14 @@ async function getMonthlyData() {
     monthRanges.map(async ({ start, end, label }) => {
       const [apps, revenue, users] = await Promise.all([
         db.application.count({
-          where: { createdAt: { gte: start, lte: end } },
+          where: { createdAt: { gte: start, lte: end }, deletedAt: null },
         }),
         db.payment.aggregate({
           where: { status: 'SUCCEEDED', paidAt: { gte: start, lte: end } },
           _sum: { amount: true },
         }),
         db.user.count({
-          where: { role: 'USER', createdAt: { gte: start, lte: end } },
+          where: { role: 'USER', createdAt: { gte: start, lte: end }, deletedAt: null },
         }),
       ]);
 

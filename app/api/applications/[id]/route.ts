@@ -31,8 +31,8 @@ export async function GET(
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const application = await db.application.findUnique({
-      where: { id },
+    const application = await db.application.findFirst({
+      where: { id, deletedAt: null },
       include: {
         service: true,
         documents: {
@@ -98,8 +98,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const application = await db.application.findUnique({
-      where: { id },
+    const application = await db.application.findFirst({
+      where: { id, deletedAt: null },
       include: { documents: true },
     });
 
@@ -127,9 +127,10 @@ export async function DELETE(
       }
     }
 
-    // 2. Delete the application (cascade deletes DB document records and payments)
-    await db.application.delete({
+    // 2. Soft delete the application (preserves DB records for audit)
+    await db.application.update({
       where: { id },
+      data: { deletedAt: new Date() },
     });
 
     return NextResponse.json({ success: true, message: 'Application deleted successfully' });
@@ -155,8 +156,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const application = await db.application.findUnique({
-      where: { id },
+    const application = await db.application.findFirst({
+      where: { id, deletedAt: null },
       select: { id: true, userId: true, status: true },
     });
 

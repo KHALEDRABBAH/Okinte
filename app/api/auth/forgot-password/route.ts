@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    const user = await db.user.findUnique({
-      where: { email: normalizedEmail },
+    const user = await db.user.findFirst({
+      where: { email: normalizedEmail, deletedAt: null },
       select: {
         id: true,
         firstName: true,

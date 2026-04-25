@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const role = searchParams.get('role');
     const skip = (page - 1) * safeLimit;
 
-    const where: any = {};
+    const where: any = { deletedAt: null };
     if (role) where.role = role;
 
     const [users, total] = await Promise.all([

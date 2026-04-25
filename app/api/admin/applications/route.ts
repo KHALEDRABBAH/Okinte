@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * safeLimit;
 
     // Build filter
-    const where: any = {};
+    const where: any = { deletedAt: null };
     if (status === 'NO_SERVICE') {
       where.serviceId = null;
     } else if (status) {
@@ -136,8 +136,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Find application
-    const application = await db.application.findUnique({
-      where: { id: applicationId },
+    const application = await db.application.findFirst({
+      where: { id: applicationId, deletedAt: null },
     });
 
     if (!application) {
@@ -146,10 +146,26 @@ export async function PATCH(request: NextRequest) {
 
     // --- Notes-only update (no status change) ---
     if (!status && notes !== undefined) {
-      const updated = await db.application.update({
-        where: { id: applicationId },
-        data: { notes },
+      const updated = await db.$transaction(async (tx: any) => {
+        const app = await tx.application.update({
+          where: { id: applicationId },
+          data: { notes },
+        });
+
+        await tx.auditLog.create({
+          data: {
+            adminId: currentUser.userId,
+            action: 'UPDATE_APPLICATION_NOTES',
+            entity: 'Application',
+            entityId: applicationId,
+            oldData: { notes: application.notes },
+            newData: { notes },
+          },
+        });
+
+        return app;
       });
+
       return NextResponse.json({
         application: updated,
         message: `Notes updated for ${updated.referenceCode}`,
@@ -189,17 +205,32 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Update application
-    const updated = await db.application.update({
-      where: { id: applicationId },
-      data: {
-        status,
-        notes: notes || application.notes,
-        reviewedAt: ['APPROVED', 'REJECTED'].includes(status) ? new Date() : undefined,
-      },
-      include: {
-        user: { select: { firstName: true, lastName: true, email: true } },
-        service: { select: { key: true } },
-      },
+    const updated = await db.$transaction(async (tx: any) => {
+      const app = await tx.application.update({
+        where: { id: applicationId },
+        data: {
+          status,
+          notes: notes || application.notes,
+          reviewedAt: ['APPROVED', 'REJECTED'].includes(status) ? new Date() : undefined,
+        },
+        include: {
+          user: { select: { firstName: true, lastName: true, email: true } },
+          service: { select: { key: true } },
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          adminId: currentUser.userId,
+          action: `STATUS_${status}`,
+          entity: 'Application',
+          entityId: applicationId,
+          oldData: { status: application.status, notes: application.notes },
+          newData: { status, notes: app.notes },
+        },
+      });
+
+      return app;
     });
 
     // Send status update email (non-blocking)

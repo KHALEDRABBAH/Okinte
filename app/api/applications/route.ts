@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
           userId: currentUser.userId,
           serviceId: service.id,
           status: { notIn: ['REJECTED'] },
+          deletedAt: null,
         },
       });
 
@@ -139,7 +140,7 @@ export async function GET(request: NextRequest) {
 
     // Step 2: Fetch all applications with related data
     const applications = await db.application.findMany({
-      where: { userId: currentUser.userId },
+      where: { userId: currentUser.userId, deletedAt: null },
       include: {
         service: true,
         documents: {

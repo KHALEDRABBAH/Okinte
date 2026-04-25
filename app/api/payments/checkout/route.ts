@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'applicationId is required' }, { status: 400 });
     }
 
-    const application = await db.application.findUnique({
-      where: { id: applicationId },
+    const application = await db.application.findFirst({
+      where: { id: applicationId, deletedAt: null },
       include: { service: true, payment: true },
     });
 
@@ -209,18 +209,38 @@ export async function POST(request: NextRequest) {
         },
       });
     } else {
-      await db.payment.create({
-        data: {
-          userId: currentUser.userId,
-          applicationId: application.id,
-          stripeSessionId: session.id,
-          amount: finalPrice,
-          discount: discount > 0 ? discount : null,
-          promoCodeId,
-          currency: 'usd',
-          status: 'PENDING',
-        },
-      });
+      try {
+        await db.payment.create({
+          data: {
+            userId: currentUser.userId,
+            applicationId: application.id,
+            stripeSessionId: session.id,
+            amount: finalPrice,
+            discount: discount > 0 ? discount : null,
+            promoCodeId,
+            currency: 'usd',
+            status: 'PENDING',
+          },
+        });
+      } catch (e: any) {
+        if (e.code === 'P2002') {
+          // A concurrent request won the race and created the payment record.
+          // Fallback to update so we don't crash.
+          console.warn('Concurrent checkout detected, falling back to update for app:', application.id);
+          await db.payment.updateMany({
+            where: { applicationId: application.id },
+            data: {
+              stripeSessionId: session.id,
+              amount: finalPrice,
+              discount: discount > 0 ? discount : null,
+              promoCodeId,
+              status: 'PENDING',
+            },
+          });
+        } else {
+          throw e;
+        }
+      }
     }
 
     // Validate session is usable before returning URL

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { verifyPassword, createToken, setAuthCookie } from '@/lib/auth';
+import { verifyPassword, createToken, setAuthCookie, generateRefreshToken } from '@/lib/auth';
 import { loginSchema } from '@/lib/validations';
 import { rateLimitAsync, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
     const { email, password } = validation.data;
 
     // Use explicit select to only fetch fields that definitely exist in the old schema
-    const user = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
+    const user = await db.user.findFirst({
+      where: { email: email.toLowerCase(), deletedAt: null },
       select: {
         id: true,
         firstName: true,
@@ -82,7 +82,19 @@ export async function POST(request: NextRequest) {
       tokenVersion: user.tokenVersion,
     });
 
-    await setAuthCookie(token);
+    const refreshToken = generateRefreshToken();
+    const refreshTokenExpires = new Date();
+    refreshTokenExpires.setDate(refreshTokenExpires.getDate() + 30); // 30 days
+
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        refreshToken,
+        refreshTokenExpires,
+      },
+    });
+
+    await setAuthCookie(token, refreshToken);
 
     return NextResponse.json({
       user: {

@@ -63,8 +63,8 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     // Re-verify admin role from DB (JWT role could be stale)
-    const freshUser = await db.user.findUnique({
-      where: { id: currentUser.userId },
+    const freshUser = await db.user.findFirst({
+      where: { id: currentUser.userId, deletedAt: null },
       select: { role: true },
     });
     if (freshUser?.role !== 'ADMIN') {

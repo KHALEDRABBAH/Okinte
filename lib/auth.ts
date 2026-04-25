@@ -38,7 +38,9 @@ function getJwtSecret(): Uint8Array {
 const JWT_SECRET = getJwtSecret();
 
 const COOKIE_NAME = 'okinte-auth-token';
-const TOKEN_EXPIRY = '7d'; // Token valid for 7 days
+const REFRESH_COOKIE_NAME = 'okinte-refresh-token';
+const TOKEN_EXPIRY = '15m'; // Access token valid for 15 minutes
+const REFRESH_TOKEN_EXPIRY_DAYS = 30; // Refresh token valid for 30 days
 
 // ============================================================
 // PASSWORD FUNCTIONS
@@ -107,15 +109,39 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
  * secure = only sent over HTTPS (in production)
  * sameSite = prevents CSRF attacks
  */
-export async function setAuthCookie(token: string): Promise<void> {
+export async function setAuthCookie(token: string, refreshToken?: string): Promise<void> {
   const cookieStore = await cookies();
+  const secure = process.env.NODE_ENV === 'production';
+  
+  // Set Access Token (15m)
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure,
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+    maxAge: 15 * 60, // 15 minutes in seconds
     path: '/',
   });
+
+  // Set Refresh Token (30d) if provided
+  if (refreshToken) {
+    cookieStore.set(REFRESH_COOKIE_NAME, refreshToken, {
+      httpOnly: true,
+      secure,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * REFRESH_TOKEN_EXPIRY_DAYS, // 30 days in seconds
+      path: '/api/auth/refresh', // Only send to refresh endpoint for security
+    });
+  }
+}
+
+/**
+ * Generate a cryptographically secure random string for refresh tokens
+ */
+export function generateRefreshToken(): string {
+  // We use Web Crypto API which is compatible with Edge runtime
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -124,6 +150,11 @@ export async function setAuthCookie(token: string): Promise<void> {
 export async function removeAuthCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+  // Delete refresh cookie too by setting its path correctly
+  cookieStore.set(REFRESH_COOKIE_NAME, '', {
+    maxAge: 0,
+    path: '/api/auth/refresh',
+  });
 }
 
 /**
@@ -136,7 +167,23 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
 
   if (!token) return null;
 
-  return verifyToken(token);
+  const payload = await verifyToken(token);
+  if (!payload) return null;
+
+  // If tokenVersion is in the JWT, verify it matches the DB
+  // This prevents session hijacking if a user resets their password
+  if (payload.tokenVersion !== undefined) {
+    const { db } = await import('@/lib/db');
+    const user = await db.user.findFirst({
+      where: { id: payload.userId, deletedAt: null },
+      select: { tokenVersion: true },
+    });
+    if (!user || user.tokenVersion !== payload.tokenVersion) {
+      return null; // Token was invalidated
+    }
+  }
+
+  return payload;
 }
 
 /**
@@ -155,8 +202,8 @@ export async function getUserFromRequest(
   // If tokenVersion is in the JWT, verify it matches the DB
   if (payload.tokenVersion !== undefined) {
     const { db } = await import('@/lib/db');
-    const user = await db.user.findUnique({
-      where: { id: payload.userId },
+    const user = await db.user.findFirst({
+      where: { id: payload.userId, deletedAt: null },
       select: { tokenVersion: true },
     });
     if (!user || user.tokenVersion !== payload.tokenVersion) {
@@ -197,8 +244,8 @@ export async function requireAdmin(): Promise<TokenPayload> {
 export async function verifyAdminRole(userId: string): Promise<boolean> {
   // Dynamic import to avoid circular dependencies
   const { db } = await import('@/lib/db');
-  const freshUser = await db.user.findUnique({
-    where: { id: userId },
+  const freshUser = await db.user.findFirst({
+    where: { id: userId, deletedAt: null },
     select: { role: true },
   });
   return freshUser?.role === 'ADMIN';

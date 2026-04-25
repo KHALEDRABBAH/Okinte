@@ -108,6 +108,7 @@ export default function AdminDashboard() {
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [stats, setStats] = useState<Stats | null>(null);
+  const [observability, setObservability] = useState<any>(null);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -168,6 +169,7 @@ export default function AdminDashboard() {
           const data = await res.json();
           if (!res.ok) throw new Error(data.error);
           setStats(data.stats);
+          setObservability(data.observability || null);
           setApplications(data.recentApplications || []);
           setMonthlyData(data.monthlyData || []);
         } else if (activeTab === 'applications') {
@@ -502,6 +504,58 @@ export default function AdminDashboard() {
                   <StatCard icon={<DollarSign className="w-6 h-6" />} label="Revenue" value={`$${stats.totalRevenue}`} color="green" />
                   <StatCard icon={<MessageSquare className="w-6 h-6" />} label="Unread Messages" value={stats.unreadMessages} color="orange" />
                 </div>
+
+                {/* Observability Widgets */}
+                {observability && (
+                  <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-orange-500" /> 
+                        Stuck Payments (&gt; 1hr)
+                      </h3>
+                      {observability.stuckPayments?.length > 0 ? (
+                        <div className="space-y-2 max-h-32 overflow-y-auto pr-2 scrollbar-thin">
+                          {observability.stuckPayments.map((p: any) => (
+                            <div key={p.id} className="text-xs p-2 bg-orange-50 text-orange-800 rounded">
+                              {p.user?.email} - ${p.amount}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-400">0 stuck payments</div>
+                      )}
+                    </div>
+
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-500" /> 
+                        System Fires (24h)
+                      </h3>
+                      {observability.systemErrors?.length > 0 ? (
+                        <div className="space-y-2 max-h-32 overflow-y-auto pr-2 scrollbar-thin">
+                          {observability.systemErrors.map((err: any) => (
+                            <div key={err.id} className="text-xs p-2 bg-red-50 text-red-800 rounded truncate" title={err.newData?.message}>
+                              <strong>{err.entity}:</strong> {err.newData?.message || 'Error'}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-400">0 system errors</div>
+                      )}
+                    </div>
+
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-blue-500" /> 
+                        Pending Webhooks (&gt; 5m)
+                      </h3>
+                      <div className="text-3xl font-bold text-gray-800">
+                        {observability.pendingWebhooks || 0}
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">Stuck in processing</div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Charts */}
                 <AdminCharts monthlyData={monthlyData} statusCounts={stats.applicationsByStatus} />

@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
       where: {
         verificationToken: token,
         verificationTokenExpires: { gt: new Date() },
+        deletedAt: null,
       },
       select: {
         id: true,
@@ -108,13 +109,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
+    const user = await db.user.findFirst({
+      where: { email: email.toLowerCase(), deletedAt: null },
       select: {
         id: true,
         firstName: true,
         email: true,
         emailVerified: true,
+        verificationToken: true,
+        verificationTokenExpires: true,
       },
     });
 
@@ -127,14 +130,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Email is already verified. You can log in.' });
     }
 
-    // Generate new token
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    // Reuse existing token if it's still valid (prevents "double click" invalidation bug)
+    let verificationToken = user.verificationToken;
+    let verificationTokenExpires = user.verificationTokenExpires;
 
-    await db.user.update({
-      where: { id: user.id },
-      data: { verificationToken, verificationTokenExpires },
-    });
+    if (!verificationToken || !verificationTokenExpires || verificationTokenExpires < new Date()) {
+      // Generate new token only if missing or expired
+      verificationToken = crypto.randomBytes(32).toString('hex');
+      verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      await db.user.update({
+        where: { id: user.id },
+        data: { verificationToken, verificationTokenExpires },
+      });
+    }
 
     // Send verification email
     const locale = body.locale || 'en';

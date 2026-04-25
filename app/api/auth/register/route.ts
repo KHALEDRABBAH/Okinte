@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { hashPassword, createToken, setAuthCookie } from '@/lib/auth';
+import { hashPassword, createToken, setAuthCookie, generateRefreshToken } from '@/lib/auth';
 import { registerSchema } from '@/lib/validations';
 import { rateLimitAsync, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 import crypto from 'crypto';
@@ -74,6 +74,10 @@ export async function POST(request: NextRequest) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
+    const refreshToken = generateRefreshToken();
+    const refreshTokenExpires = new Date();
+    refreshTokenExpires.setDate(refreshTokenExpires.getDate() + 30);
+
     // Step 5: Create the user in the database (NOT verified yet)
     const user = await db.user.create({
       data: {
@@ -87,6 +91,8 @@ export async function POST(request: NextRequest) {
         emailVerified: false,
         verificationToken,
         verificationTokenExpires,
+        refreshToken,
+        refreshTokenExpires,
       },
       select: {
         id: true,
@@ -115,7 +121,7 @@ export async function POST(request: NextRequest) {
       role: user.role,
       tokenVersion: user.tokenVersion,
     });
-    await setAuthCookie(jwtToken);
+    await setAuthCookie(jwtToken, refreshToken);
 
     // Step 8: Return success
     return NextResponse.json(

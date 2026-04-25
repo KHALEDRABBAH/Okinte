@@ -41,13 +41,13 @@ export const STORAGE_BUCKET = 'bolila-documents';
 
 /**
  * Upload a file to Supabase Storage
- * @param file - The file buffer
+ * @param file - The file buffer or File object
  * @param path - Storage path (e.g., "users/uuid/passport.pdf")
  * @param contentType - MIME type
  * @returns The storage path on success
  */
 export async function uploadFile(
-  file: Buffer,
+  file: Buffer | File | Blob,
   path: string,
   contentType: string
 ): Promise<{ path: string; error: string | null }> {
@@ -100,4 +100,24 @@ export async function deleteFile(path: string): Promise<boolean> {
   }
 
   return true;
+}
+
+/**
+ * Generate a presigned URL for direct-to-storage uploads from the browser.
+ * This prevents Vercel Serverless OOM crashes by avoiding file buffering.
+ */
+export async function generatePresignedUploadUrl(
+  path: string,
+  expiresIn: number = 300 // seconds (5 minutes)
+): Promise<{ url: string | null; token: string | null; error: string | null }> {
+  const { data, error } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .createSignedUploadUrl(path);
+
+  if (error) {
+    console.error('Presigned upload URL error:', error.message);
+    return { url: null, token: null, error: error.message };
+  }
+
+  return { url: data.signedUrl, token: data.token, error: null };
 }

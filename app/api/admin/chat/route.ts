@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     const userIds = conversations.map((c: { userId: string }) => c.userId);
     const [users, unreadCounts, lastMessages] = await Promise.all([
       db.user.findMany({
-        where: { id: { in: userIds } },
+        where: { id: { in: userIds }, deletedAt: null },
         select: { id: true, firstName: true, lastName: true, email: true },
       }),
       db.chatMessage.groupBy({
@@ -93,8 +93,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     // Re-verify admin role from DB (JWT role could be stale)
-    const freshUser = await db.user.findUnique({
-      where: { id: currentUser.userId },
+    const freshUser = await db.user.findFirst({
+      where: { id: currentUser.userId, deletedAt: null },
       select: { role: true },
     });
     if (freshUser?.role !== 'ADMIN') {
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify user exists
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.user.findFirst({ where: { id: userId, deletedAt: null } });
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
 
     if (type === 'applications') {
       const applications = await db.application.findMany({
+        where: { deletedAt: null },
         include: {
           user: { select: { firstName: true, lastName: true, email: true, phone: true, country: true, city: true } },
           service: { select: { key: true } },
@@ -69,6 +70,7 @@ export async function GET(request: NextRequest) {
       filename = `okinte-applications-${new Date().toISOString().split('T')[0]}`;
     } else if (type === 'users') {
       const users = await db.user.findMany({
+        where: { deletedAt: null },
         select: {
           firstName: true, lastName: true, email: true, phone: true,
           country: true, city: true, role: true, createdAt: true,

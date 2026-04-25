@@ -35,8 +35,8 @@ export async function GET() {
     }
 
     // Step 3-4: Fetch fresh user data from database
-    const user = await db.user.findUnique({
-      where: { id: tokenPayload.userId },
+    const user = await db.user.findFirst({
+      where: { id: tokenPayload.userId, deletedAt: null },
       select: {
         id: true,
         firstName: true,

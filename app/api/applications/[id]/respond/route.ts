@@ -37,8 +37,8 @@ export async function POST(
     }
 
     // 2. Fetch the application
-    const application = await db.application.findUnique({
-      where: { id },
+    const application = await db.application.findFirst({
+      where: { id, deletedAt: null },
       include: { documents: true },
     });
 
@@ -88,10 +88,7 @@ export async function POST(
       const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
       const storagePath = `users/${currentUser.userId}/${id}/${docType}_${Date.now()}.${ext}`;
       
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      
-      const { path, error } = await uploadFile(buffer, storagePath, file.type);
+      const { path, error } = await uploadFile(file, storagePath, file.type);
       if (error || !path) {
         console.error(`Upload failed for ${docType}:`, error);
         return NextResponse.json({ error: `${docType}: Upload failed — ${error || 'Unknown storage error'}` }, { status: 500 });

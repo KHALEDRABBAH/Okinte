@@ -20,6 +20,7 @@
 
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { alertCriticalError } from '@/lib/alert';
 
 interface RateLimitConfig {
   maxRequests: number;   // Max requests allowed in the window
@@ -65,6 +66,14 @@ function rateLimitInMemory(
   }
 
   if (existing.count >= config.maxRequests) {
+    existing.count++;
+    if (existing.count === config.maxRequests * 2) {
+      alertCriticalError('RateLimit', `Abnormal 429 Spike: ${identifier}`, {
+        identifier,
+        limit: config.maxRequests,
+        windowMs: config.windowMs,
+      }).catch(() => {});
+    }
     return {
       allowed: false,
       remaining: 0,
@@ -186,10 +195,10 @@ export function getClientIp(request: Request): string {
 
 // Pre-configured rate limiters for common use cases
 export const RATE_LIMITS = {
-  /** Login: 7 attempts per 15 minutes per IP */
-  login: { maxRequests: 7, windowMs: 15 * 60 * 1000 },
-  /** Register: 3 accounts per 30 minutes per IP */
-  register: { maxRequests: 3, windowMs: 30 * 60 * 1000 },
+  /** Login: 15 attempts per 15 minutes per IP (NAT friendly) */
+  login: { maxRequests: 15, windowMs: 15 * 60 * 1000 },
+  /** Register: 10 accounts per 30 minutes per IP (NAT friendly) */
+  register: { maxRequests: 10, windowMs: 30 * 60 * 1000 },
   /** Contact form: 5 messages per 10 minutes per IP */
   contact: { maxRequests: 5, windowMs: 10 * 60 * 1000 },
   /** General API: 60 requests per minute per IP */

@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
       where: {
         resetToken: token,
         resetTokenExpiry: { gt: new Date() }, // Token must not be expired
+        deletedAt: null,
       },
       select: { id: true },
     });

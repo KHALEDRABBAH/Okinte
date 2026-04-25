@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { alertCriticalError } from '@/lib/alert';
 
 /**
  * Escape HTML special characters to prevent XSS in email templates.
@@ -69,7 +70,8 @@ export async function sendVerificationEmail(to: string, name: string, token: str
       `,
     });
     return { data, error: null };
-  } catch (error) {
+  } catch (error: any) {
+    await alertCriticalError('Email', 'Failed to send Email', { email: to, error: error?.message || 'Unknown' });
     return { data: null, error };
   }
 }
@@ -115,7 +117,8 @@ export async function sendRegistrationEmail(to: string, name: string) {
       `,
     });
     return { data, error: null };
-  } catch (error) {
+  } catch (error: any) {
+    await alertCriticalError('Email', 'Failed to send Email', { email: to, error: error?.message || 'Unknown' });
     return { data: null, error };
   }
 }
@@ -160,7 +163,8 @@ export async function sendApplicationReceiptEmail(to: string, name: string, refe
       `,
     });
     return { data, error: null };
-  } catch (error) {
+  } catch (error: any) {
+    await alertCriticalError('Email', 'Failed to send Email', { email: to, error: error?.message || 'Unknown' });
     return { data: null, error };
   }
 }
@@ -211,7 +215,8 @@ export async function sendStatusUpdateEmail(to: string, name: string, referenceC
       `,
     });
     return { data, error: null };
-  } catch (error) {
+  } catch (error: any) {
+    await alertCriticalError('Email', 'Failed to send Email', { email: to, error: error?.message || 'Unknown' });
     return { data: null, error };
   }
 }

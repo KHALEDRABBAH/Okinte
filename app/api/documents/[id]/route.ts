@@ -38,8 +38,8 @@ export async function GET(
     }
 
     // Step 2: Find document
-    const document = await db.document.findUnique({
-      where: { id },
+    const document = await db.document.findFirst({
+      where: { id, deletedAt: null },
     });
 
     if (!document) {

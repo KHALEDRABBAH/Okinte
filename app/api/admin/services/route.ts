@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     // Re-verify admin role from DB (JWT role could be stale)
-    const freshUser = await db.user.findUnique({
-      where: { id: currentUser.userId },
+    const freshUser = await db.user.findFirst({
+      where: { id: currentUser.userId, deletedAt: null },
       select: { role: true },
     });
     if (freshUser?.role !== 'ADMIN') {
@@ -64,12 +64,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Service key already exists' }, { status: 409 });
     }
 
-    const service = await db.service.create({
-      data: {
-        key: sanitizedKey,
-        price: Number(price),
-        isActive: true,
-      },
+    const service = await db.$transaction(async (tx: any) => {
+      const newService = await tx.service.create({
+        data: {
+          key: sanitizedKey,
+          price: Number(price),
+          isActive: true,
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          adminId: currentUser.userId,
+          action: 'CREATE_SERVICE',
+          entity: 'Service',
+          entityId: newService.id,
+          newData: { key: sanitizedKey, price: Number(price) },
+        },
+      });
+
+      return newService;
     });
 
     return NextResponse.json({ service }, { status: 201 });
@@ -86,8 +100,8 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     // Re-verify admin role from DB (JWT role could be stale)
-    const freshUser = await db.user.findUnique({
-      where: { id: currentUser.userId },
+    const freshUser = await db.user.findFirst({
+      where: { id: currentUser.userId, deletedAt: null },
       select: { role: true },
     });
     if (freshUser?.role !== 'ADMIN') {
@@ -105,9 +119,25 @@ export async function PATCH(request: NextRequest) {
     if (price !== undefined) data.price = Number(price);
     if (isActive !== undefined) data.isActive = isActive;
 
-    const service = await db.service.update({
-      where: { id },
-      data,
+    const service = await db.$transaction(async (tx: any) => {
+      const oldService = await tx.service.findUnique({ where: { id } });
+      const updatedService = await tx.service.update({
+        where: { id },
+        data,
+      });
+
+      await tx.auditLog.create({
+        data: {
+          adminId: currentUser.userId,
+          action: 'UPDATE_SERVICE',
+          entity: 'Service',
+          entityId: id,
+          oldData: oldService as any,
+          newData: data,
+        },
+      });
+
+      return updatedService;
     });
 
     return NextResponse.json({ service });
@@ -124,8 +154,8 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     // Re-verify admin role from DB (JWT role could be stale)
-    const freshUser = await db.user.findUnique({
-      where: { id: currentUser.userId },
+    const freshUser = await db.user.findFirst({
+      where: { id: currentUser.userId, deletedAt: null },
       select: { role: true },
     });
     if (freshUser?.role !== 'ADMIN') {
@@ -140,9 +170,25 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Soft delete — don't break existing applications
-    const service = await db.service.update({
-      where: { id },
-      data: { isActive: false },
+    const service = await db.$transaction(async (tx: any) => {
+      const oldService = await tx.service.findUnique({ where: { id } });
+      const updatedService = await tx.service.update({
+        where: { id },
+        data: { isActive: false },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          adminId: currentUser.userId,
+          action: 'DELETE_SERVICE',
+          entity: 'Service',
+          entityId: id,
+          oldData: oldService as any,
+          newData: { isActive: false },
+        },
+      });
+
+      return updatedService;
     });
 
     return NextResponse.json({ service, message: 'Service deactivated (soft delete)' });

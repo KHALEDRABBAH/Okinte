@@ -19,12 +19,12 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getUserFromRequest, hashPassword } from '@/lib/auth';
+import { getUserFromRequest, hashPassword, createToken, setAuthCookie, generateRefreshToken } from '@/lib/auth';
 import { uploadFile, deleteFile } from '@/lib/storage';
 import { validateFileWithMagicBytes } from '@/lib/file-validation';
 import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import Stripe from 'stripe';
-import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-12-18.acacia' as any,
@@ -94,25 +94,59 @@ export async function POST(request: NextRequest) {
       userId = currentUser.userId;
     } else {
       // Check if user already exists
-      const existingUser = await db.user.findUnique({ where: { email } });
+      const existingUser = await db.user.findFirst({ where: { email, deletedAt: null } });
       if (existingUser) {
         return NextResponse.json({ error: 'Account already exists. Please login first.' }, { status: 409 });
       }
 
       // Create new user
       const passwordHash = await hashPassword(password);
+      
+      // Fix User Lockout: generate verification token and send email
+      const verificationToken = crypto.randomBytes(32).toString('hex');
+      const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const refreshToken = generateRefreshToken();
+      const refreshTokenExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
       const user = await db.user.create({
         data: {
           firstName,
           lastName,
-          email,
+          email: email.toLowerCase(),
           phone,
           country,
           city,
           passwordHash,
+          emailVerified: false,
+          verificationToken,
+          verificationTokenExpires,
+          refreshToken,
+          refreshTokenExpires,
         },
+        select: {
+          id: true,
+          firstName: true,
+          email: true,
+          role: true,
+          tokenVersion: true,
+        }
       });
       userId = user.id;
+
+      // Send verification email
+      const locale = request.headers.get('accept-language')?.split(',')[0]?.split('-')[0] || 'en';
+      const { sendVerificationEmail } = await import('@/lib/email');
+      await sendVerificationEmail(user.email, user.firstName, verificationToken, locale)
+        .catch(err => console.error('Failed to send verification email:', err));
+
+      // Set auth cookie
+      const jwtToken = await createToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        tokenVersion: user.tokenVersion,
+      });
+      await setAuthCookie(jwtToken, refreshToken);
     }
 
     // Find service
@@ -127,6 +161,7 @@ export async function POST(request: NextRequest) {
         userId,
         serviceId: service.id,
         status: { notIn: ['REJECTED'] },
+        deletedAt: null,
       },
     });
     if (existingApp) {
@@ -166,8 +201,8 @@ export async function POST(request: NextRequest) {
           throw new Error(`${type}: File size must be less than 5MB`);
         }
 
-        // Validate file with magic byte verification
-        const bytes = await file.arrayBuffer();
+        // Fix OOM Crash: only buffer first 4KB for magic bytes instead of whole file
+        const bytes = await file.slice(0, 4100).arrayBuffer();
         const buffer = Buffer.from(bytes);
 
         const fileValidation = await validateFileWithMagicBytes(buffer, file.type);
@@ -175,9 +210,9 @@ export async function POST(request: NextRequest) {
           throw new Error(`${type}: ${fileValidation.error || 'Invalid file format'}`);
         }
 
-        // Upload to storage with verified MIME type
+        // Upload to storage with verified MIME type (pass File directly)
         const storagePath = `users/${userId}/temp/${type}_${Date.now()}.${fileValidation.extension}`;
-        const { path, error } = await uploadFile(buffer, storagePath, fileValidation.mimeType!);
+        const { path, error } = await uploadFile(file, storagePath, fileValidation.mimeType!);
         
         if (error || !path) {
           throw new Error(`${type}: Upload failed`);
@@ -266,17 +301,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Create payment record
-    await db.payment.create({
-      data: {
-        userId,
-        applicationId: result.id,
-        stripeSessionId: session.id,
-        amount: service.price,
-        currency: 'usd',
-        status: 'PENDING',
-      },
-    });
+    // Create payment record (race-safe: webhook may have already created it)
+    try {
+      await db.payment.create({
+        data: {
+          userId,
+          applicationId: result.id,
+          stripeSessionId: session.id,
+          amount: service.price,
+          currency: 'usd',
+          status: 'PENDING',
+        },
+      });
+    } catch (paymentError: any) {
+      // P2002 = unique constraint on applicationId — webhook already created the payment
+      if (paymentError?.code === 'P2002') {
+        console.log(`Payment record already exists for ${result.id} (webhook won the race)`);
+      } else {
+        throw paymentError;
+      }
+    }
 
     // Return checkout URL
     return NextResponse.json({

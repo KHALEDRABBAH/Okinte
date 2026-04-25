@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File must be less than 5MB' }, { status: 400 });
     }
 
-    const user = await db.user.findUnique({
-      where: { id: currentUser.userId },
+    const user = await db.user.findFirst({
+      where: { id: currentUser.userId, deletedAt: null },
       select: { avatarUrl: true }
     });
 

@@ -169,6 +169,51 @@ export async function sendApplicationReceiptEmail(to: string, name: string, refe
   }
 }
 
+export async function sendPaymentFailedEmail(to: string, name: string, referenceCode: string, serviceKey: string) {
+  try {
+    const data = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: `Payment Failed - ${escapeHtml(referenceCode)}`,
+      html: `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+            <div style="text-align: left; margin-bottom: 30px;">
+              <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
+            </div>
+            
+            <h2 style="color: #dc2626; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Payment Unsuccessful</h2>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Hi ${escapeHtml(name)},<br><br>
+              Unfortunately, the payment for your application <strong>${escapeHtml(serviceKey.toUpperCase())}</strong> (Reference: ${escapeHtml(referenceCode)}) was not successful or the session expired.
+            </p>
+            
+            <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Your application has not been submitted yet. Please log in to your dashboard to try completing the payment again. If you continue to experience issues, please contact your bank or try a different payment method.
+            </p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://www.okinte.com'}/en/dashboard" style="background-color: #0f172a; color: #ffffff; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Return to Dashboard</a>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+              Best regards,<br>
+              <strong>The Okinte Team</strong>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { data, error: null };
+  } catch (error: any) {
+    await alertCriticalError('Email', 'Failed to send Payment Failed Email', { email: to, error: error?.message || 'Unknown' });
+    return { data: null, error };
+  }
+}
+
 export async function sendStatusUpdateEmail(to: string, name: string, referenceCode: string, status: string, notes?: string | null) {
   try {
     const isApproved = status === 'APPROVED';

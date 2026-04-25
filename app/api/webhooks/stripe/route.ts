@@ -214,14 +214,28 @@ export async function POST(req: NextRequest) {
         const applicationId = session.client_reference_id;
 
         if (applicationId) {
-          // Mark payment as FAILED (only if currently pending)
-          await db.payment.updateMany({
-            where: {
-              applicationId,
-              status: 'PENDING',
-            },
-            data: { status: 'FAILED' },
+          // Find pending payment
+          const payment = await db.payment.findFirst({
+            where: { applicationId, status: 'PENDING' },
+            include: { application: { include: { user: true, service: true } } }
           });
+
+          if (payment) {
+            // Mark payment as FAILED
+            await db.payment.update({
+              where: { id: payment.id },
+              data: { status: 'FAILED' },
+            });
+            
+            // Send failure email
+            const { sendPaymentFailedEmail } = await import('@/lib/email');
+            await sendPaymentFailedEmail(
+              payment.application.user.email,
+              payment.application.user.firstName,
+              payment.application.referenceCode,
+              payment.application.service?.key || 'service'
+            ).catch(err => console.error('Failed to send payment failure email:', err));
+          }
         }
         break;
       }
@@ -230,14 +244,27 @@ export async function POST(req: NextRequest) {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         const stripePaymentIntentId = paymentIntent.id;
 
-        // Mark payment as FAILED (only if currently pending)
-        await db.payment.updateMany({
-          where: {
-            stripePaymentIntentId,
-            status: 'PENDING',
-          },
-          data: { status: 'FAILED' },
+        const payment = await db.payment.findFirst({
+          where: { stripePaymentIntentId, status: 'PENDING' },
+          include: { application: { include: { user: true, service: true } } }
         });
+
+        if (payment) {
+          // Mark payment as FAILED
+          await db.payment.update({
+            where: { id: payment.id },
+            data: { status: 'FAILED' },
+          });
+
+          // Send failure email
+          const { sendPaymentFailedEmail } = await import('@/lib/email');
+          await sendPaymentFailedEmail(
+            payment.application.user.email,
+            payment.application.user.firstName,
+            payment.application.referenceCode,
+            payment.application.service?.key || 'service'
+          ).catch(err => console.error('Failed to send payment failure email:', err));
+        }
         break;
       }
 

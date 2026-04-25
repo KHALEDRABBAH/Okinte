@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import Header from '@/components/Header';
@@ -45,6 +45,7 @@ export default function Dashboard() {
   const td = useTranslations('dashboard');
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
@@ -211,6 +212,17 @@ export default function Dashboard() {
     };
     loadData();
   }, [locale, router]);
+
+  useEffect(() => {
+    if (searchParams?.get('success') === 'true') {
+      alert('Transaction completed successfully!');
+      // Remove query params to prevent alert on refresh
+      window.history.replaceState({}, '', `/${locale}/dashboard`);
+    } else if (searchParams?.get('canceled') === 'true') {
+      alert('Payment was canceled. You can try again when you are ready.');
+      window.history.replaceState({}, '', `/${locale}/dashboard`);
+    }
+  }, [searchParams, locale]);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });

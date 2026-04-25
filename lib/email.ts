@@ -131,12 +131,12 @@ export async function sendApplicationReceiptEmail(to: string, name: string, refe
       subject: `Application Received - ${escapeHtml(referenceCode)}`,
       html: `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
-          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left; border-top: 6px solid #10b981;">
             <div style="text-align: left; margin-bottom: 30px;">
               <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
             </div>
             
-            <h2 style="color: #1e293b; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Application Received</h2>
+            <h2 style="color: #10b981; font-size: 20px; margin-top: 0; margin-bottom: 16px;">✅ Payment Successful & Application Received</h2>
             
             <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
               Hi ${escapeHtml(name)},<br><br>
@@ -177,12 +177,12 @@ export async function sendPaymentFailedEmail(to: string, name: string, reference
       subject: `Payment Failed - ${escapeHtml(referenceCode)}`,
       html: `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; text-align: center;">
-          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left; border-top: 6px solid #ef4444;">
             <div style="text-align: left; margin-bottom: 30px;">
               <h1 style="color: #0f172a; font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px;">OKINTE</h1>
             </div>
             
-            <h2 style="color: #dc2626; font-size: 20px; margin-top: 0; margin-bottom: 16px;">Payment Unsuccessful</h2>
+            <h2 style="color: #ef4444; font-size: 20px; margin-top: 0; margin-bottom: 16px;">❌ Payment Unsuccessful</h2>
             
             <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
               Hi ${escapeHtml(name)},<br><br>

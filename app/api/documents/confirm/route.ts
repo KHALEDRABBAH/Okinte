@@ -22,45 +22,67 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid document type' }, { status: 400 });
     }
 
-    // SECURITY CHECK: Prevent users from confirming documents outside their application directory
-    const expectedPathPrefix = `users/${currentUser.userId}/${applicationId}/`;
+    const isGlobalDoc = ['PASSPORT', 'CV', 'DIPLOMA'].includes(upperDocType);
+    const isProfileMode = applicationId === 'profile';
+
+    if (!isGlobalDoc && isProfileMode) {
+      return NextResponse.json({ error: 'Cannot confirm application-specific documents on profile' }, { status: 400 });
+    }
+
+    // SECURITY CHECK: Prevent users from confirming documents outside their allowed directory
+    const expectedPathPrefix = isGlobalDoc 
+      ? `users/${currentUser.userId}/profile/` 
+      : `users/${currentUser.userId}/${applicationId}/`;
+
     if (!storagePath.startsWith(expectedPathPrefix)) {
       return NextResponse.json({ error: 'Invalid storage path' }, { status: 403 });
     }
 
-    const application = await db.application.findFirst({
-      where: { id: applicationId, deletedAt: null },
-    });
+    if (!isProfileMode && applicationId) {
+      const application = await db.application.findFirst({
+        where: { id: applicationId, deletedAt: null },
+      });
 
-    if (!application || application.userId !== currentUser.userId) {
-      return NextResponse.json({ error: 'Application not found or access denied' }, { status: 404 });
+      if (!application || application.userId !== currentUser.userId) {
+        return NextResponse.json({ error: 'Application not found or access denied' }, { status: 404 });
+      }
     }
 
-    // Upsert the document record
-    const document = await db.document.upsert({
+    const targetApplicationId = isGlobalDoc ? null : applicationId;
+
+    // Use findFirst instead of upsert due to nullable applicationId constraint limits
+    let document = await db.document.findFirst({
       where: {
-        applicationId_type_unique: {
-          applicationId,
-          type: upperDocType as any,
-        }
-      },
-      update: {
-        fileName,
-        storagePath,
-        mimeType,
-        fileSize,
-        uploadedAt: new Date(),
-      },
-      create: {
         userId: currentUser.userId,
-        applicationId,
         type: upperDocType as any,
-        fileName,
-        storagePath,
-        mimeType,
-        fileSize,
-      },
+        applicationId: targetApplicationId,
+      }
     });
+
+    if (document) {
+      document = await db.document.update({
+        where: { id: document.id },
+        data: {
+          fileName,
+          storagePath,
+          mimeType,
+          fileSize,
+          uploadedAt: new Date(),
+        }
+      });
+    } else {
+      document = await db.document.create({
+        data: {
+          userId: currentUser.userId,
+          applicationId: targetApplicationId,
+          type: upperDocType as any,
+          fileName,
+          storagePath,
+          mimeType,
+          fileSize,
+        }
+      });
+    }
 
     return NextResponse.json({ document }, { status: 201 });
   } catch (error) {

@@ -68,6 +68,16 @@ export async function GET(request: NextRequest) {
               phone: true,
               country: true,
               city: true,
+              documents: {
+                where: { applicationId: null },
+                select: {
+                  id: true,
+                  type: true,
+                  fileName: true,
+                  fileSize: true,
+                  uploadedAt: true,
+                }
+              }
             },
           },
           service: { select: { key: true, price: true } },
@@ -96,8 +106,23 @@ export async function GET(request: NextRequest) {
       db.application.count({ where }),
     ]);
 
+    const mergedApplications = applications.map((app: any) => {
+      const mergedDocuments = [
+        ...app.documents,
+        ...(app.user.documents || [])
+      ];
+      
+      const { documents: _userDocs, ...userWithoutDocs } = app.user;
+      
+      return {
+        ...app,
+        documents: mergedDocuments,
+        user: userWithoutDocs
+      };
+    });
+
     return NextResponse.json({
-      applications,
+      applications: mergedApplications,
       pagination: {
         page,
         limit: safeLimit,

@@ -304,7 +304,7 @@ export default function Apply() {
         console.error('Failed to create draft application');
       }
 
-      // Step C: Upload documents to the draft application
+      // Step C: Upload documents to the user's profile
       if (appId) {
         const fileEntries: [string, File | null][] = [
           ['PASSPORT', files.passport],
@@ -314,13 +314,43 @@ export default function Apply() {
         for (const [type, file] of fileEntries) {
           if (file) {
             try {
-              const fd = new FormData();
-              fd.append('file', file);
-              fd.append('applicationId', appId);
-              fd.append('type', type);
-              await fetch('/api/documents/upload', { method: 'POST', body: fd });
-            } catch {
-              console.error(`Failed to upload ${type}`);
+              // 1. Get presigned URL using 'profile' as applicationId
+              const presignRes = await fetch('/api/documents/presigned', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  applicationId: 'profile',
+                  type,
+                  fileName: file.name,
+                  mimeType: file.type,
+                }),
+              });
+              const presignData = await presignRes.json();
+              if (!presignRes.ok) throw new Error(presignData.error);
+
+              // 2. Upload to storage
+              const uploadRes = await fetch(presignData.url, {
+                method: 'PUT',
+                body: file,
+                headers: { 'Content-Type': file.type },
+              });
+              if (!uploadRes.ok) throw new Error('Storage upload failed');
+
+              // 3. Confirm with backend
+              await fetch('/api/documents/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  applicationId: 'profile',
+                  type,
+                  storagePath: presignData.storagePath,
+                  fileName: file.name,
+                  fileSize: file.size,
+                  mimeType: file.type,
+                }),
+              });
+            } catch (err) {
+              console.error(`Failed to upload ${type}`, err);
             }
           }
         }

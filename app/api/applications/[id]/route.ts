@@ -64,6 +64,17 @@ export async function GET(
             phone: true,
             country: true,
             city: true,
+            documents: {
+              where: { applicationId: null },
+              select: {
+                id: true,
+                type: true,
+                fileName: true,
+                mimeType: true,
+                fileSize: true,
+                uploadedAt: true,
+              }
+            }
           },
         },
       },
@@ -78,7 +89,21 @@ export async function GET(
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    return NextResponse.json({ application });
+    // Merge application-specific documents with global user documents
+    const mergedDocuments = [
+      ...application.documents,
+      ...((application.user as any).documents || [])
+    ];
+    
+    const { documents: _userDocs, ...userWithoutDocs } = application.user as any;
+    
+    const mergedApplication = {
+      ...application,
+      documents: mergedDocuments,
+      user: userWithoutDocs
+    };
+
+    return NextResponse.json({ application: mergedApplication });
 
   } catch (error) {
     console.error('Application detail error:', error);

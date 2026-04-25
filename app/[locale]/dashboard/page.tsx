@@ -37,6 +37,7 @@ interface UserProfile {
   country: string;
   city: string;
   avatarUrl?: string;
+  documents?: { id: string; type: string; fileName: string; uploadedAt: string }[];
 }
 
 export default function Dashboard() {
@@ -79,17 +80,60 @@ export default function Dashboard() {
     setIsResponding(true);
     setResponseSuccess(null);
     try {
-      const formData = new FormData();
-      formData.append('comment', responseComment);
-      
-      // Append any uploaded files
+      // 1. Upload any provided files via presigned URL flow
       for (const [type, file] of Object.entries(responseFiles)) {
-        if (file) formData.append(type, file);
+        if (!file) continue;
+
+        // Is it a global document?
+        const isGlobalDoc = ['PASSPORT', 'CV', 'DIPLOMA'].includes(type);
+        const targetAppId = isGlobalDoc ? 'profile' : appId;
+
+        // Get presigned URL
+        const presignRes = await fetch('/api/documents/presigned', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            applicationId: targetAppId,
+            type,
+            fileName: file.name,
+            mimeType: file.type,
+          }),
+        });
+        const presignData = await presignRes.json();
+        if (!presignRes.ok) throw new Error(presignData.error);
+
+        // Upload to storage
+        const uploadRes = await fetch(presignData.url, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type },
+        });
+        if (!uploadRes.ok) throw new Error(`Upload to storage failed for ${type}`);
+
+        // Confirm with backend
+        const confirmRes = await fetch('/api/documents/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            applicationId: targetAppId,
+            type,
+            storagePath: presignData.storagePath,
+            fileName: file.name,
+            fileSize: file.size,
+            mimeType: file.type,
+          }),
+        });
+        if (!confirmRes.ok) {
+          const confirmData = await confirmRes.json();
+          throw new Error(confirmData.error);
+        }
       }
 
+      // 2. Submit the comment and change application status
       const res = await fetch(`/api/applications/${appId}/respond`, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: responseComment }),
       });
       const data = await res.json();
       
@@ -224,6 +268,65 @@ export default function Dashboard() {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleGlobalDocUpload = async (type: string, file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File must be less than 5MB');
+      return;
+    }
+
+    try {
+      // 1. Get presigned URL
+      const presignRes = await fetch('/api/documents/presigned', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applicationId: 'profile', // Special flag for profile documents
+          type,
+          fileName: file.name,
+          mimeType: file.type,
+        }),
+      });
+      const presignData = await presignRes.json();
+      if (!presignRes.ok) throw new Error(presignData.error);
+
+      // 2. Upload to Supabase Storage
+      const uploadRes = await fetch(presignData.url, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+      if (!uploadRes.ok) throw new Error('Upload to storage failed');
+
+      // 3. Confirm with our backend
+      const confirmRes = await fetch('/api/documents/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applicationId: 'profile',
+          type,
+          storagePath: presignData.storagePath,
+          fileName: file.name,
+          fileSize: file.size,
+          mimeType: file.type,
+        }),
+      });
+      const confirmData = await confirmRes.json();
+      if (!confirmRes.ok) throw new Error(confirmData.error);
+
+      // 4. Update local state
+      if (user) {
+        const newDocs = (user.documents || []).filter(d => d.type !== type);
+        newDocs.push(confirmData.document);
+        setUser({ ...user, documents: newDocs });
+      }
+      
+      alert(`${type} uploaded successfully!`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Upload failed';
+      alert(`Document upload failed: ${message}`);
     }
   };
 
@@ -547,6 +650,52 @@ export default function Dashboard() {
                   </div>
                 </div>
               )}
+
+              {/* MY DOCUMENTS SECTION */}
+              {!isEditingProfile && (
+                <div className="mt-8 pt-8 border-t border-gray-100">
+                  <h3 className="text-lg font-bold text-[#1a1a2e] mb-2">My Global Documents</h3>
+                  <p className="text-sm text-gray-500 mb-6">
+                    These documents are saved to your profile and will be automatically used for all your applications.
+                  </p>
+                  <div className="grid md:grid-cols-3 gap-5">
+                    {['PASSPORT', 'CV', 'DIPLOMA'].map(type => {
+                      const doc = user.documents?.find((d: any) => d.type === type);
+                      return (
+                        <div key={type} className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                          {doc && <div className="absolute top-0 right-0 w-2 h-full bg-green-500"></div>}
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="font-bold text-gray-700 capitalize">{type.toLowerCase()}</span>
+                            {doc ? <CheckCircle className="w-5 h-5 text-green-500" /> : <AlertCircle className="w-5 h-5 text-amber-500" />}
+                          </div>
+                          {doc ? (
+                            <div className="mb-4">
+                              <p className="text-sm font-medium text-gray-800 truncate" title={doc.fileName}>{doc.fileName}</p>
+                              <p className="text-xs text-gray-500 mt-1">Updated {new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-500 mb-4">Not uploaded yet</p>
+                          )}
+                          <label className="cursor-pointer inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#2563EB] bg-[#2563EB]/10 rounded-lg hover:bg-[#2563EB]/20 transition-colors">
+                            <Upload className="w-4 h-4 mr-2" />
+                            {doc ? 'Update File' : 'Upload File'}
+                            <input
+                              type="file"
+                              hidden
+                              onChange={(e) => {
+                                if (e.target.files?.[0]) {
+                                  handleGlobalDocUpload(type, e.target.files[0]);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
             </motion.div>
           )}
 

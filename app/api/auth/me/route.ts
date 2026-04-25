@@ -50,6 +50,17 @@ export async function GET() {
         emailVerified: true,
         createdAt: true,
         updatedAt: true,
+        documents: {
+          where: { applicationId: null },
+          select: {
+            id: true,
+            type: true,
+            fileName: true,
+            mimeType: true,
+            fileSize: true,
+            uploadedAt: true,
+          }
+        }
       },
     });
 

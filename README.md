@@ -46,21 +46,11 @@ Here are some ideas to get you started:
 
 ## 📈 GitHub Stats
 <div align="center">
-  <!-- Replace YOUR_GITHUB_USERNAME with your actual GitHub username below -->
-  <img src="https://github-readme-stats.vercel.app/api?username=YOUR_GITHUB_USERNAME&show_icons=true&theme=radical" alt="GitHub Stats" />
-
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=YOUR_GITHUB_USERNAME&layout=compact&theme=radical" alt="Top Languages" />
+  <img src="https://github-readme-stats.vercel.app/api?username=KHALEDRABBAH&show_icons=true&theme=radical" alt="GitHub Stats" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=KHALEDRABBAH&layout=compact&theme=radical" alt="Top Languages" />
 </div>
 
-<div align="center">
-  <!-- You can add an image/logo for Okinte here -->
-  <h1>🌟 Okinte Platform</h1>
-  <p><strong>A high-performance, secure, and robust platform for application placement and document management.</strong></p>
 
-  [![Status](https://img.shields.io/badge/Status-Production_Ready-success.svg)](#)
-  [![Next.js](https://img.shields.io/badge/Built_with-Next.js-black.svg?logo=next.js)](#)
-  [![Tailwind](https://img.shields.io/badge/Styled_with-Tailwind_CSS-38b2ac.svg?logo=tailwind-css)](#)
-</div>
 
 <br/>
 

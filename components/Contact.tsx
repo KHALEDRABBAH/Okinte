@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Mail, Phone, MapPin, Facebook, Send, CheckCircle, MessageCircle, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Send, CheckCircle, MessageCircle, ExternalLink } from 'lucide-react';
 
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
+const INSTAGRAM_URL = 'https://www.instagram.com/okinte.placement?igsh=OGx6ZGlnMXJpeGFz';
 
 export default function Contact() {
   const t = useTranslations('contact');
@@ -69,13 +70,13 @@ export default function Contact() {
               <h3 className="font-heading font-bold text-2xl mb-8">{t('title')}</h3>
               
               <div className="space-y-6 mb-8">
-                <a href="https://wa.me/201280109982" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group">
+                <a href="https://wa.me/201036264095" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group">
                   <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MessageCircle className="w-5 h-5 text-[#2563EB]" />
                   </div>
                   <div>
                     <p className="font-semibold mb-1">{t('phoneLabel')}</p>
-                    <p className="text-white/70 text-sm group-hover:text-white transition-colors">+20 12 80109982</p>
+                    <p className="text-white/70 text-sm group-hover:text-white transition-colors">+20 10 36264095</p>
                   </div>
                 </a>
                 <a href="mailto:Okinte.placement@gmail.com" className="flex items-start gap-4 group">
@@ -93,24 +94,15 @@ export default function Contact() {
               <div className="mb-8">
                 <p className="font-semibold mb-4">{t('addressLabel')}</p>
                 <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
-                  <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2.5 px-3.5 group hover:bg-white/10 transition-colors border-b border-white/5">
+                  <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2.5 px-3.5 group hover:bg-white/10 transition-colors border-b border-white/5">
                     <div className="w-8 h-8 bg-[#2563EB]/20 rounded-lg flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-4 h-4 text-[#2563EB]" />
                     </div>
                     <div className="flex-1 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-sm">Mongo, Chad</p>
+                        <p className="font-medium text-sm">Togo</p>
                         <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-[#2563EB]/20 text-[#3b82f6] rounded">Main</span>
                       </div>
-                      <ExternalLink className="w-3 h-3 text-white/30 group-hover:text-white/70 transition-colors opacity-0 group-hover:opacity-100" />
-                    </div>
-                  </a>
-                  <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2.5 px-3.5 group hover:bg-white/10 transition-colors border-b border-white/5">
-                    <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4 h-4 text-white/70" />
-                    </div>
-                    <div className="flex-1 flex items-center justify-between">
-                      <p className="font-medium text-sm">Togo</p>
                       <ExternalLink className="w-3 h-3 text-white/30 group-hover:text-white/70 transition-colors opacity-0 group-hover:opacity-100" />
                     </div>
                   </a>
@@ -132,6 +124,9 @@ export default function Contact() {
                 <div className="flex gap-3">
                   <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                     <Facebook className="w-5 h-5" />
+                  </a>
+                  <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#e6683c] transition-colors duration-200">
+                    <Instagram className="w-5 h-5" />
                   </a>
                   <a href="mailto:Okinte.placement@gmail.com" className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                     <Mail className="w-5 h-5" />

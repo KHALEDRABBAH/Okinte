@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { unstable_setRequestLocale, getTranslations } from 'next-intl/server';
 import { Metadata } from 'next';
-import { Mail, MapPin, Phone, Facebook, ExternalLink, MessageCircle } from 'lucide-react';
+import { Mail, MapPin, Phone, Facebook, Instagram, ExternalLink, MessageCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -9,26 +9,21 @@ export async function generateMetadata({ params: { locale } }: { params: { local
   const t = await getTranslations({ locale, namespace: 'contact' });
   return {
     title: `${t('title')} — Okinte`,
-    description: 'Get in touch with Okinte. Visit our offices in Chad, Togo, or Egypt. Contact us via WhatsApp, email, or Facebook.',
+    description: 'Get in touch with Okinte. Visit our offices in Togo or Egypt. Contact us via WhatsApp, email, or social media.',
   };
 }
 
-const WHATSAPP_NUMBER = '+201280109982';
+const WHATSAPP_NUMBER = '+201036264095';
 const EMAIL = 'Okinte.placement@gmail.com';
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
+const INSTAGRAM_URL = 'https://www.instagram.com/okinte.placement?igsh=OGx6ZGlnMXJpeGFz';
 
 const locations = [
   {
-    name: 'Mongo, Chad',
-    description: 'Main Office',
-    href: 'https://share.google/8BYwcYBxCgfUxgcjG',
-    isMain: true,
-  },
-  {
     name: 'Togo',
-    description: 'Regional Office',
+    description: 'Main Office',
     href: 'https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw',
-    isMain: false,
+    isMain: true,
   },
   {
     name: 'Giza, Egypt',
@@ -70,7 +65,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                 </div>
                 <div>
                   <h2 className="font-heading font-bold text-[#1a1a2e] text-lg">WhatsApp / Phone</h2>
-                  <p className="text-gray-600 mt-1 group-hover:text-green-600 transition-colors">+20 12 80109982</p>
+                  <p className="text-gray-600 mt-1 group-hover:text-green-600 transition-colors">+20 10 36264095</p>
                 </div>
               </a>
 
@@ -96,7 +91,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                 <div className="h-px bg-gray-300 w-16" />
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                 {locations.map((location, index) => (
                   <a
                     key={index}
@@ -135,7 +130,7 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                 <div className="h-px bg-gray-300 w-16" />
               </div>
 
-              <div className="max-w-sm mx-auto">
+              <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                 <a 
                   href={FACEBOOK_URL}
                   target="_blank"
@@ -148,6 +143,20 @@ export default function ContactPage({ params: { locale } }: { params: { locale: 
                   <div>
                     <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">Facebook</h3>
                     <p className="text-sm text-gray-600 group-hover:text-[#2563EB] transition-colors">Follow us on Facebook</p>
+                  </div>
+                </a>
+                <a 
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white rounded-2xl p-6 flex items-center gap-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group"
+                >
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#dc2743] bg-opacity-10" style={{ background: 'linear-gradient(135deg, rgba(240,148,51,0.1), rgba(230,104,60,0.1), rgba(220,39,67,0.1))' }}>
+                    <Instagram className="w-7 h-7 text-[#e6683c]" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-bold text-[#1a1a2e] text-lg">Instagram</h3>
+                    <p className="text-sm text-gray-600 group-hover:text-[#e6683c] transition-colors">Follow us on Instagram</p>
                   </div>
                 </a>
               </div>

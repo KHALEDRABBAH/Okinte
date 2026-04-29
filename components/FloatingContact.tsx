@@ -14,7 +14,7 @@ export default function FloatingContact() {
   const links = [
     { icon: Facebook, label: t('facebook'), href: FACEBOOK_URL, color: 'bg-blue-600' },
     { icon: Mail, label: t('email'), href: 'mailto:Okinte.placement@gmail.com', color: 'bg-red-500' },
-    { icon: MessageCircle, label: t('whatsapp'), href: 'https://wa.me/201280109982', color: 'bg-green-500' },
+    { icon: MessageCircle, label: t('whatsapp'), href: 'https://wa.me/201036264095', color: 'bg-green-500' },
   ];
 
   return (

@@ -2,9 +2,10 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61567424603648&mibextid=rS40aB7S9Ucbxw6v';
+const INSTAGRAM_URL = 'https://www.instagram.com/okinte.placement?igsh=OGx6ZGlnMXJpeGFz';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -33,6 +34,9 @@ export default function Footer() {
             <div className="flex gap-3 mt-6">
               <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                 <Facebook className="w-4.5 h-4.5" />
+              </a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#e6683c] transition-colors duration-200">
+                <Instagram className="w-4.5 h-4.5" />
               </a>
               <a href="mailto:Okinte.placement@gmail.com" aria-label="Email us" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-[#2563EB] transition-colors duration-200">
                 <Mail className="w-4.5 h-4.5" />
@@ -68,11 +72,11 @@ export default function Footer() {
             <h2 className="font-heading font-semibold text-base mb-5 md:mb-6">{t('contactTitle')}</h2>
             <ul className="space-y-2.5">
               <li>
-                <a href="https://wa.me/201280109982" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
+                <a href="https://wa.me/201036264095" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 group">
                   <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Phone className="w-4 h-4 text-green-400" />
                   </div>
-                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">+20 12 80109982</span>
+                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">+20 10 36264095</span>
                 </a>
               </li>
               <li>
@@ -84,12 +88,6 @@ export default function Footer() {
                 </a>
               </li>
               <li className="bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
-                <a href="https://share.google/8BYwcYBxCgfUxgcjG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-white/10 transition-all duration-200 group border-b border-white/5">
-                  <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 text-red-400" />
-                  </div>
-                  <span className="text-white/70 text-sm group-hover:text-white transition-colors">Mongo, Chad</span>
-                </a>
                 <a href="https://maps.app.goo.gl/MifFEUFhE11qHS4E8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-white/10 transition-all duration-200 group border-b border-white/5">
                   <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-4 h-4 text-red-400" />
